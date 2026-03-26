@@ -6,4 +6,5 @@ jobs:
   weekly-planning:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -X POST https://ntfy.sh/zion-3slots -H "Title: Weekly Planning" -H "Priority: high" -d "Time for your Sunday 07:00 weekly planning! Review last week's 3 slots, assess what works, plan next week's slots based on priorities, move items as needed, and check your GTD and על זה principles."
+      - run: |
+          curl -X POST https://ntfy.sh/zion-3slots -H "Title: Weekly Planning" -H "Priority: high" -d "Time for your Sunday 07:00 weekly planning! Review last week's 3 slots, assess what works, plan next week's slots based on priorities, move items as needed, and check your GTD and על זה principles."
