@@ -1,9 +1,10 @@
 name: Daily Evening Review
 on:
   schedule:
-      - cron: '0 18 * * *'
-      jobs:
-        evening-review:
-            runs-on: ubuntu-latest
-                steps:
-                      - run: curl -X POST https://ntfy.sh/zion-3slots -H "Title: Evening Review" -H "Priority: high" -d "Time for your 20:00 planning review. What did you accomplish today? What are tomorrow's 3 slots?"
+    - cron: '0 18 * * *'
+jobs:
+  evening-review:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -X POST https://ntfy.sh/zion-3slots -H "Title: Evening Review" -H "Priority: high" -d "Time for your 20:00 planning review. What did you accomplish today? What are tomorrow's 3 slots?"
