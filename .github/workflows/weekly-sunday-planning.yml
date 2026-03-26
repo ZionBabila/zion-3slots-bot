@@ -2,17 +2,16 @@ name: Weekly Sunday Planning
 
 on:
   schedule:
-      # Run at 05:00 UTC every Sunday (07:00 Israel time)
-          - cron: '0 5 * * 0'
-            workflow_dispatch:
+      - cron: '0 5 * * 0'
+        workflow_dispatch:
 
-            jobs:
-              weekly-planning:
-                  runs-on: ubuntu-latest
-                      steps:
-                            - name: Send NTFY notification - Weekly Planning
-                                    run: |
-                                              curl -X POST https://ntfy.sh/zion-3slots \
-                                                          -H "Title: 📊 Weekly Planning Session" \
-                                                                      -H "Priority: high" \
-                                                                                  -d "Time for your Sunday 07:00 weekly planning! Dedicate 30 minutes to: 1) Review last week's completed projects in 3 slots, 2) Assess what's working, 3) Plan next week's 3 slots, 4) Move items between slots or parking lot, 5) Check your GTD 5 pillars and על זה principles. Open your Notion board."
+        jobs:
+          weekly-planning:
+              runs-on: ubuntu-latest
+                  steps:
+                        - name: Send NTFY notification - Weekly Planning
+                                run: |
+                                          curl -X POST https://ntfy.sh/zion-3slots \
+                                                      -H "Title: 📊 Weekly Planning Session" \
+                                                                  -H "Priority: high" \
+                                                                              -d "Time for your Sunday 07:00 weekly planning! Dedicate 30 minutes to: 1) Review last week's completed projects in 3 slots, 2) Assess what's working and what needs adjustment, 3) Plan next week's 3 slots based on priorities, 4) Move items between slots or parking lot as needed, 5) Check your GTD 5 pillars and על זה principles. Open your Notion board."
