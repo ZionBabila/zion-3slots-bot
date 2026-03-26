@@ -2,17 +2,16 @@ name: Daily Evening Review
 
 on:
   schedule:
-      # Run at 18:00 UTC daily (20:00 Israel time)
-          - cron: '0 18 * * *'
-            workflow_dispatch:
+      - cron: '0 18 * * *'
+        workflow_dispatch:
 
-            jobs:
-              evening-review:
-                  runs-on: ubuntu-latest
-                      steps:
-                            - name: Send NTFY notification - Evening Review
-                                    run: |
-                                              curl -X POST https://ntfy.sh/zion-3slots \
-                                                          -H "Title: 📋 Evening Planning Review" \
-                                                                      -H "Priority: high" \
-                                                                                  -d "Time for your daily 20:00 planning review. What did you accomplish today? What are tomorrow's 3 slots? Review completed projects and update your Notion board."
+        jobs:
+          evening-review:
+              runs-on: ubuntu-latest
+                  steps:
+                        - name: Send NTFY notification - Evening Review
+                                run: |
+                                          curl -X POST https://ntfy.sh/zion-3slots \
+                                                      -H "Title: 📋 Evening Planning Review" \
+                                                                  -H "Priority: high" \
+                                                                              -d "Time for your daily 20:00 planning review. What did you accomplish today? What are tomorrow's 3 slots? Review completed projects and update your Notion board."
