@@ -2,6 +2,7 @@ name: Daily Evening Review
 on:
   schedule:
     - cron: '0 18 * * *'
+  workflow_dispatch:
 jobs:
   evening-review:
     runs-on: ubuntu-latest
