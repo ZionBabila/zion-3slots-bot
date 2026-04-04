@@ -1,13 +1,13 @@
-name: Daily Evening Review
+name: Morning Briefing
 
 on:
   schedule:
-    # 18:00 UTC = 20:00 Israel time (UTC+2)
-    - cron: '0 18 * * *'
+    # 04:00 UTC = 06:00 Israel time (UTC+2) / 07:00 Israel DST (UTC+3)
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 jobs:
-  evening-review:
+  morning-briefing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,8 +19,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run evening review and sync
-        run: python scripts/evening_review.py
+      - name: Run morning briefing
+        run: python scripts/morning_briefing.py
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}

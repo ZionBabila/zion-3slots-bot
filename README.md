@@ -1,165 +1,169 @@
 # 🎯 Zion 3-Slots Bot
 
-Automated planning reminders via NTFY and Claude partnership for effective time management.
+Automated time management system combining **Google Calendar**, **Notion**, and **Claude AI** with NTFY push notifications. Built on the 3-Slot Methodology + GTD + על זה principles.
 
-## Overview
+## What It Does
 
-This GitHub Actions automation delivers daily and weekly planning reminders to your phone and desktop using the NTFY push notification service. It's designed to support the **3-Slot Methodology** combined with **GTD (Getting Things Done)** and **על זה** (Yair Yona's self-management approach).
+| Feature | How |
+|---|---|
+| 📅 **Morning briefing** | Daily 06:00 — combines today's Google Calendar events with your active Notion slots + AI tip |
+| 🔄 **Notion → GCal sync** | Every 15 min — tasks you schedule in Notion automatically appear in Google Calendar |
+| ✅ **Auto-complete sync** | Check ✅ Done in Notion → GCal event is updated automatically |
+| 🌙 **Evening review** | Daily 20:00 — NTFY prompt + auto-marks completed calendar events in Notion |
+| 🗓️ **Weekly planning** | Every Sunday 07:00 — auto-creates weekly plan in Notion with AI reflection |
+| 💡 **AI reflection** | Claude Haiku analyzes your week and writes a personalized reflection to Notion |
 
-## Features
+## Architecture
 
-✅ **Daily Evening Review** (20:00 Israel time)
-- Automated NTFY push notification
-- - Planning prompts: What was accomplished? What are tomorrow's 3 slots?
-  - - Runs every day via GitHub Actions
-   
-    - ✅ **Weekly Sunday Planning** (07:00 Israel time)
-    - - Automated NTFY push notification
-      - - Comprehensive 30-minute planning agenda
-        - - GTD 5 pillars + על זה principles integration
-          - - Runs every Sunday via GitHub Actions
-           
-            - ✅ **Cloud-Based 24/7 Automation**
-            - - No need to keep your computer on
-              - - GitHub Actions runs independently
-                - - NTFY delivers notifications to your iPhone and desktop
-                 
-                  - ## How It Works
-                 
-                  - ### Architecture
-                 
-                  - 1. **GitHub Actions Workflows** (`.github/workflows/`)
-                    2.    - `daily-evening-review.yml`: Triggers daily at 18:00 UTC (20:00 Israel time)
-                          -    - `weekly-sunday-planning.yml`: Triggers every Sunday at 05:00 UTC (07:00 Israel time)
-                           
-                               - 2. **NTFY Integration**
-                                 3.    - Topic: `https://ntfy.sh/zion-3slots`
-                                       -    - Receives push notifications to any subscribed client (iPhone, desktop, web)
-                                            -    - High priority notifications ensure visibility
-                                             
-                                                 - 3. **Notion Integration**
-                                                   4.    - Your planning board: `🎯 3 סלוטים — זה הכל`
-                                                         -    - Update after each notification
-                                                              -    - Track 3 active slots: Money/פרנסה, Build/בנייה, Explore/חקירה
-                                                               
-                                                                   - ## Requirements
-                                                               
-                                                                   - 1. **NTFY Subscription**
-                                                                     2.    - Subscribe to the topic: https://ntfy.sh/zion-3slots
-                                                                           -    - Download NTFY app on iPhone/desktop or use web browser
-                                                                                -    - Enable notifications
-                                                                                 
-                                                                                     - 2. **GitHub Repository**
-                                                                                       3.    - This repository with the workflows enabled
-                                                                                             -    - Workflows run automatically on schedule
-                                                                                              
-                                                                                                  - 3. **Notion Board**
-                                                                                                    4.    - Your personal 3-Slot planning board
-                                                                                                          -    - Updated manually after receiving notifications
-                                                                                                           
-                                                                                                               - ## Setup Instructions
-                                                                                                           
-                                                                                                               - ### 1. Subscribe to NTFY Notifications
-                                                                                                           
-                                                                                                               - **iPhone:**
-                                                                                                               - - Download NTFY app from App Store
-                                                                                                                 - - Open app and search for topic: `zion-3slots`
-                                                                                                                   - - Subscribe and enable notifications
-                                                                                                                    
-                                                                                                                     - **Desktop:**
-                                                                                                                     - - Visit https://ntfy.sh/zion-3slots in your browser
-                                                                                                                       - - Click bell icon to enable desktop notifications
-                                                                                                                         - - OR download NTFY desktop client
-                                                                                                                          
-                                                                                                                           - **Web:**
-                                                                                                                           - - Visit https://ntfy.sh/zion-3slots
-                                                                                                                             - - Stay on the page to receive notifications
-                                                                                                                              
-                                                                                                                               - ### 2. Enable GitHub Actions
-                                                                                                                              
-                                                                                                                               - This repository has GitHub Actions workflows that run automatically:
-                                                                                                                              
-                                                                                                                               - - Check the `Actions` tab to see scheduled workflow runs
-                                                                                                                                 - - Workflows execute at specified times via GitHub's servers (no local setup needed)
-                                                                                                                                   - - Manual trigger available with "Run workflow" button if needed
-                                                                                                                                    
-                                                                                                                                     - ### 3. Update Your Notion Board
-                                                                                                                                    
-                                                                                                                                     - After each notification, visit your Notion planning board:
-                                                                                                                                     - - Review completed projects
-                                                                                                                                       - - Update your 3 active slots
-                                                                                                                                         - - Move items between slots or to the parking lot
-                                                                                                                                           - - Revisit your GTD and על זה principles
-                                                                                                                                            
-                                                                                                                                             - ## Methodology
-                                                                                                                                            
-                                                                                                                                             - This system combines three proven methodologies:
-                                                                                                                                            
-                                                                                                                                             - **GTD (Getting Things Done)** by David Allen
-                                                                                                                                             - - Capture everything
-                                                                                                                                               - - Clarify next steps
-                                                                                                                                                 - - Organize by context
-                                                                                                                                                   - - Reflect weekly
-                                                                                                                                                     - - Engage with confidence
-                                                                                                                                                      
-                                                                                                                                                       - **על זה** (Yair Yona's Self-Management)
-                                                                                                                                                       - - כבישת הזמן (Time paving/calendar blocking)
-                                                                                                                                                         - - המנהל vs הפועל (Manager vs Doer separation)
-                                                                                                                                                           - - השומר (Distraction protection)
-                                                                                                                                                             - - אחריות רדיקלית (Radical accountability)
-                                                                                                                                                               - - חמלה רדיקלית (Radical compassion)
-                                                                                                                                                                
-                                                                                                                                                                 - **3-Slot Constraint**
-                                                                                                                                                                 - - **Slot 1**: Money/Revenue (פרנסה)
-                                                                                                                                                                   - - **Slot 2**: Build/Completion (בנייה)
-                                                                                                                                                                     - - **Slot 3**: Explore/Learning (חקירה)
-                                                                                                                                                                       - - **Parking Lot**: Ideas waiting to be activated
-                                                                                                                                                                         - - Maximum 3 active projects at once
-                                                                                                                                                                           - - Intentional project swaps during weekly review
-                                                                                                                                                                            
-                                                                                                                                                                             - ## Workflow Schedules
-                                                                                                                                                                            
-                                                                                                                                                                             - **Daily Evening Review**
-                                                                                                                                                                             - - Time: 18:00 UTC (20:00 Israel time)
-                                                                                                                                                                               - - Frequency: Every day
-                                                                                                                                                                                 - - Cron: `0 18 * * *`
-                                                                                                                                                                                   - - Action: Send NTFY notification with planning prompts
-                                                                                                                                                                                    
-                                                                                                                                                                                     - **Weekly Sunday Planning**
-                                                                                                                                                                                     - - Time: 05:00 UTC (07:00 Israel time)
-                                                                                                                                                                                       - - Frequency: Every Sunday
-                                                                                                                                                                                         - - Cron: `0 5 * * 0`
-                                                                                                                                                                                           - - Action: Send NTFY notification with 30-minute planning agenda
-                                                                                                                                                                                            
-                                                                                                                                                                                             - ## Testing
-                                                                                                                                                                                            
-                                                                                                                                                                                             - To test the workflows manually:
-                                                                                                                                                                                            
-                                                                                                                                                                                             - 1. Visit the `Actions` tab in this repository
-                                                                                                                                                                                               2. 2. Select a workflow (e.g., "Daily Evening Review")
-                                                                                                                                                                                                  3. 3. Click "Run workflow"
-                                                                                                                                                                                                     4. 4. Manually trigger a test push notification
-                                                                                                                                                                                                        5. 5. Verify NTFY notification arrives on your devices
-                                                                                                                                                                                                          
-                                                                                                                                                                                                           6. ## Important Notes
-                                                                                                                                                                                                          
-                                                                                                                                                                                                           7. - **Timezone**: All workflows use UTC time. Adjust cron expressions if needed for your timezone
-                                                                                                                                                                                                              - - **NTFY is Free**: No sign-up required for basic notifications
-                                                                                                                                                                                                                - - **Privacy**: NTFY messages are not encrypted; avoid sending sensitive data
-                                                                                                                                                                                                                  - - **Reliability**: GitHub Actions can occasionally have 5-10 minute delays
-                                                                                                                                                                                                                    - - **Always Manual**: The system sends reminders, but you must manually update your Notion board
-                                                                                                                                                                                                                     
-                                                                                                                                                                                                                      - ## Next Steps
-                                                                                                                                                                                                                     
-                                                                                                                                                                                                                      - 1. ✅ Subscribe to NTFY notifications
-                                                                                                                                                                                                                        2. 2. ✅ Verify GitHub Actions are running
-                                                                                                                                                                                                                           3. 3. 🔄 Test both workflows with manual triggers
-                                                                                                                                                                                                                              4. 4. 📝 Update your Notion board after each notification
-                                                                                                                                                                                                                                 5. 5. 📊 Complete one full week of planning cycles
-                                                                                                                                                                                                                                    6. 6. 📈 Evaluate and adjust as needed
-                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                       7. ---
-                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                       8. **Created for**: Radical accountability + Radical compassion
-                                                                                                                                                                                                                                       9. **Methodology**: GTD + על זה + 3-Slot System
-                                                                                                                                                                                                                                       10. **Delivery**: NTFY (Cloud-based push notifications)
+```
+Notion (source of truth)
+  ↕ every 15 min via GitHub Actions
+Google Calendar (time-blocked schedule)
+  ↓ notifications
+NTFY (push to iPhone/desktop)
+  ↑ AI insights
+Claude API (reflection & daily notes)
+```
+
+## Notion Database Setup
+
+### 1. Primary DB: `🎯 3 סלוטים — זה הכל`
+
+Add these properties to your existing board (or create a new database):
+
+| Property | Type | Purpose |
+|---|---|---|
+| `Name` | Title | Task/project name |
+| `Done` | Checkbox | Check to mark complete |
+| `Slot` | Select | `Slot 1 - פרנסה` / `Slot 2 - בנייה` / `Slot 3 - חקירה` / `Parking Lot` |
+| `Status` | Select | `Active` / `Paused` / `Blocked` / `Completed` / `Idea` |
+| `Scheduled Time` | Date | **Set this** to automatically create a Google Calendar event |
+| `Duration (min)` | Number | Event length (default: 60 min) |
+| `GCal Event ID` | Rich Text | Filled automatically by the bot |
+| `Next Action` | Rich Text | GTD-style next action |
+| `Notes` | Rich Text | AI notes are appended here |
+| `Week` | Date | ISO week start for grouping |
+
+### 2. Secondary DB: `Weekly Plans` (create new)
+
+| Property | Type |
+|---|---|
+| `Name` | Title |
+| `Week Start` | Date |
+| `Slot 1 Project` | Relation → 3-Slots board |
+| `Slot 2 Project` | Relation → 3-Slots board |
+| `Slot 3 Project` | Relation → 3-Slots board |
+| `Weekly Goal` | Rich Text |
+| `Reflection` | Rich Text (written by Claude AI) |
+| `Calendar Hours Available` | Number |
+
+## One-Time Setup
+
+### Step 1 — Google Calendar API
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project → Enable **Google Calendar API**
+3. Credentials → **Create Credentials** → **OAuth 2.0 Client ID** → Desktop App
+4. Download the JSON file and save it as `credentials.json` in the repo root
+5. Add `credentials.json` to `.gitignore` immediately
+6. Run the setup script:
+   ```bash
+   pip install google-auth-oauthlib
+   python setup/get_google_token.py
+   ```
+7. A browser window opens → sign in → grant access
+8. Copy the printed values (see Step 3)
+9. **Delete** `credentials.json` from your machine: `rm credentials.json`
+
+### Step 2 — Notion Integration
+
+1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations)
+2. Click **New integration** → give it a name (e.g. "Zion 3-Slots Bot")
+3. Copy the **Internal Integration Token**
+4. Open your **3-Slots planning board** in Notion → ••• menu → **Connections** → add your integration
+5. Open (or create) the **Weekly Plans** database → same step
+6. Copy the database IDs from the page URLs:
+   - URL format: `https://notion.so/workspace/DATABASE_ID?v=...`
+   - The ID is the 32-character hex string before the `?`
+
+### Step 3 — Anthropic API Key
+
+1. Go to [console.anthropic.com/api-keys](https://console.anthropic.com/api-keys)
+2. Create a new API key
+
+### Step 4 — Add GitHub Secrets
+
+Go to your repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+
+| Secret Name | Value |
+|---|---|
+| `GOOGLE_CLIENT_ID` | From Step 1 output |
+| `GOOGLE_CLIENT_SECRET` | From Step 1 output |
+| `GOOGLE_REFRESH_TOKEN` | From Step 1 output |
+| `GOOGLE_CALENDAR_ID` | `primary` (or your Gmail address) |
+| `NOTION_TOKEN` | From Step 2 |
+| `NOTION_DATABASE_ID` | 3-Slots board database ID |
+| `NOTION_WEEKLY_DB_ID` | Weekly Plans database ID |
+| `ANTHROPIC_API_KEY` | From Step 3 |
+
+### Step 5 — Subscribe to NTFY
+
+- **iPhone/Android:** Download NTFY app → subscribe to `zion-3slots`
+- **Desktop/Web:** Visit [ntfy.sh/zion-3slots](https://ntfy.sh/zion-3slots) → enable notifications
+
+## Workflow Schedules
+
+| Workflow | Schedule | What It Does |
+|---|---|---|
+| `morning-briefing.yml` | 06:00 Israel (04:00 UTC) daily | Fetch calendar + slots → NTFY + AI note |
+| `notion-to-gcal-sync.yml` | Every 15 minutes | Notion tasks → GCal events (and Done updates) |
+| `daily-evening-review.yml` | 20:00 Israel (18:00 UTC) daily | NTFY prompt + sync completed events to Notion |
+| `weekly-sunday-planning.yml` | 07:00 Israel (05:00 UTC) Sundays | Generate Notion weekly plan + AI reflection |
+
+## How to Use It
+
+**Daily workflow:**
+1. Open Notion → add a task to your 3-Slots board
+2. Set **Scheduled Time** (date + time) → the bot creates a Google Calendar event within 15 min
+3. Work on the task → when done, check ✅ **Done** in Notion → GCal event is updated
+4. At 06:00 → get a morning briefing with today's calendar + your 3 active slots
+5. At 20:00 → get an evening review prompt + sync summary
+
+**Weekly workflow:**
+1. Every Sunday 07:00 → receive weekly planning notification
+2. A new entry is auto-created in your **Weekly Plans** Notion DB
+3. Claude AI writes a reflection based on last week's progress
+4. Review and update your 3 active slots for the new week
+
+## Methodology
+
+**3-Slot Constraint**
+- **Slot 1**: Money/Revenue (פרנסה)
+- **Slot 2**: Build/Completion (בנייה)
+- **Slot 3**: Explore/Learning (חקירה)
+- **Parking Lot**: Ideas waiting to be activated
+- Maximum 3 active projects at once
+
+**GTD (Getting Things Done)** by David Allen
+- Capture, Clarify, Organize, Reflect, Engage
+
+**על זה** (Yair Yona's Self-Management)
+- כבישת הזמן (Time blocking), אחריות רדיקלית (Radical accountability), חמלה רדיקלית (Radical compassion)
+
+## Testing
+
+Run any workflow manually from the **Actions** tab → select workflow → **Run workflow**.
+
+To test locally:
+```bash
+pip install -r requirements.txt
+export GOOGLE_CLIENT_ID=...  # set all 8 secrets as env vars
+python scripts/morning_briefing.py
+```
+
+## Notes
+
+- **Reliability:** GitHub Actions can have 5-10 minute delays; the 15-min sync may occasionally be 20-25 min
+- **Privacy:** NTFY messages are not encrypted — avoid sending sensitive data in task names
+- **Timezone:** All crons use UTC. Israel is UTC+2 (winter) / UTC+3 (DST). Set `ISRAEL_UTC_OFFSET` env var to `3` during daylight saving time if needed
+- **GCal Event ID field:** Do not edit this field manually — it's managed by the bot
