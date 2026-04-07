@@ -1,0 +1,9 @@
+# Google OAuth credentials - NEVER commit these
+credentials.json
+setup/.oauth_state.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
