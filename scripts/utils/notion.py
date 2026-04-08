@@ -67,32 +67,40 @@ def _page_to_item(page: dict) -> dict:
     }
 
 
+def _query(database_id: str, filter: dict | None = None) -> list[dict]:
+    """Wrapper around databases.query that works with notion-client 2.x."""
+    client = get_client()
+    kwargs = {"database_id": database_id}
+    if filter:
+        kwargs["filter"] = filter
+    result = client.databases.query(**kwargs)
+    return result.get("results", [])
+
+
 def get_active_slots() -> list[dict]:
     """Return pages where Status = Active and Slot is one of the 3 slots (not Parking Lot)."""
-    client = get_client()
-    result = client.databases.query(
-        database_id=_db_id(),
+    results = _query(
+        _db_id(),
         filter={
             "and": [
                 {"property": "Status", "select": {"equals": "Active"}},
                 {
                     "or": [
-                        {"property": "Slot", "select": {"equals": "Slot 1 - פרנסה"}},
-                        {"property": "Slot", "select": {"equals": "Slot 2 - בנייה"}},
-                        {"property": "Slot", "select": {"equals": "Slot 3 - חקירה"}},
+                        {"property": "Slot", "select": {"equals": "Slot 1 - \u05e4\u05e8\u05e0\u05e1\u05d4"}},
+                        {"property": "Slot", "select": {"equals": "Slot 2 - \u05d1\u05e0\u05d9\u05d9\u05d4"}},
+                        {"property": "Slot", "select": {"equals": "Slot 3 - \u05d7\u05e7\u05d9\u05e8\u05d4"}},
                     ]
                 },
             ]
         },
     )
-    return [_page_to_item(p) for p in result.get("results", [])]
+    return [_page_to_item(p) for p in results]
 
 
 def get_tasks_pending_gcal_sync() -> list[dict]:
     """Return tasks that have a Scheduled Time but no GCal Event ID yet."""
-    client = get_client()
-    result = client.databases.query(
-        database_id=_db_id(),
+    results = _query(
+        _db_id(),
         filter={
             "and": [
                 {"property": "Scheduled Time", "date": {"is_not_empty": True}},
@@ -101,14 +109,13 @@ def get_tasks_pending_gcal_sync() -> list[dict]:
             ]
         },
     )
-    return [_page_to_item(p) for p in result.get("results", [])]
+    return [_page_to_item(p) for p in results]
 
 
 def get_completed_tasks_with_gcal() -> list[dict]:
     """Return tasks marked Done=true that still have a GCal Event ID."""
-    client = get_client()
-    result = client.databases.query(
-        database_id=_db_id(),
+    results = _query(
+        _db_id(),
         filter={
             "and": [
                 {"property": "Done", "checkbox": {"equals": True}},
@@ -116,16 +123,15 @@ def get_completed_tasks_with_gcal() -> list[dict]:
             ]
         },
     )
-    return [_page_to_item(p) for p in result.get("results", [])]
+    return [_page_to_item(p) for p in results]
 
 
 def get_recently_edited_with_gcal(minutes: int = 20) -> list[dict]:
     """Return tasks edited in the last `minutes` minutes that already have a GCal Event ID."""
     from dateutil import parser as dateutil_parser
 
-    client = get_client()
-    result = client.databases.query(
-        database_id=_db_id(),
+    results = _query(
+        _db_id(),
         filter={
             "and": [
                 {"property": "GCal Event ID", "rich_text": {"is_not_empty": True}},
@@ -135,7 +141,7 @@ def get_recently_edited_with_gcal(minutes: int = 20) -> list[dict]:
     )
     cutoff = datetime.utcnow() - timedelta(minutes=minutes)
     items = []
-    for p in result.get("results", []):
+    for p in results:
         last_edited = p.get("last_edited_time", "")
         try:
             edited_dt = dateutil_parser.isoparse(last_edited).replace(tzinfo=None)
@@ -148,34 +154,21 @@ def get_recently_edited_with_gcal(minutes: int = 20) -> list[dict]:
 
 def get_all_slots_this_week() -> list[dict]:
     """Return all active slot items for the current ISO week."""
-    from dateutil import parser as dateutil_parser
-
-    client = get_client()
     today = datetime.utcnow()
     week_start = today - timedelta(days=today.weekday())
     week_end = week_start + timedelta(days=7)
 
-    result = client.databases.query(
-        database_id=_db_id(),
+    results = _query(
+        _db_id(),
         filter={
             "and": [
                 {"property": "Status", "select": {"equals": "Active"}},
-                {
-                    "property": "Scheduled Time",
-                    "date": {
-                        "on_or_after": week_start.strftime("%Y-%m-%d"),
-                    },
-                },
-                {
-                    "property": "Scheduled Time",
-                    "date": {
-                        "before": week_end.strftime("%Y-%m-%d"),
-                    },
-                },
+                {"property": "Scheduled Time", "date": {"on_or_after": week_start.strftime("%Y-%m-%d")}},
+                {"property": "Scheduled Time", "date": {"before": week_end.strftime("%Y-%m-%d")}},
             ]
         },
     )
-    return [_page_to_item(p) for p in result.get("results", [])]
+    return [_page_to_item(p) for p in results]
 
 
 def update_page(page_id: str, properties: dict) -> None:
@@ -208,13 +201,11 @@ def append_note(page_id: str, existing_notes: str, new_note: str) -> None:
 
 def get_weekly_plan(week_start: datetime) -> dict | None:
     """Find an existing weekly plan entry for the given week start date."""
-    client = get_client()
     week_str = week_start.strftime("%Y-%m-%d")
-    result = client.databases.query(
-        database_id=_weekly_db_id(),
+    results = _query(
+        _weekly_db_id(),
         filter={"property": "Week Start", "date": {"equals": week_str}},
     )
-    results = result.get("results", [])
     if not results:
         return None
     page = results[0]
