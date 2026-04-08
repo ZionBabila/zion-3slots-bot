@@ -12,31 +12,32 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install notion-client==2.2.1 -q
-      - name: List all accessible databases
+      - name: Find embedded database inside the 3-Slots page
         run: |
           python3 -c "
           import os
           from notion_client import Client
           client = Client(auth=os.environ['NOTION_TOKEN'])
 
-          # Search all objects (pages + databases)
-          all_results = client.search()
-          print('=== ALL OBJECTS ACCESSIBLE TO YOUR INTEGRATION ===')
-          for item in all_results['results']:
-              obj_type = item.get('object')
-              item_id = item.get('id')
-              if obj_type == 'database':
-                  title = ''.join([t.get('plain_text','') for t in item.get('title', [])])
-                  print(f'DATABASE | ID: {item_id} | Title: {title}')
-              elif obj_type == 'page':
-                  props = item.get('properties', {})
-                  title = ''
-                  for p in props.values():
-                      if p.get('type') == 'title':
-                          title = ''.join([t.get('plain_text','') for t in p.get('title', [])])
-                  print(f'PAGE     | ID: {item_id} | Title: {title}')
+          PAGE_ID = '32c0974de5ae81c1960cf88c898f6340'
+
+          print('=== SEARCHING FOR DATABASES IN PAGE', PAGE_ID, '===')
+          # Get all child blocks of the page
+          children = client.blocks.children.list(block_id=PAGE_ID)
+          for block in children.get('results', []):
+              btype = block.get('type')
+              bid = block.get('id')
+              print(f'Block type: {btype} | ID: {bid}')
+              if btype == 'child_database':
+                  title = block.get('child_database', {}).get('title', '')
+                  print(f'  >>> FOUND DATABASE: {title} | ID: {bid}')
           print()
-          print('Total objects found:', len(all_results['results']))
+          print('=== ALSO SEARCHING WORKSPACE ===')
+          results = client.search()
+          for item in results.get('results', []):
+              print(f\"{item['object']} | {item['id']}\")
           "
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
