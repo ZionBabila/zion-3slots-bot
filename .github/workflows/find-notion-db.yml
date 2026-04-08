@@ -1,0 +1,30 @@
+name: Find Notion Database IDs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  find-databases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install notion-client==2.2.1 -q
+      - name: List all accessible databases
+        run: |
+          python3 -c "
+          import os
+          from notion_client import Client
+          client = Client(auth=os.environ['NOTION_TOKEN'])
+          results = client.search(filter={'value': 'database', 'property': 'object'})
+          print('=== DATABASES ACCESSIBLE TO YOUR INTEGRATION ===')
+          for db in results['results']:
+              title = ''.join([t.get('plain_text','') for t in db.get('title', [])])
+              print(f'Title: {title}')
+              print(f'ID:    {db[\"id\"]}')
+              print()
+          "
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
