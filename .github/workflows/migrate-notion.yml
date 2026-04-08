@@ -1,0 +1,141 @@
+name: Migrate Old Notion Page to Database
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install notion-client==2.2.1 -q
+      - name: Read old page and migrate to new database
+        run: |
+          python3 << 'EOF'
+          import os
+          from notion_client import Client
+
+          client = Client(auth=os.environ['NOTION_TOKEN'])
+          OLD_PAGE_ID = '32c0974de5ae81c1960cf88c898f6340'
+          NEW_DB_ID = os.environ['NOTION_DATABASE_ID']
+
+          # First set up the database schema
+          print('Setting up database schema...')
+          client.databases.update(
+              database_id=NEW_DB_ID,
+              properties={
+                  'Done': {'checkbox': {}},
+                  'Slot': {
+                      'select': {
+                          'options': [
+                              {'name': 'Slot 1 - פרנסה', 'color': 'red'},
+                              {'name': 'Slot 2 - בנייה', 'color': 'blue'},
+                              {'name': 'Slot 3 - חקירה', 'color': 'green'},
+                              {'name': 'Parking Lot', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Status': {
+                      'select': {
+                          'options': [
+                              {'name': 'Active', 'color': 'green'},
+                              {'name': 'Paused', 'color': 'yellow'},
+                              {'name': 'Blocked', 'color': 'red'},
+                              {'name': 'Completed', 'color': 'blue'},
+                              {'name': 'Idea', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Scheduled Time': {'date': {}},
+                  'Duration (min)': {'number': {'format': 'number'}},
+                  'GCal Event ID': {'rich_text': {}},
+                  'Next Action': {'rich_text': {}},
+                  'Notes': {'rich_text': {}},
+                  'Week': {'date': {}},
+              }
+          )
+          print('Schema ready.')
+
+          # Read all blocks from the old page
+          print(f'\nReading old page {OLD_PAGE_ID}...')
+          blocks = client.blocks.children.list(block_id=OLD_PAGE_ID)
+
+          def get_text(block):
+              btype = block.get('type', '')
+              content = block.get(btype, {})
+              rich = content.get('rich_text', [])
+              return ''.join(r.get('plain_text', '') for r in rich).strip()
+
+          # Parse the page structure:
+          # heading_2 = slot section title
+          # paragraphs/to_dos under it = items in that slot
+          SLOT_KEYWORDS = {
+              'פרנסה': 'Slot 1 - פרנסה',
+              'כסף': 'Slot 1 - פרנסה',
+              'money': 'Slot 1 - פרנסה',
+              'בנייה': 'Slot 2 - בנייה',
+              'build': 'Slot 2 - בנייה',
+              'חקירה': 'Slot 3 - חקירה',
+              'explore': 'Slot 3 - חקירה',
+              'למידה': 'Slot 3 - חקירה',
+              'parking': 'Parking Lot',
+              'חנייה': 'Parking Lot',
+              'ממתין': 'Parking Lot',
+          }
+
+          current_slot = 'Parking Lot'
+          migrated = []
+          skipped = 0
+
+          for block in blocks.get('results', []):
+              btype = block.get('type', '')
+              text = get_text(block)
+
+              if not text:
+                  continue
+
+              # Heading = new slot section
+              if btype == 'heading_2' or btype == 'heading_1' or btype == 'heading_3':
+                  text_lower = text.lower()
+                  for keyword, slot in SLOT_KEYWORDS.items():
+                      if keyword.lower() in text_lower:
+                          current_slot = slot
+                          print(f'\n--- Section: {text} → {current_slot} ---')
+                          break
+                  continue
+
+              # Skip dividers, tables, short texts
+              if btype in ('divider', 'table', 'child_page'):
+                  continue
+              if len(text) < 3:
+                  skipped += 1
+                  continue
+
+              # paragraph, to_do, numbered_list_item, bulleted_list_item → add as row
+              if btype in ('paragraph', 'to_do', 'numbered_list_item', 'bulleted_list_item'):
+                  done = block.get('to_do', {}).get('checked', False)
+                  status = 'Completed' if done else 'Active'
+
+                  print(f'  Adding: [{current_slot}] {text[:60]}')
+                  client.pages.create(
+                      parent={'database_id': NEW_DB_ID},
+                      properties={
+                          'Name': {'title': [{'text': {'content': text[:200]}}]},
+                          'Slot': {'select': {'name': current_slot}},
+                          'Status': {'select': {'name': status}},
+                          'Done': {'checkbox': done},
+                      }
+                  )
+                  migrated.append(text[:60])
+
+          print(f'\n✅ Migration complete!')
+          print(f'   Migrated: {len(migrated)} items')
+          print(f'   Skipped:  {skipped} (too short/empty)')
+          print('\nOpen "3 Slots Tasks" in Notion to review.')
+          EOF
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
