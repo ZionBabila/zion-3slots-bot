@@ -39,5 +39,3 @@ jobs:
           "
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
