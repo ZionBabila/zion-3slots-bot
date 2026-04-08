@@ -7,10 +7,10 @@ from notion_client import Client
 
 # Slot color IDs for Google Calendar (optional mapping)
 SLOT_COLOR_IDS = {
-    "Slot 1 - פרנסה": "11",   # Tomato
-    "Slot 2 - בנייה": "9",    # Blueberry
-    "Slot 3 - חקירה": "2",    # Sage
-    "Parking Lot": "8",        # Graphite
+    "💰 פרנסה": "11",   # Tomato
+    "🏗️ בנייה": "9",    # Blueberry
+    "🔍 חקירה": "2",    # Sage
+    "🅿️ חנייה": "8",   # Graphite
 }
 
 
@@ -77,9 +77,9 @@ def get_active_slots() -> list[dict]:
                 {"property": "Status", "select": {"equals": "Active"}},
                 {
                     "or": [
-                        {"property": "Slot", "select": {"equals": "Slot 1 - פרנסה"}},
-                        {"property": "Slot", "select": {"equals": "Slot 2 - בנייה"}},
-                        {"property": "Slot", "select": {"equals": "Slot 3 - חקירה"}},
+                        {"property": "Slot", "select": {"equals": "💰 פרנסה"}},
+                        {"property": "Slot", "select": {"equals": "🏗️ בנייה"}},
+                        {"property": "Slot", "select": {"equals": "🔍 חקירה"}},
                     ]
                 },
             ]

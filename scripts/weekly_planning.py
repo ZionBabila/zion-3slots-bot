@@ -92,13 +92,8 @@ def run():
         reflection = ""
 
     # Build summary notification
-    slot_labels = {
-        "Slot 1 - פרנסה": "💰 S1",
-        "Slot 2 - בנייה": "🔨 S2",
-        "Slot 3 - חקירה": "🔍 S3",
-    }
     slot_summary = " | ".join(
-        f"{slot_labels.get(s['slot'], s['slot'])}: {s['name']}"
+        f"{s['slot']}: {s['name']}"
         for s in slots
     ) or "No active slots"
 

@@ -1,0 +1,192 @@
+name: Migrate Old Notion Page to Database
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install notion-client==2.2.1 -q
+      - name: Clean database and migrate from original Hebrew page
+        run: |
+          python3 << 'EOF'
+          import os
+          from notion_client import Client
+
+          client = Client(auth=os.environ['NOTION_TOKEN'])
+          OLD_PAGE_ID = '32c0974de5ae81c1960cf88c898f6340'
+          NEW_DB_ID = os.environ['NOTION_DATABASE_ID']
+
+          # ── Step 1: set up database schema ─────────────────────────────────
+          print('Setting up database schema...')
+          client.databases.update(
+              database_id=NEW_DB_ID,
+              title=[{'text': {'content': '🎯 3 סלוטים — זה הכל'}}],
+              properties={
+                  'Done': {'checkbox': {}},
+                  'Slot': {
+                      'select': {
+                          'options': [
+                              {'name': '💰 פרנסה', 'color': 'red'},
+                              {'name': '🏗️ בנייה', 'color': 'blue'},
+                              {'name': '🔍 חקירה', 'color': 'green'},
+                              {'name': '🅿️ חנייה', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Status': {
+                      'select': {
+                          'options': [
+                              {'name': 'Active', 'color': 'green'},
+                              {'name': 'Paused', 'color': 'yellow'},
+                              {'name': 'Blocked', 'color': 'red'},
+                              {'name': 'Completed', 'color': 'blue'},
+                              {'name': 'Idea', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Scheduled Time': {'date': {}},
+                  'Duration (min)': {'number': {'format': 'number'}},
+                  'GCal Event ID': {'rich_text': {}},
+                  'Next Action': {'rich_text': {}},
+                  'Notes': {'rich_text': {}},
+              }
+          )
+          print('Schema ready.')
+
+          # ── Step 2: archive all existing rows ──────────────────────────────
+          print('\nCleaning existing rows...')
+          removed = 0
+          while True:
+              results = client.databases.query(database_id=NEW_DB_ID).get('results', [])
+              if not results:
+                  break
+              for page in results:
+                  client.pages.update(page_id=page['id'], archived=True)
+                  removed += 1
+          print(f'Archived {removed} existing rows.')
+
+          # ── Step 3: read original page (top-level + one level deep) ────────
+          print(f'\nReading original page {OLD_PAGE_ID}...')
+
+          def get_text(block):
+              btype = block.get('type', '')
+              content = block.get(btype, {})
+              rich = content.get('rich_text', [])
+              return ''.join(r.get('plain_text', '') for r in rich).strip()
+
+          def get_all_blocks(block_id):
+              """Fetch all blocks under a block_id (paginates if needed)."""
+              all_blocks = []
+              cursor = None
+              while True:
+                  kwargs = {'block_id': block_id}
+                  if cursor:
+                      kwargs['start_cursor'] = cursor
+                  resp = client.blocks.children.list(**kwargs)
+                  all_blocks.extend(resp.get('results', []))
+                  if not resp.get('has_more'):
+                      break
+                  cursor = resp.get('next_cursor')
+              return all_blocks
+
+          # Map original Hebrew headings → new Hebrew slot names
+          SLOT_KEYWORDS = {
+              'פרנסה': '💰 פרנסה',
+              'כסף':   '💰 פרנסה',
+              'money':  '💰 פרנסה',
+              'בנייה': '🏗️ בנייה',
+              'build':  '🏗️ בנייה',
+              'חקירה': '🔍 חקירה',
+              'explore':'🔍 חקירה',
+              'למידה': '🔍 חקירה',
+              'parking':'🅿️ חנייה',
+              'חנייה': '🅿️ חנייה',
+              'ממתין': '🅿️ חנייה',
+          }
+
+          current_slot = '🅿️ חנייה'
+          migrated = []
+          skipped = 0
+
+          top_blocks = get_all_blocks(OLD_PAGE_ID)
+
+          for block in top_blocks:
+              btype = block.get('type', '')
+              text  = get_text(block)
+
+              # Heading → detect slot section
+              if btype in ('heading_1', 'heading_2', 'heading_3'):
+                  if text:
+                      tl = text.lower()
+                      for kw, slot in SLOT_KEYWORDS.items():
+                          if kw.lower() in tl:
+                              current_slot = slot
+                              print(f'\n── {text} → {current_slot} ──')
+                              break
+                  continue
+
+              if btype in ('divider', 'table', 'child_page', 'child_database'):
+                  continue
+
+              # Collect items from this block + its direct children
+              items_to_add = []
+
+              if btype in ('paragraph', 'to_do', 'numbered_list_item', 'bulleted_list_item'):
+                  if text and len(text) >= 3:
+                      done = block.get('to_do', {}).get('checked', False)
+                      items_to_add.append((text, done, False))
+
+                  # Recurse one level for sub-items (nested to-dos / bullets)
+                  if block.get('has_children'):
+                      for child in get_all_blocks(block['id']):
+                          ctype = child.get('type', '')
+                          ctext = get_text(child)
+                          if ctype in ('to_do', 'bulleted_list_item', 'numbered_list_item', 'paragraph'):
+                              if ctext and len(ctext) >= 3:
+                                  cdone = child.get('to_do', {}).get('checked', False)
+                                  items_to_add.append((ctext, cdone, True))
+
+              elif btype == 'toggle':
+                  # Treat toggle header as a section label (skip, but read children)
+                  if block.get('has_children'):
+                      for child in get_all_blocks(block['id']):
+                          ctype = child.get('type', '')
+                          ctext = get_text(child)
+                          if ctype in ('to_do', 'bulleted_list_item', 'numbered_list_item', 'paragraph'):
+                              if ctext and len(ctext) >= 3:
+                                  cdone = child.get('to_do', {}).get('checked', False)
+                                  items_to_add.append((ctext, cdone, False))
+                  continue
+
+              for (item_text, done, is_sub) in items_to_add:
+                  status = 'Completed' if done else 'Active'
+                  indent = '  ↳ ' if is_sub else '  '
+                  print(f'{indent}[{current_slot}] {item_text[:70]}')
+                  client.pages.create(
+                      parent={'database_id': NEW_DB_ID},
+                      properties={
+                          'Name': {'title': [{'text': {'content': item_text[:200]}}]},
+                          'Slot': {'select': {'name': current_slot}},
+                          'Status': {'select': {'name': status}},
+                          'Done': {'checkbox': done},
+                      }
+                  )
+                  migrated.append(item_text[:70])
+
+              if not items_to_add and text and len(text) < 3:
+                  skipped += 1
+
+          print(f'\n✅ Migration complete!')
+          print(f'   Migrated: {len(migrated)} items')
+          print(f'   Skipped:  {skipped}')
+          print('\nOpen "🎯 3 סלוטים — זה הכל" in Notion to review.')
+          EOF
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}

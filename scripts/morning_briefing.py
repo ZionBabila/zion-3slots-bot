@@ -44,14 +44,9 @@ def run():
         events_section = "• No events scheduled"
 
     # Format slots for notification
-    slot_labels = {
-        "Slot 1 - פרנסה": "💰 Slot 1",
-        "Slot 2 - בנייה": "🔨 Slot 2",
-        "Slot 3 - חקירה": "🔍 Slot 3",
-    }
     if slots:
         slot_lines = [
-            f"{slot_labels.get(s['slot'], s['slot'])}: {s['name']}"
+            f"{s['slot']}: {s['name']}"
             for s in slots
         ]
         slots_section = "\n".join(slot_lines)

@@ -18,10 +18,10 @@ from utils import gcal, notion, ntfy
 
 # Slot → Google Calendar color mapping
 SLOT_COLOR_IDS = {
-    "Slot 1 - פרנסה": "11",   # Tomato (red)
-    "Slot 2 - בנייה": "9",    # Blueberry (dark blue)
-    "Slot 3 - חקירה": "2",    # Sage (green)
-    "Parking Lot": "8",        # Graphite
+    "💰 פרנסה": "11",   # Tomato (red)
+    "🏗️ בנייה": "9",    # Blueberry (dark blue)
+    "🔍 חקירה": "2",    # Sage (green)
+    "🅿️ חנייה": "8",   # Graphite
 }
 
 
@@ -52,7 +52,7 @@ def sync_new_tasks() -> int:
 
         slot = task.get("slot", "")
         color_id = SLOT_COLOR_IDS.get(slot)
-        slot_label = slot.replace("Slot 1 - ", "💰 ").replace("Slot 2 - ", "🔨 ").replace("Slot 3 - ", "🔍 ")
+        slot_label = slot
         title = f"[{slot_label}] {task['name']}"
         description = task.get("next_action", "") or task.get("notes", "")
 
@@ -114,7 +114,7 @@ def sync_edited_tasks() -> int:
         end_dt = start_dt + __import__("datetime").timedelta(minutes=duration_min)
 
         slot = task.get("slot", "")
-        slot_label = slot.replace("Slot 1 - ", "💰 ").replace("Slot 2 - ", "🔨 ").replace("Slot 3 - ", "🔍 ")
+        slot_label = slot
         title = f"[{slot_label}] {task['name']}"
 
         print(f"[slot_sync] Updating GCal event '{task['name']}' (edited recently)...")
