@@ -18,13 +18,25 @@ jobs:
           import os
           from notion_client import Client
           client = Client(auth=os.environ['NOTION_TOKEN'])
-          results = client.search(filter={'value': 'database', 'property': 'object'})
-          print('=== DATABASES ACCESSIBLE TO YOUR INTEGRATION ===')
-          for db in results['results']:
-              title = ''.join([t.get('plain_text','') for t in db.get('title', [])])
-              print(f'Title: {title}')
-              print(f'ID:    {db[\"id\"]}')
-              print()
+
+          # Search all objects (pages + databases)
+          all_results = client.search()
+          print('=== ALL OBJECTS ACCESSIBLE TO YOUR INTEGRATION ===')
+          for item in all_results['results']:
+              obj_type = item.get('object')
+              item_id = item.get('id')
+              if obj_type == 'database':
+                  title = ''.join([t.get('plain_text','') for t in item.get('title', [])])
+                  print(f'DATABASE | ID: {item_id} | Title: {title}')
+              elif obj_type == 'page':
+                  props = item.get('properties', {})
+                  title = ''
+                  for p in props.values():
+                      if p.get('type') == 'title':
+                          title = ''.join([t.get('plain_text','') for t in p.get('title', [])])
+                  print(f'PAGE     | ID: {item_id} | Title: {title}')
+          print()
+          print('Total objects found:', len(all_results['results']))
           "
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
