@@ -1,0 +1,83 @@
+name: Setup Notion Database
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-notion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install notion-client==2.2.1 -q
+      - name: Set up 3 Slots Tasks database properties
+        run: |
+          python3 -c "
+          import os
+          from notion_client import Client
+          client = Client(auth=os.environ['NOTION_TOKEN'])
+          db_id = os.environ['NOTION_DATABASE_ID']
+
+          print('Setting up database properties...')
+          client.databases.update(
+              database_id=db_id,
+              properties={
+                  'Done': {'checkbox': {}},
+                  'Slot': {
+                      'select': {
+                          'options': [
+                              {'name': 'Slot 1 - פרנסה', 'color': 'red'},
+                              {'name': 'Slot 2 - בנייה', 'color': 'blue'},
+                              {'name': 'Slot 3 - חקירה', 'color': 'green'},
+                              {'name': 'Parking Lot', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Status': {
+                      'select': {
+                          'options': [
+                              {'name': 'Active', 'color': 'green'},
+                              {'name': 'Paused', 'color': 'yellow'},
+                              {'name': 'Blocked', 'color': 'red'},
+                              {'name': 'Completed', 'color': 'blue'},
+                              {'name': 'Idea', 'color': 'gray'},
+                          ]
+                      }
+                  },
+                  'Scheduled Time': {'date': {}},
+                  'Duration (min)': {'number': {'format': 'number'}},
+                  'GCal Event ID': {'rich_text': {}},
+                  'Next Action': {'rich_text': {}},
+                  'Notes': {'rich_text': {}},
+                  'Week': {'date': {}},
+              }
+          )
+          print('Database properties set up successfully!')
+          print()
+          print('Now adding your 3 active slots as rows...')
+
+          # Add 3 placeholder slot rows
+          slots = [
+              ('Slot 1 - פרנסה', 'Your Money/Revenue project'),
+              ('Slot 2 - בנייה', 'Your Build/Completion project'),
+              ('Slot 3 - חקירה', 'Your Explore/Learning project'),
+          ]
+          for slot, name in slots:
+              client.pages.create(
+                  parent={'database_id': db_id},
+                  properties={
+                      'Name': {'title': [{'text': {'content': name}}]},
+                      'Slot': {'select': {'name': slot}},
+                      'Status': {'select': {'name': 'Active'}},
+                  }
+              )
+              print(f'Added row: {slot} - {name}')
+
+          print()
+          print('Done! Open 3 Slots Tasks in Notion and update the 3 rows with your real projects.')
+          "
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
