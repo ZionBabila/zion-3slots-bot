@@ -1,0 +1,15 @@
+{
+  "name": "C# Zero to Hero",
+  "short_name": "C# Hero",
+  "description": "Learn C# interactively on mobile",
+  "start_url": "/zion-3slots-bot/",
+  "scope": "/zion-3slots-bot/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

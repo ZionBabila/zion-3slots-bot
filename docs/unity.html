@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#f59e0b">
+<link rel="manifest" href="manifest.json">
+<title>Unity C# · C# Hero</title>
+<style>
+:root{--bg:#0a0f0a;--card:#0f1a0f;--card2:#0d150d;--accent:#22c55e;--accent2:#4ade80;--yellow:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--text:#e2e8f0;--muted:#6b7280;--border:#1e3a1e;--code:#060e06}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;min-height:100vh}
+
+.topbar{background:#0d150d;border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.back-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar-info{flex:1;min-width:0}
+.topbar-title{font-size:15px;font-weight:700}
+.topbar-sub{font-size:11px;color:var(--muted)}
+.topbar-score{font-size:13px;font-weight:700;color:var(--yellow)}
+
+.level-dots{display:flex;gap:5px;padding:14px 16px 10px;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.level-dots::-webkit-scrollbar{display:none}
+.dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--bg);color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s}
+.dot.active{border-color:var(--yellow);background:var(--yellow);color:#000}
+.dot.done{border-color:var(--accent);background:#064e3b;color:var(--accent)}
+
+main{padding:16px 15px 100px;max-width:600px;margin:0 auto}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
+.ct{font-size:18px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.cs{color:var(--muted);font-size:12px;margin-bottom:14px}
+
+pre{background:var(--code);border:1px solid #1a3a1a;border-radius:12px;padding:14px;overflow-x:auto;font-size:13px;line-height:1.75;margin:10px 0;font-family:'Courier New',monospace}
+.kw{color:#ff79c6}.type{color:#8be9fd}.str{color:#f1fa8c}.num{color:#bd93f9}.cm{color:#4a7a4a;font-style:italic}.fn{color:#50fa7b}.prop{color:#ffb86c}.cl{color:#8be9fd}.un{color:#f59e0b}
+code{background:var(--code);padding:2px 5px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#f1fa8c}
+
+.ib{border-radius:10px;padding:11px 13px;margin:10px 0;font-size:14px;display:flex;gap:9px;align-items:flex-start}
+.ib.tip{background:#0a2a0a;border:1px solid #1a4a1a}
+.ib.warn{background:#2a1f0a;border:1px solid #4a3a0d}
+.ib.unity{background:#1a1500;border:1px solid #3a3000}
+.ib .ic{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* Unity lifecycle diagram */
+.lifecycle{margin:14px 0}
+.lc-step{
+  display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;
+  padding:10px 12px;border-radius:10px;border-left:3px solid var(--accent);
+  background:#0d1a0d;
+}
+.lc-step.yellow{border-color:var(--yellow);background:#1a1500}
+.lc-step.red{border-color:var(--red);background:#1a0000}
+.lc-step.blue{border-color:var(--blue);background:#00051a}
+.lc-num{font-weight:700;color:var(--accent);width:24px;flex-shrink:0;font-size:14px}
+.lc-step.yellow .lc-num{color:var(--yellow)}
+.lc-step.red .lc-num{color:var(--red)}
+.lc-step.blue .lc-num{color:var(--blue)}
+.lc-content h4{font-size:14px;margin-bottom:2px}
+.lc-content p{font-size:12px;color:var(--muted);margin:0}
+
+/* Quiz */
+.qc{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.qq{font-size:15px;font-weight:600;margin-bottom:12px}
+.qo-w{display:flex;flex-direction:column;gap:7px}
+.qo{padding:11px 13px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;text-align:left;transition:all .2s;width:100%}
+.qo:active:not(:disabled){transform:scale(.99)}
+.qo.ok{background:#064e3b;border-color:var(--accent);color:var(--accent)}
+.qo.no{background:#450a0a;border-color:var(--red);color:var(--red)}
+.qf{margin-top:9px;padding:10px;border-radius:9px;font-size:13px;display:none}
+.qf.show{display:block}
+.qf.ok{background:#064e3b;border:1px solid var(--accent);color:var(--accent)}
+.qf.no{background:#450a0a;border:1px solid var(--red);color:var(--red)}
+
+.fi-w{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.fi-in{background:var(--code);border:2px solid var(--yellow);border-radius:8px;color:var(--text);font-family:'Courier New',monospace;font-size:13px;padding:6px 10px;width:160px}
+.fi-in:focus{outline:none;border-color:var(--accent)}
+.fi-btn{padding:8px 13px;border-radius:8px;border:none;background:var(--yellow);color:#000;font-size:13px;cursor:pointer;font-weight:700}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+.tab.active{background:var(--yellow);border-color:var(--yellow);color:#000;font-weight:700}
+.tp{display:none}.tp.active{display:block}
+
+/* Game component visual */
+.go-box{background:#0d1a0d;border:1px solid var(--border);border-radius:12px;padding:14px;margin:10px 0}
+.go-header{font-size:13px;color:var(--yellow);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.go-comp{background:#060e06;border:1px solid #1a3a1a;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;font-family:'Courier New',monospace}
+.go-comp:last-child{margin-bottom:0}
+.comp-name{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:4px}
+.comp-field{color:var(--prop);margin-left:8px}
+
+/* Buttons */
+.btn{padding:13px 22px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--yellow);color:#000}
+.btn-p:active{transform:scale(.98)}
+.btn-s{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.brow{display:flex;gap:8px;justify-content:space-between;margin-top:18px}
+
+.prog-bottom{position:fixed;bottom:0;left:0;right:0;background:#0d150d;border-top:1px solid var(--border);padding:10px 16px max(10px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;z-index:100}
+.pb-bar{flex:1;height:6px;background:var(--border);border-radius:3px}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--yellow));border-radius:3px;transition:width .4s}
+.pb-txt{font-size:13px;font-weight:700;color:var(--yellow);flex-shrink:0}
+
+.sec{display:none}.sec.active{display:block;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+h3{font-size:16px;margin:14px 0 6px;color:var(--accent2)}
+p{margin-bottom:8px;font-size:14px}
+ul,ol{padding-left:18px;margin-bottom:8px}
+li{margin-bottom:4px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+  <div class="topbar-info">
+    <div class="topbar-title">🎮 Unity C# Game Dev</div>
+    <div class="topbar-sub" id="lv-label">Level 1 of 8</div>
+  </div>
+  <div class="topbar-score">⭐ <span id="sc-v">0</span></div>
+</div>
+
+<div class="level-dots" id="dots"></div>
+
+<main>
+
+<!-- L0: MonoBehaviour -->
+<section class="sec active" id="l0">
+  <div class="card">
+    <div class="ct">🎮 MonoBehaviour — The Core</div>
+    <div class="cs">Every Unity script inherits from this</div>
+    <p>In Unity, every script is a <strong>Component</strong> attached to a GameObject. It must inherit from <code>MonoBehaviour</code>.</p>
+    <pre><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="cl">PlayerController</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="cm">// Fields show up in the Inspector!</span>
+    <span class="kw">public float</span> <span class="prop">speed</span> = <span class="num">5f</span>;
+    <span class="kw">public int</span>   <span class="prop">health</span> = <span class="num">100</span>;
+
+    <span class="kw">void</span> <span class="fn">Start</span>()
+    {
+        <span class="cm">// Runs once when the scene starts</span>
+        <span class="fn">Debug</span>.<span class="fn">Log</span>(<span class="str">"Player ready!"</span>);
+    }
+
+    <span class="kw">void</span> <span class="fn">Update</span>()
+    {
+        <span class="cm">// Runs every frame (~60x per second)</span>
+    }
+}</pre>
+    <div class="ib unity"><span class="ic">🎯</span><div><strong>Key rule:</strong> Do NOT write a constructor in Unity MonoBehaviour scripts. Unity manages object creation — use <code>Awake()</code> or <code>Start()</code> instead.</div></div>
+
+    <h3>GameObject + Component model</h3>
+    <div class="go-box">
+      <div class="go-header">🎮 Player (GameObject)</div>
+      <div class="go-comp"><div class="comp-name">Transform</div><div class="comp-field">position: (0, 0, 0)</div><div class="comp-field">rotation: (0, 0, 0)</div></div>
+      <div class="go-comp"><div class="comp-name">PlayerController (your script)</div><div class="comp-field">speed: 5</div><div class="comp-field">health: 100</div></div>
+      <div class="go-comp"><div class="comp-name">Rigidbody</div><div class="comp-field">mass: 1</div></div>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 Which class must every Unity script inherit from?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,0)">UnityScript</button>
+      <button class="qo" onclick="qa(this,true,0)">MonoBehaviour</button>
+      <button class="qo" onclick="qa(this,false,0)">Component</button>
+      <button class="qo" onclick="qa(this,false,0)">GameObject</button>
+    </div>
+    <div class="qf" id="qf0"></div>
+  </div>
+  <div class="brow"><div></div><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L1: Lifecycle -->
+<section class="sec" id="l1">
+  <div class="card">
+    <div class="ct">⏱️ Unity Lifecycle</div>
+    <div class="cs">Order of execution matters!</div>
+    <p>Unity calls these methods <strong>automatically</strong> — you never call them yourself.</p>
+
+    <div class="lifecycle">
+      <div class="lc-step blue">
+        <div class="lc-num">1</div>
+        <div class="lc-content">
+          <h4>Awake()</h4>
+          <p>Called first, even if script is disabled. Use for getting component references.</p>
+        </div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-num">2</div>
+        <div class="lc-content">
+          <h4>OnEnable()</h4>
+          <p>Called when the script/object is enabled.</p>
+        </div>
+      </div>
+      <div class="lc-step yellow">
+        <div class="lc-num">3</div>
+        <div class="lc-content">
+          <h4>Start()</h4>
+          <p>Called once before the first frame. Script must be enabled. Use for initialisation.</p>
+        </div>
+      </div>
+      <div class="lc-step yellow">
+        <div class="lc-num">4</div>
+        <div class="lc-content">
+          <h4>Update()</h4>
+          <p>Called every frame. Main loop for gameplay logic, input.</p>
+        </div>
+      </div>
+      <div class="lc-step blue">
+        <div class="lc-num">5</div>
+        <div class="lc-content">
+          <h4>FixedUpdate()</h4>
+          <p>Fixed timestep (default 0.02s). Use for physics calculations.</p>
+        </div>
+      </div>
+      <div class="lc-step">
+        <div class="lc-num">6</div>
+        <div class="lc-content">
+          <h4>LateUpdate()</h4>
+          <p>After all Updates. Good for camera following.</p>
+        </div>
+      </div>
+      <div class="lc-step red">
+        <div class="lc-num">7</div>
+        <div class="lc-content">
+          <h4>OnDisable() / OnDestroy()</h4>
+          <p>Cleanup — unsubscribe events, release resources.</p>
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="kw">public class</span> <span class="cl">Enemy</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="un">Rigidbody</span> <span class="prop">rb</span>;
+
+    <span class="kw">void</span> <span class="fn">Awake</span>()
+    {
+        <span class="cm">// Get component ref — even if disabled</span>
+        rb = <span class="fn">GetComponent</span>&lt;<span class="un">Rigidbody</span>&gt;();
+    }
+
+    <span class="kw">void</span> <span class="fn">Start</span>()
+    {
+        <span class="cm">// Setup after all Awakes complete</span>
+        rb.mass = <span class="num">2f</span>;
+    }
+
+    <span class="kw">void</span> <span class="fn">FixedUpdate</span>()
+    {
+        <span class="cm">// Physics — always use FixedUpdate for Rigidbody</span>
+        rb.<span class="fn">AddForce</span>(<span class="un">Vector3</span>.forward * <span class="num">10f</span>);
+    }
+}</pre>
+    <div class="ib tip"><span class="ic">💡</span><div><strong>Awake vs Start:</strong> Use <code>Awake</code> to get component references, use <code>Start</code> to use them — because all <code>Awake</code>s run before any <code>Start</code>.</div></div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 You need physics movement. Which method should you use?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,1)">Update()</button>
+      <button class="qo" onclick="qa(this,false,1)">Start()</button>
+      <button class="qo" onclick="qa(this,true,1)">FixedUpdate()</button>
+      <button class="qo" onclick="qa(this,false,1)">Awake()</button>
+    </div>
+    <div class="qf" id="qf1"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L2: Transform & Movement -->
+<section class="sec" id="l2">
+  <div class="card">
+    <div class="ct">🏃 Transform &amp; Movement</div>
+    <div class="cs">Moving, rotating, scaling GameObjects</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t2a')">Move</button>
+      <button class="tab" onclick="st(this,'t2b')">Rotate</button>
+      <button class="tab" onclick="st(this,'t2c')">Input</button>
+    </div>
+
+    <div class="tp active" id="t2a">
+      <pre><span class="kw">void</span> <span class="fn">Update</span>()
+{
+    <span class="cm">// Move along Z axis</span>
+    transform.<span class="fn">Translate</span>(<span class="un">Vector3</span>.forward * speed * <span class="un">Time</span>.deltaTime);
+
+    <span class="cm">// Set position directly</span>
+    transform.position = <span class="kw">new</span> <span class="un">Vector3</span>(<span class="num">1f</span>, <span class="num">0f</span>, <span class="num">0f</span>);
+
+    <span class="cm">// Move toward target</span>
+    transform.position = <span class="un">Vector3</span>.<span class="fn">MoveTowards</span>(
+        transform.position,
+        target.position,
+        speed * <span class="un">Time</span>.deltaTime
+    );
+}</pre>
+      <div class="ib unity"><span class="ic">🎯</span><div>Always multiply movement by <code>Time.deltaTime</code> to make it <strong>frame-rate independent</strong>.</div></div>
+    </div>
+
+    <div class="tp" id="t2b">
+      <pre><span class="kw">void</span> <span class="fn">Update</span>()
+{
+    <span class="cm">// Rotate around Y axis</span>
+    transform.<span class="fn">Rotate</span>(<span class="un">Vector3</span>.up * rotSpeed * <span class="un">Time</span>.deltaTime);
+
+    <span class="cm">// Look at a target</span>
+    transform.<span class="fn">LookAt</span>(target.position);
+
+    <span class="cm">// Set rotation directly</span>
+    transform.rotation = <span class="un">Quaternion</span>.<span class="fn">Euler</span>(<span class="num">0</span>, <span class="num">90</span>, <span class="num">0</span>);
+}</pre>
+    </div>
+
+    <div class="tp" id="t2c">
+      <pre><span class="kw">void</span> <span class="fn">Update</span>()
+{
+    <span class="cm">// WASD / Arrow Keys (returns -1, 0, or 1)</span>
+    <span class="kw">float</span> h = <span class="un">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Horizontal"</span>);
+    <span class="kw">float</span> v = <span class="un">Input</span>.<span class="fn">GetAxis</span>(<span class="str">"Vertical"</span>);
+
+    <span class="un">Vector3</span> dir = <span class="kw">new</span> <span class="un">Vector3</span>(h, <span class="num">0</span>, v);
+    transform.<span class="fn">Translate</span>(dir * speed * <span class="un">Time</span>.deltaTime);
+
+    <span class="cm">// Button press</span>
+    <span class="kw">if</span> (<span class="un">Input</span>.<span class="fn">GetKeyDown</span>(<span class="un">KeyCode</span>.Space))
+        <span class="fn">Jump</span>();
+
+    <span class="cm">// Mouse button</span>
+    <span class="kw">if</span> (<span class="un">Input</span>.<span class="fn">GetMouseButtonDown</span>(<span class="num">0</span>))  <span class="cm">// 0=left</span>
+        <span class="fn">Shoot</span>();
+}</pre>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 Why multiply movement by <code>Time.deltaTime</code>?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,2)">To slow the game down</button>
+      <button class="qo" onclick="qa(this,true,2)">To make movement frame-rate independent</button>
+      <button class="qo" onclick="qa(this,false,2)">It's required by Unity API</button>
+      <button class="qo" onclick="qa(this,false,2)">To use physics properly</button>
+    </div>
+    <div class="qf" id="qf2"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L3: Collisions & Triggers -->
+<section class="sec" id="l3">
+  <div class="card">
+    <div class="ct">💥 Collisions &amp; Triggers</div>
+    <div class="cs">Detecting when objects touch</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t3a')">Collision</button>
+      <button class="tab" onclick="st(this,'t3b')">Trigger</button>
+      <button class="tab" onclick="st(this,'t3c')">Tags</button>
+    </div>
+
+    <div class="tp active" id="t3a">
+      <p>Physical collisions — objects can't pass through each other.</p>
+      <pre><span class="cm">// Requires: Collider + Rigidbody on at least one</span>
+<span class="kw">void</span> <span class="fn">OnCollisionEnter</span>(<span class="un">Collision</span> col)
+{
+    <span class="fn">Debug</span>.<span class="fn">Log</span>(<span class="str">"Hit: "</span> + col.gameObject.name);
+}
+
+<span class="kw">void</span> <span class="fn">OnCollisionStay</span>(<span class="un">Collision</span> col)
+{
+    <span class="cm">// Runs every frame while touching</span>
+}
+
+<span class="kw">void</span> <span class="fn">OnCollisionExit</span>(<span class="un">Collision</span> col)
+{
+    <span class="cm">// Ran when objects separate</span>
+}</pre>
+    </div>
+
+    <div class="tp" id="t3b">
+      <p>Triggers — objects pass through, but you detect the overlap. Check <strong>"Is Trigger"</strong> on the Collider.</p>
+      <pre><span class="cm">// Requires: Collider with Is Trigger = true</span>
+<span class="kw">void</span> <span class="fn">OnTriggerEnter</span>(<span class="un">Collider</span> other)
+{
+    <span class="kw">if</span> (other.<span class="fn">CompareTag</span>(<span class="str">"Coin"</span>))
+    {
+        score++;
+        <span class="un">Destroy</span>(other.gameObject);
+    }
+}
+
+<span class="kw">void</span> <span class="fn">OnTriggerExit</span>(<span class="un">Collider</span> other)
+{
+    <span class="cm">// Left the zone</span>
+}</pre>
+      <div class="ib unity"><span class="ic">🎯</span><div>Triggers are perfect for: coins, checkpoints, damage zones, item pickup areas.</div></div>
+    </div>
+
+    <div class="tp" id="t3c">
+      <pre><span class="cm">// Check tag — preferred over name</span>
+<span class="kw">if</span> (other.<span class="fn">CompareTag</span>(<span class="str">"Enemy"</span>))
+    TakeDamage(<span class="num">10</span>);
+
+<span class="cm">// GetComponent to access scripts</span>
+<span class="un">Enemy</span> e = other.<span class="fn">GetComponent</span>&lt;<span class="un">Enemy</span>&gt;();
+<span class="kw">if</span> (e != <span class="kw">null</span>)
+    e.<span class="fn">TakeDamage</span>(<span class="num">25</span>);
+
+<span class="cm">// Layers for physics filtering</span>
+<span class="cm">// Set in Edit → Project Settings → Physics</span></pre>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 A coin pickup zone (player walks through it) should use…</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,3)">OnCollisionEnter (regular collision)</button>
+      <button class="qo" onclick="qa(this,true,3)">OnTriggerEnter (Is Trigger = true)</button>
+      <button class="qo" onclick="qa(this,false,3)">Update() with distance check</button>
+    </div>
+    <div class="qf" id="qf3"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L4: Prefabs & Instantiate -->
+<section class="sec" id="l4">
+  <div class="card">
+    <div class="ct">🧩 Prefabs &amp; Instantiate</div>
+    <div class="cs">Spawning objects at runtime</div>
+    <p>A <strong>Prefab</strong> is a saved GameObject template. <code>Instantiate()</code> creates a copy of it at runtime — essential for bullets, enemies, coins, etc.</p>
+    <pre><span class="kw">public class</span> <span class="cl">Shooter</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="cm">// Drag your Bullet prefab here in Inspector</span>
+    <span class="kw">public</span> <span class="un">GameObject</span> <span class="prop">bulletPrefab</span>;
+    <span class="kw">public</span> <span class="un">Transform</span>  <span class="prop">firePoint</span>;
+    <span class="kw">public float</span>      <span class="prop">bulletSpeed</span> = <span class="num">20f</span>;
+
+    <span class="kw">void</span> <span class="fn">Update</span>()
+    {
+        <span class="kw">if</span> (<span class="un">Input</span>.<span class="fn">GetKeyDown</span>(<span class="un">KeyCode</span>.Space))
+            <span class="fn">Shoot</span>();
+    }
+
+    <span class="kw">void</span> <span class="fn">Shoot</span>()
+    {
+        <span class="cm">// Create bullet at fire point</span>
+        <span class="un">GameObject</span> bullet = <span class="un">Instantiate</span>(
+            bulletPrefab,
+            firePoint.position,
+            firePoint.rotation
+        );
+
+        <span class="cm">// Give it velocity</span>
+        <span class="un">Rigidbody</span> rb = bullet.<span class="fn">GetComponent</span>&lt;<span class="un">Rigidbody</span>&gt;();
+        rb.linearVelocity = firePoint.forward * bulletSpeed;
+
+        <span class="cm">// Destroy after 3 seconds</span>
+        <span class="un">Destroy</span>(bullet, <span class="num">3f</span>);
+    }
+}</pre>
+    <div class="ib tip"><span class="ic">💡</span><div>Always <code>Destroy</code> spawned objects when no longer needed — otherwise memory fills up.</div></div>
+    <h3>Common Instantiate patterns</h3>
+    <pre><span class="cm">// Simple spawn at position</span>
+<span class="un">Instantiate</span>(prefab, pos, <span class="un">Quaternion</span>.identity);
+
+<span class="cm">// Spawn as child of another object</span>
+<span class="un">Instantiate</span>(prefab, pos, rot, parentTransform);
+
+<span class="cm">// Spawn and get the script on it</span>
+<span class="un">Enemy</span> e = <span class="un">Instantiate</span>(enemyPrefab, pos, rot)
+              .<span class="fn">GetComponent</span>&lt;<span class="un">Enemy</span>&gt;();
+e.health = <span class="num">50</span>;</pre>
+  </div>
+  <div class="qc">
+    <div class="qq">✏️ What method spawns a copy of a prefab at runtime?</div>
+    <div class="fi-w">
+      <input class="fi-in" id="fi4" type="text" placeholder="method name">
+      <button class="fi-btn" onclick="cf('fi4',['Instantiate','instantiate'],'fif4')">Check ✓</button>
+    </div>
+    <div class="qf" id="fif4"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L5: ScriptableObjects & Data -->
+<section class="sec" id="l5">
+  <div class="card">
+    <div class="ct">📊 Data &amp; ScriptableObjects</div>
+    <div class="cs">Sharing data between scripts cleanly</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t5a')">Static vars</button>
+      <button class="tab" onclick="st(this,'t5b')">ScriptableObject</button>
+      <button class="tab" onclick="st(this,'t5c')">PlayerPrefs</button>
+    </div>
+
+    <div class="tp active" id="t5a">
+      <p>A <code>static</code> variable belongs to the class — shared across all instances.</p>
+      <pre><span class="kw">public class</span> <span class="cl">GameManager</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="cm">// Singleton pattern — one GameManager</span>
+    <span class="kw">public static</span> <span class="cl">GameManager</span> <span class="prop">Instance</span>;
+
+    <span class="kw">public</span> <span class="kw">int</span>   score  = <span class="num">0</span>;
+    <span class="kw">public</span> <span class="kw">int</span>   lives  = <span class="num">3</span>;
+    <span class="kw">public</span> <span class="kw">bool</span>  gameOver = <span class="kw">false</span>;
+
+    <span class="kw">void</span> <span class="fn">Awake</span>()
+    {
+        <span class="kw">if</span> (Instance == <span class="kw">null</span>) Instance = <span class="kw">this</span>;
+        <span class="kw">else</span> <span class="un">Destroy</span>(gameObject);
+    }
+}
+
+<span class="cm">// Access from any other script:</span>
+<span class="cl">GameManager</span>.Instance.score += <span class="num">10</span>;</pre>
+    </div>
+
+    <div class="tp" id="t5b">
+      <p>A <strong>ScriptableObject</strong> is a data container asset — great for weapon stats, character configs, etc.</p>
+      <pre><span class="cm">// Create this as an asset in Unity</span>
+[<span class="un">CreateAssetMenu</span>(menuName = <span class="str">"Game/WeaponData"</span>)]
+<span class="kw">public class</span> <span class="cl">WeaponData</span> : <span class="un">ScriptableObject</span>
+{
+    <span class="kw">public string</span> <span class="prop">weaponName</span>;
+    <span class="kw">public float</span>  <span class="prop">damage</span>;
+    <span class="kw">public float</span>  <span class="prop">fireRate</span>;
+    <span class="kw">public int</span>    <span class="prop">clipSize</span>;
+}
+
+<span class="cm">// Use in a script:</span>
+<span class="kw">public class</span> <span class="cl">Gun</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="cl">WeaponData</span> <span class="prop">data</span>; <span class="cm">// drag asset here</span>
+
+    <span class="kw">void</span> <span class="fn">Shoot</span>()
+    {
+        <span class="fn">ApplyDamage</span>(data.damage);
+    }
+}</pre>
+    </div>
+
+    <div class="tp" id="t5c">
+      <pre><span class="cm">// Save data between sessions</span>
+<span class="un">PlayerPrefs</span>.<span class="fn">SetInt</span>(<span class="str">"HighScore"</span>, <span class="num">1500</span>);
+<span class="un">PlayerPrefs</span>.<span class="fn">SetFloat</span>(<span class="str">"Volume"</span>, <span class="num">0.8f</span>);
+<span class="un">PlayerPrefs</span>.<span class="fn">SetString</span>(<span class="str">"PlayerName"</span>, <span class="str">"Zion"</span>);
+<span class="un">PlayerPrefs</span>.<span class="fn">Save</span>();
+
+<span class="cm">// Load</span>
+<span class="kw">int</span>    hi   = <span class="un">PlayerPrefs</span>.<span class="fn">GetInt</span>(<span class="str">"HighScore"</span>, <span class="num">0</span>);
+<span class="kw">float</span>  vol  = <span class="un">PlayerPrefs</span>.<span class="fn">GetFloat</span>(<span class="str">"Volume"</span>, <span class="num">1f</span>);
+<span class="kw">string</span> name = <span class="un">PlayerPrefs</span>.<span class="fn">GetString</span>(<span class="str">"PlayerName"</span>, <span class="str">""</span>);</pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div>PlayerPrefs is fine for simple saves. For complex game saves use JSON serialization or a proper save system.</div></div>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 The Singleton pattern ensures…</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,4)">Every scene has many GameManagers</button>
+      <button class="qo" onclick="qa(this,true,4)">Only one instance exists and is globally accessible</button>
+      <button class="qo" onclick="qa(this,false,4)">The script runs faster</button>
+    </div>
+    <div class="qf" id="qf4"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L6: Coroutines -->
+<section class="sec" id="l6">
+  <div class="card">
+    <div class="ct">⏳ Coroutines</div>
+    <div class="cs">Timed events without blocking</div>
+    <p>Coroutines let you <strong>pause execution</strong> and resume after a delay or condition — without freezing the game.</p>
+    <pre><span class="kw">public class</span> <span class="cl">SpawnManager</span> : <span class="un">MonoBehaviour</span>
+{
+    <span class="kw">public</span> <span class="un">GameObject</span> <span class="prop">enemyPrefab</span>;
+
+    <span class="kw">void</span> <span class="fn">Start</span>()
+    {
+        <span class="cm">// Start the coroutine</span>
+        <span class="fn">StartCoroutine</span>(<span class="fn">SpawnLoop</span>());
+    }
+
+    <span class="cm">// Must return IEnumerator</span>
+    <span class="un">IEnumerator</span> <span class="fn">SpawnLoop</span>()
+    {
+        <span class="kw">while</span> (<span class="kw">true</span>)
+        {
+            <span class="un">Instantiate</span>(enemyPrefab,
+                <span class="kw">new</span> <span class="un">Vector3</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>),
+                <span class="un">Quaternion</span>.identity);
+
+            <span class="cm">// Wait 2 seconds then continue</span>
+            <span class="kw">yield return new</span> <span class="un">WaitForSeconds</span>(<span class="num">2f</span>);
+        }
+    }
+}
+
+<span class="cm">// Other yield options:</span>
+<span class="kw">yield return null</span>;                    <span class="cm">// wait 1 frame</span>
+<span class="kw">yield return new</span> <span class="un">WaitForSeconds</span>(<span class="num">1f</span>); <span class="cm">// wait 1 sec</span>
+<span class="kw">yield return new</span> <span class="un">WaitUntil</span>(()=> isDone); <span class="cm">// wait for condition</span></pre>
+    <div class="ib tip"><span class="ic">💡</span><div>Use <code>StopCoroutine()</code> or <code>StopAllCoroutines()</code> to stop them. They also stop if the GameObject is destroyed.</div></div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 A Coroutine method must have return type…</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,5)">void</button>
+      <button class="qo" onclick="qa(this,true,5)">IEnumerator</button>
+      <button class="qo" onclick="qa(this,false,5)">bool</button>
+      <button class="qo" onclick="qa(this,false,5)">Coroutine</button>
+    </div>
+    <div class="qf" id="qf5"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L7: Hero Challenge -->
+<section class="sec" id="l7">
+  <div class="card">
+    <div class="ct">🏆 Unity Hero Challenge</div>
+    <div class="cs">Final boss — all Unity topics</div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">1. You want code that runs once when the scene loads. Which method?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,6)">Update()</button>
+      <button class="qo" onclick="qa(this,true,6)">Start()</button>
+      <button class="qo" onclick="qa(this,false,6)">FixedUpdate()</button>
+      <button class="qo" onclick="qa(this,false,6)">OnEnable()</button>
+    </div>
+    <div class="qf" id="qf6"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">2. <code>Awake()</code> runs before <code>Start()</code>. True or False?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,true,7)">True</button>
+      <button class="qo" onclick="qa(this,false,7)">False</button>
+    </div>
+    <div class="qf" id="qf7"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">3. To spawn bullets at runtime you use…</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,8)">new GameObject()</button>
+      <button class="qo" onclick="qa(this,true,8)">Instantiate(prefab, pos, rot)</button>
+      <button class="qo" onclick="qa(this,false,8)">Create(prefab)</button>
+    </div>
+    <div class="qf" id="qf8"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">4. What keyword pauses a Coroutine for 2 seconds?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,9)"><code>await Task.Delay(2000)</code></button>
+      <button class="qo" onclick="qa(this,false,9)"><code>Thread.Sleep(2000)</code></button>
+      <button class="qo" onclick="qa(this,true,9)"><code>yield return new WaitForSeconds(2f)</code></button>
+    </div>
+    <div class="qf" id="qf9"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">5. A pickup zone where the player walks through should use…</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,10)">OnCollisionEnter</button>
+      <button class="qo" onclick="qa(this,true,10)">OnTriggerEnter (Is Trigger ✓)</button>
+      <button class="qo" onclick="qa(this,false,10)">OnMouseDown</button>
+    </div>
+    <div class="qf" id="qf10"></div>
+  </div>
+
+  <div id="final-area"></div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="showFinal()">See Score 🎯</button></div>
+</section>
+
+</main>
+
+<div class="prog-bottom">
+  <div class="pb-bar"><div class="pb-fill" id="pb" style="width:0%"></div></div>
+  <div class="pb-txt" id="pb-txt">0 / 8</div>
+</div>
+
+<script>
+const LEVELS=8;let cur=0;
+const done=new Array(LEVELS).fill(false);
+const Q={
+  0:{d:false,ok:"Correct! Every Unity script inherits MonoBehaviour.",no:"It's MonoBehaviour — the base class for all Unity scripts."},
+  1:{d:false,ok:"Correct! FixedUpdate runs on a fixed timestep — ideal for physics.",no:"Physics goes in FixedUpdate(), not Update() — frame rate issues otherwise."},
+  2:{d:false,ok:"Correct! Without deltaTime, speed varies with frame rate.",no:"Time.deltaTime ensures the same speed regardless of FPS."},
+  3:{d:false,ok:"Correct! Triggers let objects pass through — perfect for pickups.",no:"Triggers (Is Trigger = true) are the right choice for walk-through detection."},
+  4:{d:false,ok:"Correct! Singleton = one global instance accessible everywhere.",no:"Singleton ensures only one instance of a manager script exists."},
+  5:{d:false,ok:"Correct! IEnumerator is required to use yield return.",no:"Coroutines must return IEnumerator."},
+  6:{d:false,ok:"Correct! Start() runs once before the first frame.",no:"Start() runs once on scene load."},
+  7:{d:false,ok:"Correct! Awake() always runs before Start().",no:"Actually true — Awake runs before Start."},
+  8:{d:false,ok:"Correct! Instantiate() creates a copy of a prefab.",no:"Use Instantiate(prefab, pos, rot) to spawn objects."},
+  9:{d:false,ok:"Correct! yield return new WaitForSeconds pauses the coroutine.",no:"In Unity Coroutines, use yield return new WaitForSeconds(n)."},
+  10:{d:false,ok:"Correct! OnTriggerEnter with Is Trigger = true is the right choice.",no:"Trigger colliders let objects pass through while still detecting overlap."},
+};
+let sc=0,sm=0;
+
+const dotC=document.getElementById('dots');
+for(let i=0;i<LEVELS;i++){
+  const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.textContent=i+1;
+  d.onclick=()=>goTo(i);dotC.appendChild(d);
+}
+
+function goTo(n){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('l'+n).classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('active',i===n);if(done[i]&&i!==n)d.classList.add('done');});
+  cur=n;document.getElementById('lv-label').textContent='Level '+(n+1)+' of '+LEVELS;
+  updProg();window.scrollTo(0,0);
+  dotC.children[n].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function next(){if(cur<LEVELS-1)goTo(cur+1);}
+function prev(){if(cur>0)goTo(cur-1);}
+
+function updProg(){
+  done[cur]=true;
+  const d=done.filter(Boolean).length;
+  document.getElementById('pb').style.width=(d/LEVELS*100)+'%';
+  document.getElementById('pb-txt').textContent=d+' / '+LEVELS;
+  localStorage.setItem('unity_pct',Math.round(d/LEVELS*100));
+  localStorage.setItem('unity_score',sc);
+}
+
+function qa(btn,ok,qid){
+  if(Q[qid].d)return;Q[qid].d=true;
+  btn.closest('.qo-w').querySelectorAll('.qo').forEach(b=>b.disabled=true);
+  sm++;
+  if(ok){btn.classList.add('ok');sc++;document.getElementById('sc-v').textContent=sc;fb('qf'+qid,'ok','✅ '+Q[qid].ok);}
+  else{btn.classList.add('no');fb('qf'+qid,'no','❌ '+Q[qid].no);}
+  localStorage.setItem('unity_score',sc);
+}
+function fb(id,t,m){const e=document.getElementById(id);if(e){e.textContent=m;e.className='qf show '+t;}}
+function cf(id,accepted,fbId){
+  const v=document.getElementById(id).value.trim();
+  const ok=Array.isArray(accepted)?accepted.map(a=>a.toLowerCase()).includes(v.toLowerCase()):v.toLowerCase()===accepted.toLowerCase();
+  sm++;
+  if(ok){sc++;document.getElementById('sc-v').textContent=sc;fb(fbId,'ok','✅ Correct!');document.getElementById(id).disabled=true;}
+  else{fb(fbId,'no','❌ Expected: '+accepted[0]);}
+  localStorage.setItem('unity_score',sc);
+}
+function st(btn,pid){
+  const p=btn.closest('.card');
+  p.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  p.querySelectorAll('.tp').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');document.getElementById(pid).classList.add('active');
+}
+function showFinal(){
+  const pct=sm>0?Math.round(sc/sm*100):0;
+  const icon=pct>=90?'🏆':pct>=70?'🥈':'🥉';
+  const msg=pct>=90?'Unity Hero! You\'re ready to build games!':pct>=70?'Unity Pro! Almost there.':'Keep practising — you\'ll get it!';
+  localStorage.setItem('unity_pct',100);
+  document.getElementById('final-area').innerHTML=`<div style="text-align:center;padding:30px 16px;background:linear-gradient(135deg,#0a1f00,#1a1500);border-radius:18px;border:1px solid var(--yellow);margin:14px 0"><div style="font-size:52px;margin-bottom:10px">${icon}</div><h2 style="color:var(--yellow);font-size:22px">Unity Hero!</h2><p style="font-size:20px;color:var(--yellow);font-weight:700;margin:8px 0">${pct}% — ${sc}/${sm}</p><p style="color:var(--muted);font-size:14px">${msg}</p><a href="index.html" style="display:inline-block;margin-top:16px;padding:12px 22px;background:var(--yellow);color:#000;border-radius:12px;text-decoration:none;font-weight:700">← Back to Home</a></div>`;
+  document.getElementById('final-area').scrollIntoView({behavior:'smooth'});
+}
+updProg();
+</script>
+</body>
+</html>

@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>C# Constructors & OOP — Zero to Hero</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card2: #16213e;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --blue: #3b82f6;
+    --orange: #f97316;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #2d2d4e;
+    --code-bg: #0d1117;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px; line-height: 1.6; min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #0a1628 0%, #0f0f1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px; position: sticky; top: 0; z-index: 100;
+  }
+  .h-row { display: flex; align-items: center; gap: 10px; }
+  .logo { font-size: 26px; }
+  .h-text h1 { font-size: 17px; font-weight: 700; color: var(--accent2); }
+  .h-text p { font-size: 11px; color: var(--muted); }
+  .prog-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; }
+  .prog-bar { height: 100%; background: linear-gradient(90deg,var(--blue),var(--accent2)); border-radius: 2px; transition: width .4s; }
+
+  /* Nav */
+  nav {
+    display: flex; overflow-x: auto; gap: 6px; padding: 10px 14px;
+    background: var(--card); border-bottom: 1px solid var(--border); scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nb {
+    flex-shrink: 0; padding: 5px 13px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-size: 12px; cursor: pointer; white-space: nowrap; transition: all .2s;
+  }
+  .nb.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .nb.done { border-color: var(--green); color: var(--green); }
+  .nb.done.active { background: var(--green); color: #fff; }
+
+  main { padding: 18px 15px 100px; max-width: 680px; margin: 0 auto; }
+
+  /* Sections */
+  .sec { display: none; }
+  .sec.active { display: block; animation: fi .3s ease; }
+  @keyframes fi { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+
+  /* Cards */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px; margin-bottom: 14px;
+  }
+  .ct { font-size: 19px; font-weight: 700; margin-bottom: 4px; display:flex;align-items:center;gap:8px; }
+  .cs { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  /* Code */
+  pre {
+    background: var(--code-bg); border: 1px solid #2a2a4a;
+    border-radius: 12px; padding: 14px; overflow-x: auto;
+    font-size: 13px; line-height: 1.75; margin: 10px 0;
+    font-family: 'Courier New', monospace; position: relative;
+  }
+  .kw{color:#ff79c6} .type{color:#8be9fd} .str{color:#f1fa8c}
+  .num{color:#bd93f9} .cm{color:#6272a4;font-style:italic}
+  .fn{color:#50fa7b} .prop{color:#ffb86c} .cl{color:#8be9fd}
+
+  /* Syntax anatomy — annotated code */
+  .anatomy { position: relative; margin: 14px 0; }
+  .anatomy pre { padding-bottom: 32px; }
+  .ann {
+    position: absolute; font-size: 11px; color: var(--accent2);
+    border-left: 2px solid var(--accent2); padding-left: 6px;
+    white-space: nowrap; pointer-events: none;
+  }
+
+  /* Info boxes */
+  .ib {
+    border-radius: 10px; padding: 12px 14px; margin: 10px 0;
+    font-size: 14px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .ib.tip{background:#1a2a1a;border:1px solid #2d4a2d}
+  .ib.warn{background:#2a1f0a;border:1px solid #4a3a0d}
+  .ib.info{background:#0a1628;border:1px solid #1e3a5f}
+  .ib .ic{font-size:17px;flex-shrink:0;margin-top:1px}
+
+  /* Quiz */
+  .qc{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+  .qq{font-size:15px;font-weight:600;margin-bottom:14px}
+  .qo-wrap{display:flex;flex-direction:column;gap:7px}
+  .qo{
+    padding:11px 14px;border-radius:9px;border:1px solid var(--border);
+    background:var(--card);color:var(--text);font-size:13px;cursor:pointer;text-align:left;transition:all .2s;
+  }
+  .qo:hover:not(:disabled){border-color:var(--blue);background:#0a1628}
+  .qo.ok{background:#064e3b;border-color:var(--green);color:var(--green)}
+  .qo.no{background:#450a0a;border-color:var(--red);color:var(--red)}
+  .qf{margin-top:10px;padding:11px;border-radius:9px;font-size:13px;display:none}
+  .qf.show{display:block}
+  .qf.ok{background:#064e3b;border:1px solid var(--green);color:var(--green)}
+  .qf.no{background:#450a0a;border:1px solid var(--red);color:var(--red)}
+
+  /* Fill */
+  .fi-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}
+  .fi-in{
+    background:var(--code-bg);border:2px solid var(--blue);border-radius:8px;
+    color:var(--text);font-family:'Courier New',monospace;font-size:13px;
+    padding:6px 10px;width:200px;
+  }
+  .fi-in:focus{outline:none;border-color:var(--accent2)}
+  .fi-btn{padding:8px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-size:13px;cursor:pointer}
+
+  /* Object builder */
+  .ob-field{
+    display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;
+  }
+  .ob-label{font-size:13px;color:var(--muted);width:90px;flex-shrink:0}
+  .ob-input{
+    background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+    color:var(--text);font-size:13px;padding:6px 10px;width:160px;
+  }
+  .ob-input:focus{outline:none;border-color:var(--blue)}
+  .ob-out{
+    background:var(--code-bg);border:1px solid var(--green);border-radius:10px;
+    padding:12px 14px;font-family:'Courier New',monospace;font-size:13px;
+    margin-top:12px;min-height:60px;color:var(--green);white-space:pre-wrap;
+  }
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0;padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+  .tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+  .tp{display:none}
+  .tp.active{display:block}
+
+  /* Memory card / cheatsheet */
+  .cheat{
+    background:linear-gradient(135deg,#0a1628,#1a0533);
+    border:1px solid var(--blue);border-radius:14px;padding:16px;margin:12px 0;
+  }
+  .cheat-title{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+
+  /* Buttons */
+  .btn{padding:11px 22px;border-radius:11px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+  .btn-p{background:var(--blue);color:#fff}
+  .btn-p:hover{background:#2563eb;transform:translateY(-1px)}
+  .btn-s{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+  .btn-s:hover{border-color:var(--blue)}
+  .btn-row{display:flex;gap:8px;justify-content:space-between;margin-top:18px;flex-wrap:wrap}
+
+  /* Visual: class box */
+  .class-box{
+    border:2px solid var(--blue);border-radius:12px;overflow:hidden;margin:14px auto;max-width:280px;
+  }
+  .class-header{background:var(--blue);padding:8px 14px;font-weight:700;font-size:14px;text-align:center}
+  .class-section{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+  .class-section:last-child{border-bottom:none}
+  .class-section-title{font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;letter-spacing:.05em}
+  .class-field{color:var(--orange);margin-bottom:3px}
+  .class-method{color:var(--green);margin-bottom:3px}
+  .class-ctor{color:var(--accent2);margin-bottom:3px;font-weight:600}
+
+  /* Badge */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+  .bdg-b{background:#0a1628;color:var(--blue);border:1px solid var(--blue)}
+  .bdg-g{background:#064e3b;color:var(--green);border:1px solid var(--green)}
+  .bdg-y{background:#2d1f00;color:var(--yellow);border:1px solid var(--yellow)}
+  .bdg-p{background:#2d1a4a;color:var(--accent2);border:1px solid var(--accent)}
+
+  /* Completion */
+  .completion{text-align:center;padding:36px 16px;background:linear-gradient(135deg,#0a1628,#1a0533);border-radius:18px;border:1px solid var(--blue);margin-top:16px}
+  .completion .trophy{font-size:60px;margin-bottom:14px}
+  .completion h2{font-size:26px;color:var(--accent2);margin-bottom:6px}
+
+  /* Score */
+  #sc-disp{font-size:12px;color:var(--muted);text-align:right;padding:0 14px 6px;max-width:680px;margin:0 auto}
+  #sc-disp span{color:var(--accent2);font-weight:700}
+
+  h2{font-size:21px;margin-bottom:6px}
+  h3{font-size:16px;margin:14px 0 6px;color:var(--accent2)}
+  p{margin-bottom:8px;font-size:14px}
+  ul,ol{padding-left:18px;margin-bottom:8px}
+  li{margin-bottom:3px;font-size:14px}
+  code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#f1fa8c}
+
+  /* Step highlight */
+  .step-hl{background:rgba(59,130,246,.15);border-left:3px solid var(--blue);padding:3px 8px;border-radius:0 6px 6px 0;margin:6px 0;font-size:13px}
+
+  /* Constructor types comparison */
+  .ctor-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+  @media(max-width:480px){.ctor-grid{grid-template-columns:1fr}}
+  .ctor-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
+  .ctor-card h4{font-size:13px;color:var(--accent2);margin-bottom:6px}
+  .ctor-card p{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-row">
+    <div class="logo">🏗️</div>
+    <div class="h-text">
+      <h1>C# Constructors &amp; OOP</h1>
+      <p>Syntax memory + deep understanding · 7 levels</p>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+</header>
+
+<nav id="nav">
+  <button class="nb active" onclick="go(0)">1 · Class &amp; Object</button>
+  <button class="nb" onclick="go(1)">2 · Constructor Syntax</button>
+  <button class="nb" onclick="go(2)">3 · Types of Ctors</button>
+  <button class="nb" onclick="go(3)">4 · this &amp; Chaining</button>
+  <button class="nb" onclick="go(4)">5 · OOP Pillars</button>
+  <button class="nb" onclick="go(5)">6 · Syntax Cheat Sheet</button>
+  <button class="nb" onclick="go(6)">7 · Hero Challenge</button>
+</nav>
+<div id="sc-disp">Score: <span id="sv">0</span> / <span id="sm">0</span></div>
+
+<main>
+
+<!-- ═══════ SECTION 0 — Class & Object ═══════ -->
+<section class="sec active" id="s0">
+  <div class="card">
+    <div class="ct">📦 Class vs Object</div>
+    <div class="cs">Level 1 of 7 — The mental model</div>
+
+    <p>A <strong>class</strong> is a <em>blueprint</em>. An <strong>object</strong> is a <em>concrete instance</em> built from that blueprint.</p>
+
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:16px 0">
+      <!-- Blueprint -->
+      <div class="class-box" style="border-color:var(--muted)">
+        <div class="class-header" style="background:var(--muted);color:#000">📄 Car  <small>(blueprint)</small></div>
+        <div class="class-section">
+          <div class="class-section-title">Fields</div>
+          <div class="class-field">string Make</div>
+          <div class="class-field">string Model</div>
+          <div class="class-field">int Year</div>
+        </div>
+        <div class="class-section">
+          <div class="class-section-title">Constructor</div>
+          <div class="class-ctor">Car(make, model, year)</div>
+        </div>
+        <div class="class-section">
+          <div class="class-section-title">Methods</div>
+          <div class="class-method">Drive()</div>
+          <div class="class-method">Honk()</div>
+        </div>
+      </div>
+      <!-- Arrow -->
+      <div style="display:flex;align-items:center;font-size:28px;color:var(--blue)">→</div>
+      <!-- Objects -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="class-box" style="max-width:200px;border-color:var(--green)">
+          <div class="class-header" style="background:var(--green);color:#000">🚗 myCar</div>
+          <div class="class-section" style="font-size:12px">
+            Make = "Toyota"<br>Model = "Corolla"<br>Year = 2022
+          </div>
+        </div>
+        <div class="class-box" style="max-width:200px;border-color:var(--orange)">
+          <div class="class-header" style="background:var(--orange);color:#000">🏎️ sportsCar</div>
+          <div class="class-section" style="font-size:12px">
+            Make = "Ferrari"<br>Model = "488"<br>Year = 2024
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="cm">// Blueprint (class)</span>
+<span class="kw">class</span> <span class="cl">Car</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> Make;
+    <span class="kw">public</span> <span class="type">string</span> Model;
+    <span class="kw">public</span> <span class="type">int</span>    Year;
+}
+
+<span class="cm">// Objects (instances)</span>
+<span class="cl">Car</span> myCar     = <span class="kw">new</span> <span class="cl">Car</span>();
+<span class="cl">Car</span> sportsCar = <span class="kw">new</span> <span class="cl">Car</span>();</pre>
+
+    <div class="ib tip">
+      <span class="ic">💡</span>
+      <div>Every object is <strong>independent</strong> — changing <code>myCar.Make</code> doesn't affect <code>sportsCar.Make</code>.</div>
+    </div>
+
+    <h3>What is <code>new</code>?</h3>
+    <p>The <code>new</code> keyword does three things:</p>
+    <ol>
+      <li>Allocates memory on the <strong>heap</strong></li>
+      <li>Calls the <strong>constructor</strong></li>
+      <li>Returns a <strong>reference</strong> to the object</li>
+    </ol>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 What is the difference between a class and an object?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,0)">They are the same thing</button>
+      <button class="qo" onclick="ans(this,true,0)">A class is the blueprint; an object is a concrete instance</button>
+      <button class="qo" onclick="ans(this,false,0)">A class holds data; an object holds methods</button>
+      <button class="qo" onclick="ans(this,false,0)">An object is declared with <code>class</code> keyword</button>
+    </div>
+    <div class="qf" id="qf0"></div>
+  </div>
+
+  <div class="btn-row">
+    <div></div>
+    <button class="btn btn-p" onclick="go(1)">Next: Constructor Syntax →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 1 — Constructor Syntax ═══════ -->
+<section class="sec" id="s1">
+  <div class="card">
+    <div class="ct">✍️ Constructor Syntax</div>
+    <div class="cs">Level 2 of 7 — Memory-first approach</div>
+
+    <p>A constructor is a <strong>special method</strong> that runs automatically when you create an object with <code>new</code>.</p>
+
+    <!-- SYNTAX ANATOMY -->
+    <h3>Anatomy — remember every piece</h3>
+    <div class="cheat">
+      <div class="cheat-title">🧠 Syntax Pattern</div>
+      <pre style="margin:0;background:transparent;border:none;padding:0;font-size:13px"><span class="kw">public</span>  <span class="cl">ClassName</span>  (<span class="type">type</span> param1, <span class="type">type</span> param2)
+  ↑         ↑              ↑
+access    same name      parameters
+modifier  as class       (optional)
+<span class="kw">
+{</span>
+    <span class="cm">// set fields here</span>
+    <span class="prop">this</span>.Field1 = param1;
+<span class="kw">}</span></pre>
+    </div>
+
+    <h3>Key rules to memorise</h3>
+    <ul>
+      <li>Same name as the <strong>class</strong></li>
+      <li><strong>No return type</strong> — not even <code>void</code></li>
+      <li>Called automatically with <code>new</code></li>
+      <li>Can be <strong>overloaded</strong> (multiple constructors)</li>
+    </ul>
+
+    <h3>Full example</h3>
+    <pre><span class="kw">class</span> <span class="cl">Person</span>
+{
+    <span class="cm">// Fields</span>
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span>;
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Age</span>;
+
+    <span class="cm">// Constructor  ← no return type!</span>
+    <span class="kw">public</span> <span class="cl">Person</span>(<span class="type">string</span> name, <span class="type">int</span> age)
+    {
+        <span class="prop">this</span>.<span class="prop">Name</span> = name;
+        <span class="prop">this</span>.<span class="prop">Age</span>  = age;
+    }
+}
+
+<span class="cm">// Creating objects</span>
+<span class="cl">Person</span> p1 = <span class="kw">new</span> <span class="cl">Person</span>(<span class="str">"Alice"</span>, <span class="num">30</span>);
+<span class="cl">Person</span> p2 = <span class="kw">new</span> <span class="cl">Person</span>(<span class="str">"Bob"</span>,   <span class="num">25</span>);</pre>
+
+    <!-- Live Object Builder -->
+    <h3>🎮 Live Object Builder</h3>
+    <p style="color:var(--muted);font-size:13px">Fill in the fields — watch the constructor call update in real time.</p>
+    <div class="ob-field">
+      <span class="ob-label">Name:</span>
+      <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Alice" oninput="buildObj()">
+    </div>
+    <div class="ob-field">
+      <span class="ob-label">Age:</span>
+      <input class="ob-input" id="ob-age" type="number" placeholder="e.g. 30" oninput="buildObj()">
+    </div>
+    <div class="ob-out" id="ob-out">// Start typing above...</div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 What is the return type of a constructor?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,1)">void</button>
+      <button class="qo" onclick="ans(this,false,1)">The class type (e.g. Person)</button>
+      <button class="qo" onclick="ans(this,true,1)">It has no return type</button>
+      <button class="qo" onclick="ans(this,false,1)">bool</button>
+    </div>
+    <div class="qf" id="qf1"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">✏️ What must the constructor's name match?</div>
+    <div class="fi-wrap">
+      <input class="fi-in" id="fi1" type="text" placeholder="type your answer">
+      <button class="fi-btn" onclick="chkfi('fi1',['class name','the class name','class','className','ClassName'],'fi1f')">Check ✓</button>
+    </div>
+    <div class="qf" id="fi1f"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(0)">← Back</button>
+    <button class="btn btn-p" onclick="go(2)">Next: Types of Constructors →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 2 — Types of Constructors ═══════ -->
+<section class="sec" id="s2">
+  <div class="card">
+    <div class="ct">🔧 Types of Constructors</div>
+    <div class="cs">Level 3 of 7</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t2a')">Default</button>
+      <button class="tab" onclick="st(this,'t2b')">Parameterized</button>
+      <button class="tab" onclick="st(this,'t2c')">Copy</button>
+      <button class="tab" onclick="st(this,'t2d')">Static</button>
+    </div>
+
+    <!-- Default -->
+    <div class="tp active" id="t2a">
+      <div class="ib info"><span class="ic">ℹ️</span><div>A <strong>default constructor</strong> takes no parameters. If you write no constructor at all, C# auto-generates one.</div></div>
+      <pre><span class="kw">class</span> <span class="cl">Dog</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span>;
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Age</span>;
+
+    <span class="cm">// Default constructor — no parameters</span>
+    <span class="kw">public</span> <span class="cl">Dog</span>()
+    {
+        <span class="prop">Name</span> = <span class="str">"Unknown"</span>;
+        <span class="prop">Age</span>  = <span class="num">0</span>;
+    }
+}
+
+<span class="cl">Dog</span> d = <span class="kw">new</span> <span class="cl">Dog</span>(); <span class="cm">// Name="Unknown", Age=0</span></pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div>Once you define <em>any</em> constructor with parameters, C# <strong>removes</strong> the auto-generated default one. You must write it explicitly if you still need it.</div></div>
+    </div>
+
+    <!-- Parameterized -->
+    <div class="tp" id="t2b">
+      <div class="ib info"><span class="ic">ℹ️</span><div>Pass data <em>at creation time</em>. This is the most commonly used type.</div></div>
+      <pre><span class="kw">class</span> <span class="cl">Dog</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span>;
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Age</span>;
+
+    <span class="cm">// Parameterized constructor</span>
+    <span class="kw">public</span> <span class="cl">Dog</span>(<span class="type">string</span> name, <span class="type">int</span> age)
+    {
+        <span class="prop">this</span>.<span class="prop">Name</span> = name;
+        <span class="prop">this</span>.<span class="prop">Age</span>  = age;
+    }
+}
+
+<span class="cl">Dog</span> rex  = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>,  <span class="num">3</span>);
+<span class="cl">Dog</span> luna = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Luna"</span>, <span class="num">1</span>);</pre>
+    </div>
+
+    <!-- Copy -->
+    <div class="tp" id="t2c">
+      <div class="ib info"><span class="ic">ℹ️</span><div>A <strong>copy constructor</strong> takes an instance of the same class and duplicates it.</div></div>
+      <pre><span class="kw">class</span> <span class="cl">Dog</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span>;
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Age</span>;
+
+    <span class="cm">// Copy constructor</span>
+    <span class="kw">public</span> <span class="cl">Dog</span>(<span class="cl">Dog</span> other)
+    {
+        <span class="prop">this</span>.<span class="prop">Name</span> = other.<span class="prop">Name</span>;
+        <span class="prop">this</span>.<span class="prop">Age</span>  = other.<span class="prop">Age</span>;
+    }
+}
+
+<span class="cl">Dog</span> original = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>, <span class="num">3</span>);
+<span class="cl">Dog</span> copy      = <span class="kw">new</span> <span class="cl">Dog</span>(original);
+<span class="cm">// copy.Name = "Rex", copy.Age = 3
+// They are SEPARATE objects</span></pre>
+    </div>
+
+    <!-- Static -->
+    <div class="tp" id="t2d">
+      <div class="ib info"><span class="ic">ℹ️</span><div>A <strong>static constructor</strong> runs <em>once</em> — before the first object is created. Used to initialise static (shared) data.</div></div>
+      <pre><span class="kw">class</span> <span class="cl">AppConfig</span>
+{
+    <span class="kw">public static</span> <span class="type">string</span> <span class="prop">Version</span>;
+    <span class="kw">public static</span> <span class="type">int</span>    <span class="prop">MaxUsers</span>;
+
+    <span class="cm">// Static constructor — no access modifier, no params</span>
+    <span class="kw">static</span> <span class="cl">AppConfig</span>()
+    {
+        <span class="prop">Version</span>  = <span class="str">"1.0"</span>;
+        <span class="prop">MaxUsers</span> = <span class="num">100</span>;
+    }
+}
+<span class="cm">// Runs automatically before first use</span></pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div>Static constructors: no access modifier, no parameters, called once automatically.</div></div>
+    </div>
+  </div>
+
+  <!-- Comparison grid -->
+  <div class="card">
+    <div class="ct" style="font-size:16px">Quick Comparison</div>
+    <div class="ctor-grid">
+      <div class="ctor-card">
+        <h4>Default</h4>
+        <p>No parameters<br><code>new Dog()</code></p>
+      </div>
+      <div class="ctor-card">
+        <h4>Parameterized</h4>
+        <p>Takes arguments<br><code>new Dog("Rex",3)</code></p>
+      </div>
+      <div class="ctor-card">
+        <h4>Copy</h4>
+        <p>Takes same type<br><code>new Dog(other)</code></p>
+      </div>
+      <div class="ctor-card">
+        <h4>Static</h4>
+        <p>Class-level, once<br><code>static Dog() {}</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 What happens to the auto-generated default constructor when you define a parameterized constructor?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,2)">It still works automatically</button>
+      <button class="qo" onclick="ans(this,true,2)">C# removes it — you must write it explicitly if needed</button>
+      <button class="qo" onclick="ans(this,false,2)">It becomes private</button>
+      <button class="qo" onclick="ans(this,false,2)">It gets converted to a static constructor</button>
+    </div>
+    <div class="qf" id="qf2"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 A static constructor has…</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,3)">public access modifier and parameters</button>
+      <button class="qo" onclick="ans(this,true,3)">No access modifier and no parameters</button>
+      <button class="qo" onclick="ans(this,false,3)">A return type of void</button>
+      <button class="qo" onclick="ans(this,false,3)">The same syntax as a regular method</button>
+    </div>
+    <div class="qf" id="qf3"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(1)">← Back</button>
+    <button class="btn btn-p" onclick="go(3)">Next: this &amp; Chaining →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 3 — this & Constructor Chaining ═══════ -->
+<section class="sec" id="s3">
+  <div class="card">
+    <div class="ct">🔗 <code>this</code> &amp; Constructor Chaining</div>
+    <div class="cs">Level 4 of 7</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t3a')">this keyword</button>
+      <button class="tab" onclick="st(this,'t3b')">Chaining</button>
+      <button class="tab" onclick="st(this,'t3c')">Properties</button>
+    </div>
+
+    <div class="tp active" id="t3a">
+      <h3>What is <code>this</code>?</h3>
+      <p><code>this</code> refers to the <strong>current instance</strong> of the class. Its most common use: disambiguate when a parameter has the same name as a field.</p>
+      <pre><span class="kw">class</span> <span class="cl">Car</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Model</span>;   <span class="cm">// field</span>
+
+    <span class="kw">public</span> <span class="cl">Car</span>(<span class="type">string</span> Model)  <span class="cm">// same name as field!</span>
+    {
+        <span class="prop">this</span>.<span class="prop">Model</span> = Model;
+        <span class="cm">//  ↑ field    ↑ parameter</span>
+    }
+}</pre>
+      <div class="ib tip"><span class="ic">💡</span><div>Without <code>this.</code>, both sides refer to the <em>parameter</em>, so the field would never be set.</div></div>
+    </div>
+
+    <div class="tp" id="t3b">
+      <h3>Constructor Chaining with <code>: this()</code></h3>
+      <p>Call one constructor from another to avoid repeating code.</p>
+      <pre><span class="kw">class</span> <span class="cl">Server</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Host</span>;
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Port</span>;
+    <span class="kw">public</span> <span class="type">bool</span>   <span class="prop">Secure</span>;
+
+    <span class="cm">// Full constructor</span>
+    <span class="kw">public</span> <span class="cl">Server</span>(<span class="type">string</span> host, <span class="type">int</span> port, <span class="type">bool</span> secure)
+    {
+        <span class="prop">Host</span>   = host;
+        <span class="prop">Port</span>   = port;
+        <span class="prop">Secure</span> = secure;
+    }
+
+    <span class="cm">// Chains to full constructor — default port 80</span>
+    <span class="kw">public</span> <span class="cl">Server</span>(<span class="type">string</span> host) : <span class="prop">this</span>(host, <span class="num">80</span>, <span class="kw">false</span>) { }
+
+    <span class="cm">// Chains — secure defaults to port 443</span>
+    <span class="kw">public</span> <span class="cl">Server</span>(<span class="type">string</span> host, <span class="kw">bool</span> secure)
+        : <span class="prop">this</span>(host, <span class="num">443</span>, secure) { }
+}
+
+<span class="cl">Server</span> s1 = <span class="kw">new</span> <span class="cl">Server</span>(<span class="str">"localhost"</span>);
+<span class="cl">Server</span> s2 = <span class="kw">new</span> <span class="cl">Server</span>(<span class="str">"api.app.com"</span>, <span class="kw">true</span>);</pre>
+      <div class="ib tip"><span class="ic">💡</span><div>The chained constructor runs <strong>first</strong>, then the body of the calling constructor.</div></div>
+    </div>
+
+    <div class="tp" id="t3c">
+      <h3>Properties vs Fields</h3>
+      <p>Best practice: use <strong>properties</strong> instead of public fields.</p>
+      <pre><span class="kw">class</span> <span class="cl">Person</span>
+{
+    <span class="cm">// Property (recommended)</span>
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="type">int</span>    <span class="prop">Age</span>  { <span class="kw">get</span>; <span class="kw">private set</span>; } <span class="cm">// read-only outside</span>
+
+    <span class="kw">public</span> <span class="cl">Person</span>(<span class="type">string</span> name, <span class="type">int</span> age)
+    {
+        <span class="prop">Name</span> = name;  <span class="cm">// same as this.Name = name</span>
+        <span class="prop">Age</span>  = age;
+    }
+}
+
+<span class="cm">// Modern C# — Primary Constructor (C# 12)</span>
+<span class="kw">class</span> <span class="cl">Point</span>(<span class="type">int</span> x, <span class="type">int</span> y)
+{
+    <span class="kw">public</span> <span class="type">int</span> <span class="prop">X</span> { <span class="kw">get</span>; } = x;
+    <span class="kw">public</span> <span class="type">int</span> <span class="prop">Y</span> { <span class="kw">get</span>; } = y;
+}</pre>
+    </div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 When should you use <code>this.Name = name</code> instead of just <code>Name = name</code>?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,4)">Always — it's required in all constructors</button>
+      <button class="qo" onclick="ans(this,true,4)">When the parameter name is the same as the field name</button>
+      <button class="qo" onclick="ans(this,false,4)">Only in static constructors</button>
+      <button class="qo" onclick="ans(this,false,4)">Never — they are identical</button>
+    </div>
+    <div class="qf" id="qf4"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 In constructor chaining with <code>: this(...)</code>, which constructor runs first?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,5)">The calling constructor's body</button>
+      <button class="qo" onclick="ans(this,true,5)">The chained constructor (the one in <code>: this(...)</code>)</button>
+      <button class="qo" onclick="ans(this,false,5)">They run simultaneously</button>
+      <button class="qo" onclick="ans(this,false,5)">The static constructor</button>
+    </div>
+    <div class="qf" id="qf5"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(2)">← Back</button>
+    <button class="btn btn-p" onclick="go(4)">Next: OOP Pillars →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 4 — OOP Pillars ═══════ -->
+<section class="sec" id="s4">
+  <div class="card">
+    <div class="ct">🏛️ The 4 Pillars of OOP</div>
+    <div class="cs">Level 5 of 7</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t4a')">Encapsulation</button>
+      <button class="tab" onclick="st(this,'t4b')">Inheritance</button>
+      <button class="tab" onclick="st(this,'t4c')">Polymorphism</button>
+      <button class="tab" onclick="st(this,'t4d')">Abstraction</button>
+    </div>
+
+    <div class="tp active" id="t4a">
+      <p><strong>Encapsulation</strong> — hide the internal state, expose only what's needed.</p>
+      <pre><span class="kw">class</span> <span class="cl">BankAccount</span>
+{
+    <span class="kw">private</span> <span class="type">decimal</span> _balance; <span class="cm">// hidden!</span>
+
+    <span class="kw">public</span> <span class="cl">BankAccount</span>(<span class="type">decimal</span> initial)
+    {
+        _balance = initial;
+    }
+
+    <span class="kw">public</span> <span class="type">void</span> <span class="fn">Deposit</span>(<span class="type">decimal</span> amount)
+    {
+        <span class="kw">if</span> (amount &gt; <span class="num">0</span>) _balance += amount;
+    }
+
+    <span class="kw">public</span> <span class="type">decimal</span> <span class="fn">GetBalance</span>() =&gt; _balance;
+}</pre>
+      <div class="ib tip"><span class="ic">💡</span><div>Nobody can set <code>_balance = -9999</code> directly. They must go through <code>Deposit()</code> which validates input.</div></div>
+    </div>
+
+    <div class="tp" id="t4b">
+      <p><strong>Inheritance</strong> — a child class gets all the fields and methods of its parent.</p>
+      <pre><span class="kw">class</span> <span class="cl">Animal</span>
+{
+    <span class="kw">public</span> <span class="type">string</span> <span class="prop">Name</span>;
+    <span class="kw">public</span> <span class="cl">Animal</span>(<span class="type">string</span> name) { <span class="prop">Name</span> = name; }
+    <span class="kw">public virtual void</span> <span class="fn">Speak</span>() =&gt; <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"..."</span>);
+}
+
+<span class="kw">class</span> <span class="cl">Dog</span> : <span class="cl">Animal</span>  <span class="cm">// ← inherits Animal</span>
+{
+    <span class="kw">public</span> <span class="cl">Dog</span>(<span class="type">string</span> name) : <span class="kw">base</span>(name) { } <span class="cm">// ← calls parent ctor</span>
+    <span class="kw">public override void</span> <span class="fn">Speak</span>() =&gt; <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Woof!"</span>);
+}
+
+<span class="cl">Dog</span> d = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>);
+d.<span class="fn">Speak</span>(); <span class="cm">// "Woof!"</span></pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div><code>: base(...)</code> calls the <em>parent</em> constructor. Always chain to the base if it requires parameters.</div></div>
+    </div>
+
+    <div class="tp" id="t4c">
+      <p><strong>Polymorphism</strong> — same method call, different behaviour depending on the actual type.</p>
+      <pre><span class="cl">Animal</span>[] animals = {
+    <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>),
+    <span class="kw">new</span> <span class="cl">Cat</span>(<span class="str">"Luna"</span>),
+    <span class="kw">new</span> <span class="cl">Bird</span>(<span class="str">"Tweety"</span>)
+};
+
+<span class="kw">foreach</span> (<span class="kw">var</span> a <span class="kw">in</span> animals)
+    a.<span class="fn">Speak</span>(); <span class="cm">// each calls its OWN Speak()</span>
+
+<span class="cm">// Output:
+// Woof!
+// Meow!
+// Tweet!</span></pre>
+    </div>
+
+    <div class="tp" id="t4d">
+      <p><strong>Abstraction</strong> — define a contract without implementation. Use <code>abstract</code> or <code>interface</code>.</p>
+      <pre><span class="kw">abstract class</span> <span class="cl">Shape</span>
+{
+    <span class="kw">public abstract double</span> <span class="fn">Area</span>();  <span class="cm">// no body</span>
+}
+
+<span class="kw">class</span> <span class="cl">Circle</span> : <span class="cl">Shape</span>
+{
+    <span class="kw">double</span> _r;
+    <span class="kw">public</span> <span class="cl">Circle</span>(<span class="kw">double</span> r) { _r = r; }
+    <span class="kw">public override double</span> <span class="fn">Area</span>() =&gt; Math.PI * _r * _r;
+}
+
+<span class="kw">class</span> <span class="cl">Square</span> : <span class="cl">Shape</span>
+{
+    <span class="kw">double</span> _s;
+    <span class="kw">public</span> <span class="cl">Square</span>(<span class="kw">double</span> s) { _s = s; }
+    <span class="kw">public override double</span> <span class="fn">Area</span>() =&gt; _s * _s;
+}</pre>
+    </div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 Which OOP pillar does making a field <code>private</code> represent?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,6)">Inheritance</button>
+      <button class="qo" onclick="ans(this,true,6)">Encapsulation</button>
+      <button class="qo" onclick="ans(this,false,6)">Polymorphism</button>
+      <button class="qo" onclick="ans(this,false,6)">Abstraction</button>
+    </div>
+    <div class="qf" id="qf6"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">🧠 How do you call the parent class constructor from a child constructor?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,7)"><code>: this()</code></button>
+      <button class="qo" onclick="ans(this,true,7)"><code>: base()</code></button>
+      <button class="qo" onclick="ans(this,false,7)"><code>parent()</code></button>
+      <button class="qo" onclick="ans(this,false,7)"><code>super()</code></button>
+    </div>
+    <div class="qf" id="qf7"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(3)">← Back</button>
+    <button class="btn btn-p" onclick="go(5)">Next: Syntax Cheat Sheet →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 5 — Cheat Sheet ═══════ -->
+<section class="sec" id="s5">
+  <div class="card">
+    <div class="ct">📋 Syntax Cheat Sheet</div>
+    <div class="cs">Level 6 of 7 — Save this page!</div>
+    <p style="color:var(--muted);font-size:13px">Every syntax pattern in one place. Refer back whenever you forget.</p>
+
+    <div class="cheat">
+      <div class="cheat-title">1 · Basic Class + Constructor</div>
+      <pre style="margin:0"><span class="kw">class</span> <span class="cl">ClassName</span>
+{
+    <span class="kw">public</span> <span class="type">Type</span> <span class="prop">Field</span>;          <span class="cm">// field</span>
+    <span class="kw">public</span> <span class="type">Type</span> <span class="prop">Prop</span> { <span class="kw">get; set;</span> } <span class="cm">// property</span>
+
+    <span class="kw">public</span> <span class="cl">ClassName</span>(<span class="type">Type</span> param)  <span class="cm">// constructor</span>
+    {
+        <span class="prop">this</span>.<span class="prop">Field</span> = param;
+    }
+}</pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">2 · All Constructor Types</div>
+      <pre style="margin:0"><span class="cm">// Default (no params)</span>
+<span class="kw">public</span> <span class="cl">MyClass</span>() { }
+
+<span class="cm">// Parameterized</span>
+<span class="kw">public</span> <span class="cl">MyClass</span>(<span class="type">string</span> x, <span class="type">int</span> y) { ... }
+
+<span class="cm">// Copy</span>
+<span class="kw">public</span> <span class="cl">MyClass</span>(<span class="cl">MyClass</span> other) { ... }
+
+<span class="cm">// Static (once, no modifier, no params)</span>
+<span class="kw">static</span> <span class="cl">MyClass</span>() { ... }</pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">3 · Constructor Chaining</div>
+      <pre style="margin:0"><span class="cm">// Call another ctor in same class</span>
+<span class="kw">public</span> <span class="cl">MyClass</span>(<span class="type">string</span> x) : <span class="prop">this</span>(x, <span class="num">0</span>) { }
+
+<span class="cm">// Call parent class ctor</span>
+<span class="kw">public</span> <span class="cl">Child</span>(<span class="type">string</span> x) : <span class="kw">base</span>(x) { }</pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">4 · Inheritance + Override</div>
+      <pre style="margin:0"><span class="kw">class</span> <span class="cl">Parent</span>
+{
+    <span class="kw">public virtual void</span> <span class="fn">Method</span>() { }
+}
+
+<span class="kw">class</span> <span class="cl">Child</span> : <span class="cl">Parent</span>
+{
+    <span class="kw">public override void</span> <span class="fn">Method</span>() { }
+}</pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">5 · Abstract Class &amp; Interface</div>
+      <pre style="margin:0"><span class="cm">// Abstract class</span>
+<span class="kw">abstract class</span> <span class="cl">Base</span>
+{
+    <span class="kw">public abstract void</span> <span class="fn">Do</span>();   <span class="cm">// must implement</span>
+    <span class="kw">public virtual  void</span> <span class="fn">Log</span>() { } <span class="cm">// optional override</span>
+}
+
+<span class="cm">// Interface</span>
+<span class="kw">interface</span> <span class="cl">IRunnable</span>
+{
+    <span class="kw">void</span> <span class="fn">Run</span>();
+}
+
+<span class="kw">class</span> <span class="cl">Task</span> : <span class="cl">Base</span>, <span class="cl">IRunnable</span>
+{
+    <span class="kw">public override void</span> <span class="fn">Do</span>()  { }
+    <span class="kw">public         void</span> <span class="fn">Run</span>() { }
+}</pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">6 · Access Modifiers Quick Ref</div>
+      <pre style="margin:0"><span class="kw">public</span>            <span class="cm">// accessible everywhere</span>
+<span class="kw">private</span>           <span class="cm">// only within this class</span>
+<span class="kw">protected</span>         <span class="cm">// this class + child classes</span>
+<span class="kw">internal</span>          <span class="cm">// same assembly/project</span>
+<span class="kw">protected internal</span> <span class="cm">// protected OR internal</span></pre>
+    </div>
+
+    <div class="cheat">
+      <div class="cheat-title">7 · Object Creation Patterns</div>
+      <pre style="margin:0"><span class="cm">// Standard</span>
+<span class="cl">Dog</span> d = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>, <span class="num">3</span>);
+
+<span class="cm">// var (type inferred)</span>
+<span class="kw">var</span> d = <span class="kw">new</span> <span class="cl">Dog</span>(<span class="str">"Rex"</span>, <span class="num">3</span>);
+
+<span class="cm">// Object initializer (sets properties)</span>
+<span class="kw">var</span> d = <span class="kw">new</span> <span class="cl">Dog</span> { <span class="prop">Name</span> = <span class="str">"Rex"</span>, <span class="prop">Age</span> = <span class="num">3</span> };
+
+<span class="cm">// Target-typed new (C# 9+)</span>
+<span class="cl">Dog</span> d = <span class="kw">new</span>(<span class="str">"Rex"</span>, <span class="num">3</span>);</pre>
+    </div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">✏️ Write the keyword used to call the parent class constructor (e.g. <code>: _____(args)</code>)</div>
+    <div class="fi-wrap">
+      <input class="fi-in" id="fi5" type="text" placeholder="keyword">
+      <button class="fi-btn" onclick="chkfi('fi5',['base'],'fi5f')">Check ✓</button>
+    </div>
+    <div class="qf" id="fi5f"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(4)">← Back</button>
+    <button class="btn btn-p" onclick="go(6)">Final: Hero Challenge →</button>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 6 — Hero Challenge ═══════ -->
+<section class="sec" id="s6">
+  <div class="card">
+    <div class="ct">🏆 Hero Challenge</div>
+    <div class="cs">Level 7 of 7 — All concepts combined</div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">1. What is wrong with this constructor?
+      <pre style="font-size:12px;margin:8px 0"><span class="kw">public void</span> <span class="cl">Dog</span>(<span class="type">string</span> name) { <span class="prop">Name</span> = name; }</pre>
+    </div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,8)">The parameter name is wrong</button>
+      <button class="qo" onclick="ans(this,true,8)">Constructors must not have a return type — remove <code>void</code></button>
+      <button class="qo" onclick="ans(this,false,8)">The access modifier should be <code>private</code></button>
+      <button class="qo" onclick="ans(this,false,8)">Nothing — it's correct</button>
+    </div>
+    <div class="qf" id="qf8"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">2. What is the output?
+      <pre style="font-size:12px;margin:8px 0"><span class="kw">class</span> <span class="cl">A</span>
+{
+    <span class="kw">public</span> <span class="cl">A</span>() { <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="str">"A "</span>); }
+}
+<span class="kw">class</span> <span class="cl">B</span> : <span class="cl">A</span>
+{
+    <span class="kw">public</span> <span class="cl">B</span>() { <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="str">"B"</span>); }
+}
+<span class="kw">new</span> <span class="cl">B</span>();</pre>
+    </div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,9)">B</button>
+      <button class="qo" onclick="ans(this,true,9)">A B</button>
+      <button class="qo" onclick="ans(this,false,9)">B A</button>
+      <button class="qo" onclick="ans(this,false,9)">Compile error</button>
+    </div>
+    <div class="qf" id="qf9"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">3. Which OOP concept does this demonstrate?
+      <pre style="font-size:12px;margin:8px 0"><span class="cl">Shape</span>[] s = { <span class="kw">new</span> <span class="cl">Circle</span>(), <span class="kw">new</span> <span class="cl">Square</span>() };
+<span class="kw">foreach</span> (<span class="kw">var</span> x <span class="kw">in</span> s) x.<span class="fn">Area</span>();</pre>
+    </div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,10)">Encapsulation</button>
+      <button class="qo" onclick="ans(this,false,10)">Inheritance</button>
+      <button class="qo" onclick="ans(this,true,10)">Polymorphism</button>
+      <button class="qo" onclick="ans(this,false,10)">Abstraction</button>
+    </div>
+    <div class="qf" id="qf10"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">4. What does <code>: this(x, 0)</code> do in a constructor definition?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,11)">Calls a method named <code>this</code></button>
+      <button class="qo" onclick="ans(this,true,11)">Chains to another constructor in the same class</button>
+      <button class="qo" onclick="ans(this,false,11)">Calls the parent class constructor</button>
+      <button class="qo" onclick="ans(this,false,11)">Creates a static initialiser</button>
+    </div>
+    <div class="qf" id="qf11"></div>
+  </div>
+
+  <div class="qc">
+    <div class="qq">5. Which access modifier makes a member accessible only in its own class?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,12)">public</button>
+      <button class="qo" onclick="ans(this,false,12)">protected</button>
+      <button class="qo" onclick="ans(this,true,12)">private</button>
+      <button class="qo" onclick="ans(this,false,12)">internal</button>
+    </div>
+    <div class="qf" id="qf12"></div>
+  </div>
+
+  <div id="comp-area"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-s" onclick="go(5)">← Back</button>
+    <button class="btn btn-p" onclick="showComp()">See My Score 🎯</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ── State ──────────────────────────────────────
+let cur = 0;
+const TOTAL = 7;
+const done = new Array(TOTAL).fill(false);
+
+const Q = {
+  0:  { a: false, d: false, ok: "Correct! A class is the blueprint; objects are instances created from it.", no: "Nope — a class is the template/blueprint. Each 'new' call creates a separate object." },
+  1:  { a: false, d: false, ok: "Correct! Constructors have no return type — not even void.", no: "Wrong — constructors have NO return type at all." },
+  2:  { a: false, d: false, ok: "Correct! C# removes the auto default constructor once you define any other.", no: "Wrong — C# removes the default one. You must re-add it manually." },
+  3:  { a: false, d: false, ok: "Correct! Static constructor: no modifier, no params, runs once.", no: "Wrong — static constructors have no access modifier and no parameters." },
+  4:  { a: false, d: false, ok: "Correct! 'this.' disambiguates when field and parameter share a name.", no: "Wrong — 'this.' is needed when the param name shadows the field name." },
+  5:  { a: false, d: false, ok: "Correct! The chained constructor always runs first, then the body.", no: "Wrong — the chained constructor (: this/base) runs first." },
+  6:  { a: false, d: false, ok: "Correct! Encapsulation = hiding data with private + controlled access.", no: "Wrong — hiding data with private is Encapsulation." },
+  7:  { a: false, d: false, ok: "Correct! 'base()' calls the parent (base) class constructor.", no: "Wrong — in C# you use 'base()', not 'super()' (that's Java)." },
+  8:  { a: false, d: false, ok: "Correct! Constructors must NOT have a return type like void.", no: "Wrong — constructors have no return type. Remove 'void'." },
+  9:  { a: false, d: false, ok: "Correct! Parent constructor always runs first, then child. Output: 'A B'.", no: "Wrong — parent (A) constructor runs first, so output is 'A B'." },
+  10: { a: false, d: false, ok: "Correct! Calling the same method name on different types = polymorphism.", no: "Wrong — same method, different behaviour by type = Polymorphism." },
+  11: { a: false, d: false, ok: "Correct! ': this(...)' chains to another constructor in the same class.", no: "Wrong — ': this(...)' calls another constructor in the same class. Use ': base(...)' for parent." },
+  12: { a: false, d: false, ok: "Correct! 'private' means only accessible inside the class itself.", no: "Wrong — 'private' restricts access to the class only." },
+};
+
+let sc = 0, sm = 0;
+
+function go(n) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  document.querySelectorAll('.nb').forEach((b,i) => b.classList.toggle('active', i===n));
+  cur = n; updProg(); window.scrollTo(0,0);
+}
+
+function updProg() {
+  done[cur] = true;
+  const d = done.filter(Boolean).length;
+  document.getElementById('prog').style.width = (d/TOTAL*100)+'%';
+  document.querySelectorAll('.nb').forEach((b,i) => {
+    if (done[i] && i!==cur) b.classList.add('done'); else if (i===cur) b.classList.remove('done');
+  });
+}
+
+function ans(btn, ok, qid) {
+  if (Q[qid].d) return;
+  Q[qid].d = true;
+  btn.closest('.qo-wrap').querySelectorAll('.qo').forEach(b => b.disabled=true);
+  sm++; document.getElementById('sm').textContent = sm;
+  if (ok) {
+    btn.classList.add('ok'); Q[qid].a=true; sc++;
+    document.getElementById('sv').textContent = sc;
+    fb('qf'+qid,'ok','✅ '+Q[qid].ok);
+  } else {
+    btn.classList.add('no'); fb('qf'+qid,'no','❌ '+Q[qid].no);
+  }
+}
+
+function fb(id, type, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.className = 'qf show '+type; }
+}
+
+function chkfi(inId, accepted, fbId) {
+  const val = document.getElementById(inId).value.trim().toLowerCase();
+  const ok = Array.isArray(accepted) ? accepted.map(a=>a.toLowerCase()).includes(val) : val===accepted.toLowerCase();
+  sm++; document.getElementById('sm').textContent = sm;
+  if (ok) {
+    sc++; document.getElementById('sv').textContent = sc;
+    fb(fbId,'ok','✅ Correct!');
+    document.getElementById(inId).disabled = true;
+  } else {
+    fb(fbId,'no','❌ Not quite — expected: '+accepted[0]);
+  }
+}
+
+function st(btn, panelId) {
+  const p = btn.closest('.card') || btn.closest('section');
+  p.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  p.querySelectorAll('.tp').forEach(tp => tp.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+function buildObj() {
+  const name = document.getElementById('ob-name').value || '...';
+  const age  = document.getElementById('ob-age').value  || '...';
+  const out  = document.getElementById('ob-out');
+  if (name==='...' && age==='...') {
+    out.textContent = '// Start typing above...';
+    return;
+  }
+  out.textContent =
+    `Person ${name.toLowerCase().replace(/\s/g,'')} =\n  new Person("${name}", ${age});\n\n// ${name.toLowerCase().replace(/\s/g,'')}.Name = "${name}"\n// ${name.toLowerCase().replace(/\s/g,'')}.Age  = ${age}`;
+}
+
+function showComp() {
+  const pct = sm>0 ? Math.round(sc/sm*100) : 0;
+  let icon,title,msg;
+  if (pct>=90){icon='🏆';title='OOP Hero';msg='Outstanding! You have mastered C# constructors and OOP.';}
+  else if(pct>=70){icon='🥈';title='OOP Pro';msg='Great! A couple of concepts to review — you\'re nearly there.';}
+  else if(pct>=50){icon='🥉';title='OOP Student';msg='Good progress — go back to the sections you missed.';}
+  else{icon='📚';title='Keep Going';msg='No problem — revisit each level and try again!';}
+
+  document.getElementById('comp-area').innerHTML = `
+    <div class="completion">
+      <div class="trophy">${icon}</div>
+      <h2>${title}</h2>
+      <p style="font-size:21px;color:var(--accent2);font-weight:700;margin:8px 0">${pct}% — ${sc}/${sm} correct</p>
+      <p style="color:var(--muted)">${msg}</p>
+      <div style="margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <span class="badge bdg-b">📦 Class/Object</span>
+        <span class="badge bdg-g">✍️ Ctor Syntax</span>
+        <span class="badge bdg-g">🔧 Ctor Types</span>
+        <span class="badge bdg-p">🔗 this/base</span>
+        <span class="badge bdg-y">🏛️ OOP Pillars</span>
+      </div>
+      <button class="btn btn-s" style="margin-top:20px" onclick="go(0);resetAll()">↺ Start Over</button>
+    </div>`;
+  document.getElementById('comp-area').scrollIntoView({behavior:'smooth'});
+}
+
+function resetAll() {
+  Object.keys(Q).forEach(k => { Q[k].a=false; Q[k].d=false; });
+  sc=0; sm=0;
+  document.getElementById('sv').textContent='0';
+  document.getElementById('sm').textContent='0';
+  document.querySelectorAll('.qo').forEach(b=>{b.disabled=false;b.classList.remove('ok','no')});
+  document.querySelectorAll('.qf').forEach(f=>{f.className='qf';f.textContent=''});
+  document.querySelectorAll('.fi-in').forEach(i=>i.disabled=false);
+  document.getElementById('comp-area').innerHTML='';
+}
+
+updProg();
+</script>
+</body>
+</html>
