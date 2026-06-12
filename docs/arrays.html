@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#7c3aed">
+<link rel="manifest" href="manifest.json">
+<title>Arrays · C# Hero</title>
+<style>
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;--accent:#7c3aed;--accent2:#a855f7;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;--text:#e2e8f0;--muted:#94a3b8;--border:#2d2d4e;--code:#0d1117}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;min-height:100vh}
+
+/* Top bar */
+.topbar{
+  background:#13131f;border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:100;
+}
+.back-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.topbar-info{flex:1;min-width:0}
+.topbar-title{font-size:15px;font-weight:700}
+.topbar-sub{font-size:11px;color:var(--muted)}
+.topbar-score{font-size:13px;font-weight:700;color:var(--accent2)}
+
+/* Level dots */
+.level-dots{
+  display:flex;gap:5px;padding:14px 16px 10px;
+  background:var(--card);border-bottom:1px solid var(--border);
+  overflow-x:auto;scrollbar-width:none;
+}
+.level-dots::-webkit-scrollbar{display:none}
+.dot{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
+  background:var(--bg);color:var(--muted);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;transition:all .2s;
+}
+.dot.active{border-color:var(--accent);background:var(--accent);color:#fff;transform:scale(1.1)}
+.dot.done{border-color:var(--green);background:#064e3b;color:var(--green)}
+
+main{padding:16px 15px 100px;max-width:600px;margin:0 auto}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px}
+.ct{font-size:18px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.cs{color:var(--muted);font-size:12px;margin-bottom:14px}
+
+/* Code */
+pre{background:var(--code);border:1px solid #2a2a4a;border-radius:12px;padding:14px;overflow-x:auto;font-size:13px;line-height:1.75;margin:10px 0;font-family:'Courier New',monospace}
+.kw{color:#ff79c6}.type{color:#8be9fd}.str{color:#f1fa8c}.num{color:#bd93f9}.cm{color:#6272a4;font-style:italic}.fn{color:#50fa7b}.prop{color:#ffb86c}
+code{background:var(--code);padding:2px 5px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#f1fa8c}
+
+/* Info boxes */
+.ib{border-radius:10px;padding:11px 13px;margin:10px 0;font-size:14px;display:flex;gap:9px;align-items:flex-start}
+.ib.tip{background:#1a2a1a;border:1px solid #2d4a2d}
+.ib.warn{background:#2a1f0a;border:1px solid #4a3a0d}
+.ib.danger{background:#2a0a0a;border:1px solid #4a1a1a}
+.ib .ic{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* Array visual */
+.av{display:flex;gap:5px;flex-wrap:wrap;margin:14px 0;justify-content:center}
+.ac{
+  width:54px;height:54px;border-radius:10px;border:2px solid var(--accent);
+  background:var(--card2);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:700;font-size:15px;transition:all .3s;
+  cursor:pointer;position:relative;
+}
+.ac .ix{font-size:10px;color:var(--muted);position:absolute;bottom:3px}
+.ac.hl{background:var(--accent);border-color:var(--accent2);color:#fff;transform:scale(1.1)}
+.ac.gr{background:#064e3b;border-color:var(--green)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tp{display:none}.tp.active{display:block}
+
+/* Quiz */
+.qc{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.qq{font-size:15px;font-weight:600;margin-bottom:12px}
+.qo-w{display:flex;flex-direction:column;gap:7px}
+.qo{padding:11px 13px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;text-align:left;transition:all .2s;width:100%}
+.qo:active:not(:disabled){transform:scale(.99)}
+.qo.ok{background:#064e3b;border-color:var(--green);color:var(--green)}
+.qo.no{background:#450a0a;border-color:var(--red);color:var(--red)}
+.qf{margin-top:9px;padding:10px;border-radius:9px;font-size:13px;display:none}
+.qf.show{display:block}
+.qf.ok{background:#064e3b;border:1px solid var(--green);color:var(--green)}
+.qf.no{background:#450a0a;border:1px solid var(--red);color:var(--red)}
+
+/* Fill */
+.fi-w{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.fi-in{background:var(--code);border:2px solid var(--accent);border-radius:8px;color:var(--text);font-family:'Courier New',monospace;font-size:13px;padding:6px 10px;width:130px}
+.fi-in:focus{outline:none;border-color:var(--accent2)}
+.fi-btn{padding:8px 13px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;cursor:pointer;font-weight:600}
+
+/* Slider */
+.sl-wrap{margin:12px 0}
+.sl-wrap label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+
+/* Buttons */
+.btn{padding:13px 22px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:active{transform:scale(.98)}
+.btn-s{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.brow{display:flex;gap:8px;justify-content:space-between;margin-top:18px}
+
+/* Progress bottom */
+.prog-bottom{
+  position:fixed;bottom:0;left:0;right:0;background:#13131f;
+  border-top:1px solid var(--border);padding:10px 16px max(10px,env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:12px;z-index:100;
+}
+.pb-bar{flex:1;height:6px;background:var(--border);border-radius:3px}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .4s}
+.pb-txt{font-size:13px;font-weight:700;color:var(--accent2);flex-shrink:0}
+
+/* Section hide/show */
+.sec{display:none}.sec.active{display:block;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+h3{font-size:16px;margin:14px 0 6px;color:var(--accent2)}
+p{margin-bottom:8px;font-size:14px}
+ul,ol{padding-left:18px;margin-bottom:8px}
+li{margin-bottom:3px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+  <div class="topbar-info">
+    <div class="topbar-title">📦 Arrays</div>
+    <div class="topbar-sub" id="lv-label">Level 1 of 8</div>
+  </div>
+  <div class="topbar-score">⭐ <span id="sc-v">0</span></div>
+</div>
+
+<div class="level-dots" id="dots"></div>
+
+<main>
+
+<!-- L0: What is an Array -->
+<section class="sec active" id="l0">
+  <div class="card">
+    <div class="ct">📦 What is an Array?</div>
+    <div class="cs">Fixed-size collection of same-type elements</div>
+    <p>An <strong>array</strong> stores many values under <em>one variable name</em>, in a numbered row of boxes.</p>
+    <div class="av" id="av0">
+      <div class="ac" onclick="hlCell(this,0,'42')"><span>42</span><span class="ix">[0]</span></div>
+      <div class="ac" onclick="hlCell(this,1,'17')"><span>17</span><span class="ix">[1]</span></div>
+      <div class="ac" onclick="hlCell(this,2,'99')"><span>99</span><span class="ix">[2]</span></div>
+      <div class="ac" onclick="hlCell(this,3,'5')"><span>5</span><span class="ix">[3]</span></div>
+      <div class="ac" onclick="hlCell(this,4,'73')"><span>73</span><span class="ix">[4]</span></div>
+    </div>
+    <p id="cell-out" style="text-align:center;color:var(--accent2);font-size:14px;min-height:18px"></p>
+    <div class="sl-wrap">
+      <label>Slide to highlight index: <strong id="sl-lbl">0</strong></label>
+      <input type="range" min="0" max="4" value="0" oninput="slCell(this.value)">
+    </div>
+    <pre><span class="cm">// Without array — messy</span>
+<span class="kw">int</span> s1=<span class="num">42</span>, s2=<span class="num">17</span>, s3=<span class="num">99</span>;
+
+<span class="cm">// With array — clean</span>
+<span class="kw">int</span>[] scores = { <span class="num">42</span>, <span class="num">17</span>, <span class="num">99</span> };</pre>
+    <div class="ib tip"><span class="ic">💡</span><div>Arrays start at index <strong>0</strong>. A 5-element array uses indices 0–4.</div></div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 What index does the first element of a C# array have?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,0)">1</button>
+      <button class="qo" onclick="qa(this,true,0)">0</button>
+      <button class="qo" onclick="qa(this,false,0)">-1</button>
+    </div>
+    <div class="qf" id="qf0"></div>
+  </div>
+  <div class="brow"><div></div><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L1: Declaring -->
+<section class="sec" id="l1">
+  <div class="card">
+    <div class="ct">✍️ Declaring &amp; Initialising</div>
+    <div class="cs">3 ways to create an array</div>
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t1a')">Way 1</button>
+      <button class="tab" onclick="st(this,'t1b')">Way 2</button>
+      <button class="tab" onclick="st(this,'t1c')">Way 3</button>
+      <button class="tab" onclick="st(this,'t1d')">Defaults</button>
+    </div>
+    <div class="tp active" id="t1a">
+      <p><strong>Declare then assign</strong></p>
+      <pre><span class="kw">int</span>[] nums = <span class="kw">new</span> <span class="kw">int</span>[<span class="num">3</span>];
+nums[<span class="num">0</span>] = <span class="num">10</span>;
+nums[<span class="num">1</span>] = <span class="num">20</span>;
+nums[<span class="num">2</span>] = <span class="num">30</span>;</pre>
+    </div>
+    <div class="tp" id="t1b">
+      <p><strong>Inline initializer</strong></p>
+      <pre><span class="kw">int</span>[] nums = <span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span> };</pre>
+    </div>
+    <div class="tp" id="t1c">
+      <p><strong>Shorthand (most common)</strong></p>
+      <pre><span class="kw">int</span>[] nums = { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span> };</pre>
+      <div class="ib tip"><span class="ic">💡</span><div>This is the one you'll use most often.</div></div>
+    </div>
+    <div class="tp" id="t1d">
+      <p>Without values, elements get <strong>defaults</strong>:</p>
+      <pre><span class="kw">int</span>[]    → 0
+<span class="kw">double</span>[] → 0.0
+<span class="kw">bool</span>[]   → false
+<span class="kw">string</span>[] → null</pre>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">✏️ What is <code>scores.Length</code> for <code>int[] scores = {10,20,30};</code>?</div>
+    <div class="fi-w">
+      <input class="fi-in" id="fi1" type="number" placeholder="number">
+      <button class="fi-btn" onclick="cf('fi1','3','fif1')">Check ✓</button>
+    </div>
+    <div class="qf" id="fif1"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L2: Accessing -->
+<section class="sec" id="l2">
+  <div class="card">
+    <div class="ct">🎯 Accessing Elements</div>
+    <div class="cs">Read, write, Length, ranges</div>
+    <p>Use <code>[]</code> to read or write elements.</p>
+    <pre><span class="kw">string</span>[] fruits = { <span class="str">"🍎"</span>, <span class="str">"🍌"</span>, <span class="str">"🍒"</span>, <span class="str">"📅"</span> };
+<span class="fn">Console</span>.<span class="fn">WriteLine</span>(fruits[<span class="num">0</span>]); <span class="cm">// 🍎</span>
+fruits[<span class="num">1</span>] = <span class="str">"🫐"</span>; <span class="cm">// change Banana to Blueberry</span></pre>
+    <p style="font-size:13px;color:var(--muted)">Tap a fruit:</p>
+    <div class="av">
+      <div class="ac" onclick="sf(this,0,'🍎 Apple')" style="cursor:pointer"><span>🍎</span><span class="ix">[0]</span></div>
+      <div class="ac" onclick="sf(this,1,'🍌 Banana')" style="cursor:pointer"><span>🍌</span><span class="ix">[1]</span></div>
+      <div class="ac" onclick="sf(this,2,'🍒 Cherry')" style="cursor:pointer"><span>🍒</span><span class="ix">[2]</span></div>
+      <div class="ac" onclick="sf(this,3,'📅 Date')" style="cursor:pointer"><span>📅</span><span class="ix">[3]</span></div>
+    </div>
+    <p id="fruit-out" style="text-align:center;color:var(--accent2);font-size:14px;min-height:18px"></p>
+    <h3>Last element shortcut</h3>
+    <pre><span class="kw">int</span>[] a = { <span class="num">5</span>,<span class="num">10</span>,<span class="num">15</span>,<span class="num">20</span> };
+a[a.<span class="prop">Length</span>-<span class="num">1</span>] <span class="cm">// 20 — classic</span>
+a[^<span class="num">1</span>]        <span class="cm">// 20 — C# 8+ shortcut</span>
+a[^<span class="num">2</span>]        <span class="cm">// 15</span></pre>
+    <div class="ib danger"><span class="ic">🚨</span><div><strong>IndexOutOfRangeException</strong> — accessing index ≥ Length crashes the program.</div></div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 <code>int[] a={10,20,30,40,50};</code> — what is <code>a[^2]</code>?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,1)">20</button>
+      <button class="qo" onclick="qa(this,true,1)">40</button>
+      <button class="qo" onclick="qa(this,false,1)">50</button>
+    </div>
+    <div class="qf" id="qf1"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L3: Loops -->
+<section class="sec" id="l3">
+  <div class="card">
+    <div class="ct">🔁 Loops</div>
+    <div class="cs">for / foreach / common patterns</div>
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t3a')">for</button>
+      <button class="tab" onclick="st(this,'t3b')">foreach</button>
+      <button class="tab" onclick="st(this,'t3c')">Patterns</button>
+    </div>
+    <div class="tp active" id="t3a">
+      <pre><span class="kw">int</span>[] s = { <span class="num">85</span>,<span class="num">92</span>,<span class="num">78</span> };
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i&lt;s.<span class="prop">Length</span>; i++)
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(s[i]);</pre>
+      <div class="ib tip"><span class="ic">💡</span><div>Use <code>for</code> when you need the <strong>index</strong> or want to modify elements.</div></div>
+    </div>
+    <div class="tp" id="t3b">
+      <pre><span class="kw">string</span>[] c = { <span class="str">"Red"</span>,<span class="str">"Green"</span>,<span class="str">"Blue"</span> };
+<span class="kw">foreach</span> (<span class="kw">string</span> color <span class="kw">in</span> c)
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(color);</pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div><code>foreach</code> is <strong>read-only</strong> — you can't modify array elements through the loop variable.</div></div>
+    </div>
+    <div class="tp" id="t3c">
+      <pre><span class="cm">// Sum</span>
+<span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">foreach</span> (<span class="kw">int</span> n <span class="kw">in</span> arr) sum += n;
+
+<span class="cm">// Max</span>
+<span class="kw">int</span> max = arr[<span class="num">0</span>];
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">1</span>; i&lt;arr.<span class="prop">Length</span>; i++)
+    <span class="kw">if</span> (arr[i] &gt; max) max = arr[i];
+
+<span class="cm">// Reverse loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> i=arr.<span class="prop">Length</span>-<span class="num">1</span>; i&gt;=<span class="num">0</span>; i--)
+    <span class="fn">Console</span>.<span class="fn">Write</span>(arr[i]+<span class="str">" "</span>);</pre>
+    </div>
+  </div>
+  <!-- Loop visualizer -->
+  <div class="card">
+    <div class="ct" style="font-size:16px">🎮 Loop Visualizer</div>
+    <div class="av" id="lv-arr">
+      <div class="ac"><span>3</span><span class="ix">[0]</span></div>
+      <div class="ac"><span>7</span><span class="ix">[1]</span></div>
+      <div class="ac"><span>2</span><span class="ix">[2]</span></div>
+      <div class="ac"><span>9</span><span class="ix">[3]</span></div>
+      <div class="ac"><span>1</span><span class="ix">[4]</span></div>
+    </div>
+    <p id="lv-status" style="text-align:center;font-size:13px;color:var(--muted)">Press Play</p>
+    <div style="text-align:center;display:flex;gap:10px;justify-content:center;margin-top:8px">
+      <button class="btn btn-p" style="padding:10px 18px" onclick="startLV()">▶ Play</button>
+      <button class="btn btn-s" style="padding:10px 18px" onclick="resetLV()">↺</button>
+    </div>
+    <p id="lv-sum" style="text-align:center;font-size:15px;color:var(--green);margin-top:8px;min-height:22px"></p>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 Which loop is read-only and can't modify array elements?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,2)">for</button>
+      <button class="qo" onclick="qa(this,true,2)">foreach</button>
+      <button class="qo" onclick="qa(this,false,2)">while</button>
+    </div>
+    <div class="qf" id="qf2"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L4: Array Methods -->
+<section class="sec" id="l4">
+  <div class="card">
+    <div class="ct">🛠️ Array Methods</div>
+    <div class="cs">Sort, Search, Copy, LINQ</div>
+    <div class="tabs">
+      <button class="tab active" onclick="st(this,'t4a')">Sort/Reverse</button>
+      <button class="tab" onclick="st(this,'t4b')">Search</button>
+      <button class="tab" onclick="st(this,'t4c')">LINQ</button>
+    </div>
+    <div class="tp active" id="t4a">
+      <pre><span class="kw">int</span>[] a = { <span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span> };
+<span class="fn">Array</span>.<span class="fn">Sort</span>(a);       <span class="cm">// [1,2,5,8]</span>
+<span class="fn">Array</span>.<span class="fn">Reverse</span>(a);    <span class="cm">// [8,5,2,1]</span>
+<span class="fn">Array</span>.<span class="fn">Fill</span>(a, <span class="num">0</span>);    <span class="cm">// [0,0,0,0]</span></pre>
+    </div>
+    <div class="tp" id="t4b">
+      <pre><span class="kw">int</span>[] a = { <span class="num">1</span>,<span class="num">2</span>,<span class="num">5</span>,<span class="num">8</span> }; <span class="cm">// sorted!</span>
+<span class="kw">int</span> i = <span class="fn">Array</span>.<span class="fn">BinarySearch</span>(a, <span class="num">5</span>); <span class="cm">// 2</span>
+<span class="kw">int</span> j = <span class="fn">Array</span>.<span class="fn">IndexOf</span>(a, <span class="num">99</span>);     <span class="cm">// -1 (not found)</span></pre>
+      <div class="ib warn"><span class="ic">⚠️</span><div>BinarySearch requires the array to be <strong>sorted first</strong>.</div></div>
+    </div>
+    <div class="tp" id="t4c">
+      <pre><span class="cm">// using System.Linq;</span>
+<span class="kw">int</span>[] n = { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span> };
+n.<span class="fn">Sum</span>()              <span class="cm">// 15</span>
+n.<span class="fn">Max</span>()              <span class="cm">// 5</span>
+n.<span class="fn">Average</span>()          <span class="cm">// 3.0</span>
+n.<span class="fn">Where</span>(x=>x%<span class="num">2</span>==<span class="num">0</span>).<span class="fn">ToArray</span>() <span class="cm">// [2,4]</span></pre>
+    </div>
+  </div>
+  <div class="qc">
+    <div class="qq">✏️ What does <code>Array.IndexOf(arr, value)</code> return when not found?</div>
+    <div class="fi-w">
+      <input class="fi-in" id="fi4" type="number" placeholder="number">
+      <button class="fi-btn" onclick="cf('fi4','-1','fif4')">Check ✓</button>
+    </div>
+    <div class="qf" id="fif4"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L5: 2D -->
+<section class="sec" id="l5">
+  <div class="card">
+    <div class="ct">🔲 Multi-Dimensional</div>
+    <div class="cs">2D arrays — grids and matrices</div>
+    <pre><span class="kw">int</span>[,] m = {
+    { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span> },
+    { <span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span> },
+    { <span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span> }
+};
+m[<span class="num">1</span>,<span class="num">2</span>] <span class="cm">// 6  (row 1, col 2)</span>
+m.<span class="fn">GetLength</span>(<span class="num">0</span>) <span class="cm">// 3 rows</span>
+m.<span class="fn">GetLength</span>(<span class="num">1</span>) <span class="cm">// 3 cols</span></pre>
+    <p style="font-size:13px;color:var(--muted)">Tap a cell:</p>
+    <div id="matrix-g" style="display:grid;grid-template-columns:repeat(3,56px);gap:5px;justify-content:center;margin:12px 0"></div>
+    <p id="mat-out" style="text-align:center;color:var(--accent2);font-size:13px;min-height:18px"></p>
+    <h3>Loop a 2D array</h3>
+    <pre><span class="kw">for</span>(<span class="kw">int</span> r=<span class="num">0</span>; r&lt;m.<span class="fn">GetLength</span>(<span class="num">0</span>); r++)
+  <span class="kw">for</span>(<span class="kw">int</span> c=<span class="num">0</span>; c&lt;m.<span class="fn">GetLength</span>(<span class="num">1</span>); c++)
+    <span class="fn">Console</span>.<span class="fn">Write</span>(m[r,c]+<span class="str">" "</span>);</pre>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 <code>int[,] m = new int[4,6];</code> — what is <code>m.GetLength(1)</code>?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,3)">4</button>
+      <button class="qo" onclick="qa(this,true,3)">6</button>
+      <button class="qo" onclick="qa(this,false,3)">24</button>
+    </div>
+    <div class="qf" id="qf3"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L6: Jagged -->
+<section class="sec" id="l6">
+  <div class="card">
+    <div class="ct">🪜 Jagged Arrays</div>
+    <div class="cs">Array of arrays — each row any length</div>
+    <pre><span class="kw">int</span>[][] jag = <span class="kw">new</span> <span class="kw">int</span>[<span class="num">3</span>][];
+jag[<span class="num">0</span>] = <span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">1</span>,<span class="num">2</span> };
+jag[<span class="num">1</span>] = <span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span> };
+jag[<span class="num">2</span>] = <span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">7</span> };
+
+jag[<span class="num">1</span>][<span class="num">2</span>] <span class="cm">// 5  ← [row][col]</span></pre>
+    <div id="jag-v" style="margin:12px 0"></div>
+    <div class="ib tip"><span class="ic">💡</span><div><strong>[,]</strong> = rectangular (all rows same length)<br><strong>[][]</strong> = jagged (each row any length)</div></div>
+  </div>
+  <div class="qc">
+    <div class="qq">🧠 How do you access row 2, col 3 in a jagged array <code>jag</code>?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,4)"><code>jag[2,3]</code></button>
+      <button class="qo" onclick="qa(this,true,4)"><code>jag[2][3]</code></button>
+      <button class="qo" onclick="qa(this,false,4)"><code>jag.Get(2,3)</code></button>
+    </div>
+    <div class="qf" id="qf4"></div>
+  </div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="next()">Next →</button></div>
+</section>
+
+<!-- L7: Final -->
+<section class="sec" id="l7">
+  <div class="card">
+    <div class="ct">🏆 Array Hero Challenge</div>
+    <div class="cs">Final boss — all topics combined</div>
+  </div>
+  <div class="qc">
+    <div class="qq">1. <code>int[] a={10,20,30}; a[1]=a[0]+a[2];</code> — what is <code>a[1]</code>?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,5)">20</button>
+      <button class="qo" onclick="qa(this,true,5)">40</button>
+      <button class="qo" onclick="qa(this,false,5)">30</button>
+    </div>
+    <div class="qf" id="qf5"></div>
+  </div>
+  <div class="qc">
+    <div class="qq">2. After <code>Array.Sort({5,3,1,4,2})</code>, what is index [0]?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,true,6)">1</button>
+      <button class="qo" onclick="qa(this,false,6)">5</button>
+      <button class="qo" onclick="qa(this,false,6)">3</button>
+    </div>
+    <div class="qf" id="qf6"></div>
+  </div>
+  <div class="qc">
+    <div class="qq">3. Which declares a 2D rectangular array?</div>
+    <div class="qo-w">
+      <button class="qo" onclick="qa(this,false,7)"><code>int[][] m = new int[3][4];</code></button>
+      <button class="qo" onclick="qa(this,true,7)"><code>int[,] m = new int[3,4];</code></button>
+      <button class="qo" onclick="qa(this,false,7)"><code>int m[3,4];</code></button>
+    </div>
+    <div class="qf" id="qf7"></div>
+  </div>
+  <div id="final-area"></div>
+  <div class="brow"><button class="btn btn-s" onclick="prev()">← Back</button><button class="btn btn-p" onclick="showFinal()">See Score 🎯</button></div>
+</section>
+
+</main>
+
+<div class="prog-bottom">
+  <div class="pb-bar"><div class="pb-fill" id="pb" style="width:0%"></div></div>
+  <div class="pb-txt" id="pb-txt">0 / 8</div>
+</div>
+
+<script>
+const LEVELS = 8;
+let cur = 0;
+const done = new Array(LEVELS).fill(false);
+const Q = {
+  0:{d:false,ok:"Correct! Zero-indexed.",no:"Arrays start at 0."},
+  1:{d:false,ok:"Correct! ^2 = second from end = arr[3] = 40.",no:"^2 means 2nd from end → 40."},
+  2:{d:false,ok:"Correct! foreach is read-only.",no:"foreach is the read-only one."},
+  3:{d:false,ok:"Correct! GetLength(1) = columns = 6.",no:"GetLength(0)=rows, GetLength(1)=cols."},
+  4:{d:false,ok:"Correct! Jagged uses [][] syntax.",no:"Jagged arrays use jag[row][col]."},
+  5:{d:false,ok:"Correct! 10+30 = 40.",no:"a[0]+a[2] = 10+30 = 40."},
+  6:{d:false,ok:"Correct! Sort ascending → smallest first.",no:"Sort ascending → 1 is first."},
+  7:{d:false,ok:"Correct! [,] is the 2D rectangular syntax.",no:"[,] = rectangular, [][] = jagged."},
+};
+let sc=0, sm=0;
+
+// Build dots
+const dotC = document.getElementById('dots');
+for(let i=0;i<LEVELS;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.textContent=i+1;
+  d.onclick=()=>goTo(i);
+  dotC.appendChild(d);
+}
+
+function goTo(n){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('l'+n).classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('active',i===n);
+    if(done[i]&&i!==n)d.classList.add('done');
+  });
+  cur=n;
+  document.getElementById('lv-label').textContent='Level '+(n+1)+' of '+LEVELS;
+  updProg();
+  window.scrollTo(0,0);
+  dotC.children[n].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function next(){if(cur<LEVELS-1)goTo(cur+1);}
+function prev(){if(cur>0)goTo(cur-1);}
+
+function updProg(){
+  done[cur]=true;
+  const d=done.filter(Boolean).length;
+  document.getElementById('pb').style.width=(d/LEVELS*100)+'%';
+  document.getElementById('pb-txt').textContent=d+' / '+LEVELS;
+  const pct=Math.round(d/LEVELS*100);
+  localStorage.setItem('arr_pct',pct);
+  localStorage.setItem('arr_score',sc);
+}
+
+function qa(btn,ok,qid){
+  if(Q[qid].d)return;
+  Q[qid].d=true;
+  btn.closest('.qo-w').querySelectorAll('.qo').forEach(b=>b.disabled=true);
+  sm++;
+  if(ok){btn.classList.add('ok');sc++;document.getElementById('sc-v').textContent=sc;fb('qf'+qid,'ok','✅ '+Q[qid].ok);}
+  else{btn.classList.add('no');fb('qf'+qid,'no','❌ '+Q[qid].no);}
+  localStorage.setItem('arr_score',sc);
+}
+
+function fb(id,t,m){const e=document.getElementById(id);if(e){e.textContent=m;e.className='qf show '+t;}}
+
+function cf(ii,exp,fi){
+  const v=document.getElementById(ii).value.trim();
+  sm++;
+  if(v===exp){sc++;document.getElementById('sc-v').textContent=sc;fb(fi,'ok','✅ Correct! Answer is '+exp+'.');document.getElementById(ii).disabled=true;}
+  else{fb(fi,'no','❌ The answer is '+exp+'.');}
+  localStorage.setItem('arr_score',sc);
+}
+
+function st(btn,pid){
+  const p=btn.closest('.card');
+  p.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  p.querySelectorAll('.tp').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pid).classList.add('active');
+}
+
+// Cell highlight
+const ivs=[42,17,99,5,73];
+let lastCell=null;
+function hlCell(el,idx,val){
+  document.querySelectorAll('#av0 .ac').forEach(c=>c.classList.remove('hl'));
+  el.classList.add('hl');
+  document.getElementById('cell-out').textContent='Index ['+idx+'] = '+val;
+}
+function slCell(idx){
+  document.getElementById('sl-lbl').textContent=idx;
+  document.querySelectorAll('#av0 .ac').forEach((c,i)=>c.classList.toggle('hl',i==idx));
+  document.getElementById('cell-out').textContent='Index ['+idx+'] = '+ivs[idx];
+}
+let lastFruit=null;
+function sf(el,idx,name){if(lastFruit)lastFruit.classList.remove('hl');el.classList.add('hl');lastFruit=el;document.getElementById('fruit-out').textContent='fruits['+idx+'] = "'+name+'"';}
+
+// Loop visualizer
+const lvData=[3,7,2,9,1];let lvTimer=null,lvStep=0,lvSum=0;
+function startLV(){
+  resetLV();
+  lvTimer=setInterval(()=>{
+    const cells=document.querySelectorAll('#lv-arr .ac');
+    cells.forEach(c=>c.classList.remove('hl'));
+    if(lvStep<lvData.length){
+      cells[lvStep].classList.add('hl');lvSum+=lvData[lvStep];
+      document.getElementById('lv-status').textContent='i='+lvStep+' → arr['+lvStep+']='+lvData[lvStep]+' → sum='+lvSum;
+      lvStep++;
+    } else {
+      clearInterval(lvTimer);
+      document.getElementById('lv-status').textContent='Done!';
+      document.getElementById('lv-sum').textContent='Total sum = '+lvSum;
+    }
+  },700);
+}
+function resetLV(){clearInterval(lvTimer);lvStep=0;lvSum=0;document.querySelectorAll('#lv-arr .ac').forEach(c=>c.classList.remove('hl'));document.getElementById('lv-status').textContent='Press Play';document.getElementById('lv-sum').textContent='';}
+
+// Matrix
+(function(){
+  const data=[[1,2,3],[4,5,6],[7,8,9]];
+  const g=document.getElementById('matrix-g');
+  data.forEach((row,r)=>row.forEach((v,c)=>{
+    const el=document.createElement('div');
+    el.className='ac';el.style.cursor='pointer';el.style.width='56px';el.style.height='56px';
+    el.innerHTML='<span>'+v+'</span><span class="ix">['+r+','+c+']</span>';
+    el.onclick=function(){document.querySelectorAll('#matrix-g .ac').forEach(x=>x.classList.remove('hl'));this.classList.add('hl');document.getElementById('mat-out').textContent='m['+r+','+c+'] = '+v;};
+    g.appendChild(el);
+  }));
+})();
+
+// Jagged visual
+(function(){
+  const rows=[[1,2],[3,4,5,6],[7]];
+  const c=document.getElementById('jag-v');
+  rows.forEach((row,r)=>{
+    const d=document.createElement('div');d.className='av';d.style.justifyContent='flex-start';d.style.marginBottom='6px';
+    row.forEach((v,ci)=>{const el=document.createElement('div');el.className='ac';el.style.borderColor=['#a855f7','#3b82f6','#10b981'][r];el.innerHTML='<span>'+v+'</span><span class="ix">['+r+']['+ci+']</span>';d.appendChild(el);});
+    const lbl=document.createElement('span');lbl.style='color:var(--muted);font-size:12px;align-self:center;margin-left:6px';lbl.textContent='len='+row.length;d.appendChild(lbl);
+    c.appendChild(d);
+  });
+})();
+
+function showFinal(){
+  const pct=sm>0?Math.round(sc/sm*100):0;
+  const icon=pct>=90?'🏆':pct>=70?'🥈':'🥉';
+  const msg=pct>=90?'Array Hero! Outstanding!':pct>=70?'Array Pro! Almost perfect.':'Keep going — review and retry!';
+  localStorage.setItem('arr_pct',100);
+  document.getElementById('final-area').innerHTML=`<div style="text-align:center;padding:30px 16px;background:linear-gradient(135deg,#1a0533,#0a1628);border-radius:18px;border:1px solid var(--accent);margin:14px 0"><div style="font-size:52px;margin-bottom:10px">${icon}</div><h2 style="color:var(--accent2);font-size:22px">Array Hero!</h2><p style="font-size:20px;color:var(--accent2);font-weight:700;margin:8px 0">${pct}% — ${sc}/${sm}</p><p style="color:var(--muted);font-size:14px">${msg}</p><a href="index.html" style="display:inline-block;margin-top:16px;padding:12px 22px;background:var(--accent);color:#fff;border-radius:12px;text-decoration:none;font-weight:700">← Back to Home</a></div>`;
+  document.getElementById('final-area').scrollIntoView({behavior:'smooth'});
+}
+
+updProg();
+</script>
+</body>
+</html>
