@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="he" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity C# Typing Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>Unity C# ⌨</h1>
+            <p>Typing Practice</p>
+        </div>
+        <div class="lesson-list" id="lesson-list"></div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="main">
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="wpm">0</span>
+                <span class="stat-label">WPM</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="accuracy">100%</span>
+                <span class="stat-label">דיוק</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="timer">0:00</span>
+                <span class="stat-label">זמן</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="progress-pct">0%</span>
+                <span class="stat-label">התקדמות</span>
+            </div>
+        </div>
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+            <div class="lesson-meta">
+                <span class="lesson-category" id="lesson-category"></span>
+                <h2 class="lesson-title" id="lesson-title"></h2>
+                <p class="lesson-desc" id="lesson-desc"></p>
+                <div class="difficulty-stars" id="difficulty-stars"></div>
+            </div>
+            <div class="lesson-controls">
+                <button id="btn-restart" class="btn btn-secondary">↺ מחדש</button>
+                <button id="btn-next" class="btn btn-primary">הבא ›</button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Code Display -->
+        <div class="code-container">
+            <div class="code-display" id="code-display"></div>
+        </div>
+
+        <!-- Hint -->
+        <div class="hint" id="hint">לחץ על מקש כלשהו להתחלה</div>
+
+        <!-- Completion Overlay -->
+        <div class="completion" id="completion">
+            <div class="completion-card">
+                <h2>✓ שיעור הושלם!</h2>
+                <div class="completion-stars" id="final-stars">☆☆☆</div>
+                <div class="completion-stats">
+                    <div class="completion-stat">
+                        <span class="completion-value" id="final-wpm">0</span>
+                        <span class="completion-label">WPM</span>
+                    </div>
+                    <div class="completion-stat">
+                        <span class="completion-value" id="final-accuracy">100%</span>
+                        <span class="completion-label">דיוק</span>
+                    </div>
+                    <div class="completion-stat">
+                        <span class="completion-value" id="final-time">0:00</span>
+                        <span class="completion-label">זמן</span>
+                    </div>
+                </div>
+                <div class="completion-buttons">
+                    <button id="btn-completion-retry" class="btn btn-secondary">↺ שוב</button>
+                    <button id="btn-completion-next" class="btn btn-primary">הבא ›</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="lessons.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
