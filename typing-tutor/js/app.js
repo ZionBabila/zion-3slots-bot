@@ -249,13 +249,10 @@ function handleInput(e) {
 
 function handleKeydown(e) {
   if (state.finished) return;
-  const input = document.getElementById("hidden-input");
 
   if (e.key === "Enter") {
-    e.preventDefault();
-    if (state.fullText[state.typed.length] === "\n") {
-      input.value += "\n";
-      handleInput({ target: input });
+    if (state.fullText[state.typed.length] !== "\n") {
+      e.preventDefault();
     }
   } else if (e.key === "Tab") {
     e.preventDefault();
