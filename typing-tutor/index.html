@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>מקליד C# ל-Unity</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>⌨️ מקליד C# ל-Unity</h1>
+    <div class="stats-bar">
+      <div class="stat"><span id="stat-wpm">0</span><label>מילים/דקה</label></div>
+      <div class="stat"><span id="stat-acc">100%</span><label>דיוק</label></div>
+      <div class="stat"><span id="stat-errors">0</span><label>שגיאות</label></div>
+      <div class="stat"><span id="stat-progress">0%</span><label>התקדמות</label></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar" id="lesson-list"></aside>
+
+    <section class="main-panel">
+      <div class="lesson-header">
+        <h2 id="lesson-title">בחר שיעור</h2>
+        <p id="lesson-desc"></p>
+      </div>
+
+      <div class="code-stage">
+        <pre id="code-display" dir="ltr"></pre>
+        <input id="hidden-input" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      </div>
+
+      <div class="result-panel" id="result-panel" hidden>
+        <h3>🎉 שיעור הושלם!</h3>
+        <p id="result-text"></p>
+        <button id="btn-next">לשיעור הבא ➜</button>
+        <button id="btn-retry">נסה שוב</button>
+      </div>
+
+      <div class="keyboard" id="keyboard" dir="ltr"></div>
+    </section>
+  </main>
+
+  <script src="js/lessons.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
