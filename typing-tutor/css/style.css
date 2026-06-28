@@ -128,13 +128,40 @@ body {
   border: 1px solid var(--accent);
 }
 
+.keyboard-panel { margin-top: 24px; }
+
+.keyboard-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  min-height: 28px;
+}
+
+.finger-label { color: var(--accent); font-size: 0.85rem; font-weight: bold; }
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #3a3a52;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-secondary:hover { border-color: var(--accent); }
+
 .keyboard {
-  margin-top: 24px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   align-items: center;
+  transition: opacity 0.2s, max-height 0.2s;
 }
+
+body.blind-mode .keyboard { display: none; }
+body.blind-mode .finger-label { visibility: hidden; }
 
 .kb-row { display: flex; gap: 6px; }
 
@@ -147,11 +174,23 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  color: var(--muted);
+  color: var(--text);
+  border-bottom: 3px solid transparent;
 }
 
 .key.wide { min-width: 70px; }
 .key.active { background: var(--key-active); color: #102; }
+
+/* Finger-zone color guide, matching the typical touch-typing chart. */
+.key.finger-l-pinky  { border-bottom-color: #f56565; }
+.key.finger-l-ring    { border-bottom-color: #ed8936; }
+.key.finger-l-middle  { border-bottom-color: #ecc94b; }
+.key.finger-l-index   { border-bottom-color: #48bb78; }
+.key.finger-r-index   { border-bottom-color: #4fd1c5; }
+.key.finger-r-middle  { border-bottom-color: #4299e1; }
+.key.finger-r-ring    { border-bottom-color: #9f7aea; }
+.key.finger-r-pinky   { border-bottom-color: #ed64a6; }
+.key.finger-thumb     { border-bottom-color: var(--muted); }
 
 @media (max-width: 720px) {
   .layout { flex-direction: column; }

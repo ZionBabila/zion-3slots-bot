@@ -8,6 +8,39 @@ const KEYBOARD_ROWS = [
   ["Space"],
 ];
 
+// Standard touch-typing finger assignment per key, for the blind-typing guide.
+const FINGER_MAP = {
+  "`": "l-pinky", "1": "l-pinky", "tab": "l-pinky", "caps": "l-pinky", "shift": "l-pinky", "z": "l-pinky", "q": "l-pinky", "a": "l-pinky",
+  "2": "l-ring", "w": "l-ring", "s": "l-ring", "x": "l-ring",
+  "3": "l-middle", "e": "l-middle", "d": "l-middle", "c": "l-middle",
+  "4": "l-index", "5": "l-index", "r": "l-index", "t": "l-index", "f": "l-index", "g": "l-index", "v": "l-index", "b": "l-index",
+  "6": "r-index", "7": "r-index", "y": "r-index", "u": "r-index", "h": "r-index", "j": "r-index", "n": "r-index", "m": "r-index",
+  "8": "r-middle", "i": "r-middle", "k": "r-middle", ",": "r-middle",
+  "9": "r-ring", "o": "r-ring", "l": "r-ring", ".": "r-ring",
+  "0": "r-pinky", "-": "r-pinky", "=": "r-pinky", "p": "r-pinky", "[": "r-pinky", "]": "r-pinky", ";": "r-pinky", "'": "r-pinky", "/": "r-pinky",
+  "space": "thumb",
+};
+
+// Shifted symbols map to the same physical key as their unshifted base character.
+const SHIFT_SYMBOL_MAP = {
+  "{": "[", "}": "]", "(": "9", ")": "0", "<": ",", ">": ".",
+  ":": ";", '"': "'", "_": "-", "+": "=", "?": "/", "!": "1",
+  "@": "2", "#": "3", "$": "4", "%": "5", "^": "6", "&": "7",
+  "*": "8", "~": "`", "|": "\\",
+};
+
+const FINGER_LABELS = {
+  "l-pinky": "אצבע זרת — יד שמאל",
+  "l-ring": "אצבע קמיצה — יד שמאל",
+  "l-middle": "אצבע אמה — יד שמאל",
+  "l-index": "אצבע מורה — יד שמאל",
+  "r-index": "אצבע מורה — יד ימין",
+  "r-middle": "אצבע אמה — יד ימין",
+  "r-ring": "אצבע קמיצה — יד ימין",
+  "r-pinky": "אצבע זרת — יד ימין",
+  "thumb": "אגודל",
+};
+
 const state = {
   lessonIndex: 0,
   fullText: "",
@@ -67,7 +100,8 @@ function buildKeyboard() {
     rowEl.className = "kb-row";
     row.forEach((k) => {
       const keyEl = document.createElement("div");
-      keyEl.className = "key" + (k.length > 1 ? " wide" : "");
+      const finger = FINGER_MAP[k.toLowerCase()];
+      keyEl.className = "key" + (k.length > 1 ? " wide" : "") + (finger ? ` finger-${finger}` : "");
       keyEl.dataset.key = k.toLowerCase();
       keyEl.textContent = k === "Space" ? "␣" : k;
       rowEl.appendChild(keyEl);
@@ -78,15 +112,27 @@ function buildKeyboard() {
 
 function highlightNextKey(char) {
   document.querySelectorAll(".key.active").forEach((k) => k.classList.remove("active"));
-  if (char === undefined) return;
+  const fingerLabel = document.getElementById("finger-label");
+  if (char === undefined) {
+    fingerLabel.textContent = "";
+    return;
+  }
   let target = char.toLowerCase();
-  if (char === " " || char === "\n") target = "space";
+  let needsShift = char !== char.toLowerCase() && /[a-z]/i.test(char);
+  if (char === " " || char === "\n") {
+    target = "space";
+  } else if (SHIFT_SYMBOL_MAP[char]) {
+    target = SHIFT_SYMBOL_MAP[char];
+    needsShift = true;
+  }
   const keyEl = document.querySelector(`.key[data-key="${cssEscape(target)}"]`);
   if (keyEl) keyEl.classList.add("active");
-  if (char !== char.toLowerCase()) {
+  if (needsShift) {
     const shiftEl = document.querySelector('.key[data-key="shift"]');
     if (shiftEl) shiftEl.classList.add("active");
   }
+  const finger = FINGER_MAP[target];
+  fingerLabel.textContent = finger ? `השתמש ב: ${FINGER_LABELS[finger]}` : "";
 }
 
 function cssEscape(s) {
@@ -231,5 +277,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-next").addEventListener("click", () => {
     const next = (state.lessonIndex + 1) % LESSONS.length;
     loadLesson(next);
+  });
+
+  const blindToggle = document.getElementById("btn-blind-mode");
+  blindToggle.addEventListener("click", () => {
+    const hiding = document.body.classList.toggle("blind-mode");
+    blindToggle.textContent = hiding ? "👁️ הצג מקלדת" : "🙈 מצב הקלדה עיוורת";
+    input.focus();
   });
 });
