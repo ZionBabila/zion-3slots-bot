@@ -10,3 +10,5 @@
 
 מתפרסם אוטומטית ל-GitHub Pages בכל פעם שמשתנה תוכן התיקייה הזו (דרך `.github/workflows/deploy-typing-tutor.yml`).
 הלינק החיים מופיע בכרטיסיית **Pages** בהגדרות הריפו, ובסטטוס ה-deployment של ה-Actions run.
+
+(deploy מחדש)
