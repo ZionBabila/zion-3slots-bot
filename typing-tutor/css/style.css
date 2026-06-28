@@ -2,6 +2,7 @@
   --bg: #1e1e2f;
   --panel: #262638;
   --accent: #4fd1c5;
+  --correct: #48bb78;
   --error: #f56565;
   --text: #e2e8f0;
   --muted: #8b94ac;
@@ -88,7 +89,7 @@ body {
   margin: 0;
 }
 
-#code-display .char-correct { color: var(--accent); }
+#code-display .char-correct { color: var(--correct); }
 #code-display .char-incorrect { color: var(--error); text-decoration: underline; }
 #code-display .char-pending { color: var(--muted); }
 #code-display .char-current { background: var(--accent); color: #102; border-radius: 2px; }
