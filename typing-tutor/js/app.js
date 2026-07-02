@@ -41,6 +41,24 @@ const FINGER_LABELS = {
   "thumb": "אגודל",
 };
 
+let _audioCtx = null;
+function playTypeSound(correct) {
+  try {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _audioCtx;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.value = correct ? 780 : 160;
+    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.05);
+  } catch (_) {}
+}
+
 const state = {
   lessonIndex: 0,
   fullText: "",
@@ -180,6 +198,7 @@ function renderCode() {
     }
   }
   display.innerHTML = html;
+  display.querySelector(".char-current")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
 function escapeHtml(s) {
@@ -209,8 +228,13 @@ function finishLesson() {
   saveProgress(lesson.id, wpm, accuracy);
   buildSidebar();
 
+  const elapsed = state.startTime ? Math.round((Date.now() - state.startTime) / 1000) : 0;
+  const mins = Math.floor(elapsed / 60);
+  const secs = elapsed % 60;
+  const timeStr = mins > 0 ? `${mins}:${String(secs).padStart(2, "0")} דק'` : `${secs} שנ'`;
+
   document.getElementById("result-text").textContent =
-    `מהירות: ${wpm} מילים לדקה · דיוק: ${accuracy}%`;
+    `מהירות: ${wpm} מ/ד  ·  דיוק: ${accuracy}%  ·  שגיאות: ${state.errorCount}  ·  זמן: ${timeStr}`;
   document.getElementById("result-panel").hidden = false;
   highlightNextKey(undefined);
 }
@@ -228,7 +252,9 @@ function handleInput(e) {
     const newChar = value[value.length - 1];
     const expected = state.fullText[state.typed.length];
     state.totalTyped++;
-    if (newChar !== expected) state.errorCount++;
+    const correct = newChar === expected;
+    if (!correct) state.errorCount++;
+    playTypeSound(correct);
   }
 
   if (value.length <= state.fullText.length) {
@@ -256,6 +282,13 @@ function handleKeydown(e) {
     }
   } else if (e.key === "Tab") {
     e.preventDefault();
+    // Auto-fill the leading spaces at the current position so Tab completes indentation
+    const spaces = state.fullText.slice(state.typed.length).match(/^ +/)?.[0];
+    if (spaces) {
+      const input = document.getElementById("hidden-input");
+      input.value += spaces;
+      handleInput({ target: input });
+    }
   }
 }
 
