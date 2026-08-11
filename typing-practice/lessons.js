@@ -1,143 +1,1246 @@
 // lessons.js — Unity C# API Reference + Practical Examples
+// Each "API" lesson explains the method/property while you type it.
+// Each "Example" lesson is a complete script you can paste directly into Unity.
+
 const LESSONS = [
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 1 — MonoBehaviour API
+    // ══════════════════════════════════════════════════════════════
     {
-        id: 1, category: "MonoBehaviour API",
+        id: 1,
+        category: "MonoBehaviour API",
         title: "Lifecycle — Execution Order",
         description: "סדר הרצה מדויק של כל שיטות MonoBehaviour — מ-Awake ועד OnDestroy.",
-        difficulty: 1, type: "api",
-        code: `// MONOBEHAVIOUR — LIFECYCLE EXECUTION ORDER\n// Unity calls these methods automatically, in THIS exact sequence.\nusing UnityEngine;\n\npublic class LifecycleOrder : MonoBehaviour\n{\n    // AWAKE — fires first, even when the script is disabled\n    // cache GetComponent calls and set up internal state here\n    void Awake() { Debug.Log("1 Awake"); }\n\n    // ON ENABLE — fires every time this component is turned on\n    // subscribe to C# events here (pair with OnDisable to unsubscribe)\n    void OnEnable() { Debug.Log("2 OnEnable"); }\n\n    // START — fires once, just before the first Update\n    // safe to reference other objects here (all Awake calls are done)\n    void Start() { Debug.Log("3 Start"); }\n\n    // FIXED UPDATE — fires at a fixed interval (default: 50x per second)\n    // ONLY use this for Rigidbody physics — never AddForce in Update\n    void FixedUpdate() { }\n\n    // UPDATE — fires every rendered frame (speed depends on frame rate)\n    // use for input, non-physics movement, timers\n    void Update() { }\n\n    // LATE UPDATE — fires after ALL objects finish their Update\n    // perfect for camera follow (the target already moved this frame)\n    void LateUpdate() { }\n\n    // ON DISABLE — fires when component is disabled or object destroyed\n    // unsubscribe from events here to prevent memory leaks\n    void OnDisable() { Debug.Log("7 OnDisable"); }\n\n    // ON DESTROY — last call before the object is removed from memory\n    void OnDestroy() { Debug.Log("8 OnDestroy"); }\n}`
+        difficulty: 1,
+        type: "api",
+        code: `// MONOBEHAVIOUR — LIFECYCLE EXECUTION ORDER
+// Unity calls these methods automatically, in THIS exact sequence.
+using UnityEngine;
+
+public class LifecycleOrder : MonoBehaviour
+{
+    // AWAKE — fires first, even when the script is disabled
+    // cache GetComponent calls and set up internal state here
+    void Awake() { Debug.Log("1 Awake"); }
+
+    // ON ENABLE — fires every time this component is turned on
+    // subscribe to C# events here (pair with OnDisable to unsubscribe)
+    void OnEnable() { Debug.Log("2 OnEnable"); }
+
+    // START — fires once, just before the first Update
+    // safe to reference other objects here (all Awake calls are done)
+    void Start() { Debug.Log("3 Start"); }
+
+    // FIXED UPDATE — fires at a fixed interval (default: 50x per second)
+    // ONLY use this for Rigidbody physics — never AddForce in Update
+    void FixedUpdate() { }
+
+    // UPDATE — fires every rendered frame (speed depends on frame rate)
+    // use for input, non-physics movement, timers
+    void Update() { }
+
+    // LATE UPDATE — fires after ALL objects finish their Update
+    // perfect for camera follow (the target already moved this frame)
+    void LateUpdate() { }
+
+    // ON DISABLE — fires when component is disabled or object destroyed
+    // unsubscribe from events here to prevent memory leaks
+    void OnDisable() { Debug.Log("7 OnDisable"); }
+
+    // ON DESTROY — last call before the object is removed from memory
+    void OnDestroy() { Debug.Log("8 OnDestroy"); }
+}`
     },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 2 — Transform API
+    // ══════════════════════════════════════════════════════════════
     {
-        id: 2, category: "Transform API",
+        id: 2,
+        category: "Transform API",
         title: "Transform — Position, Rotation, Scale",
         description: "כל מה שצריך לדעת על Transform — המרכיב שקיים על כל GameObject.",
-        difficulty: 1, type: "api",
-        code: `// TRANSFORM — every GameObject has one; controls where it lives in the world\nusing UnityEngine;\n\npublic class TransformAPI : MonoBehaviour\n{\n    void Start()\n    {\n        // position — world-space coordinates (X right, Y up, Z forward)\n        transform.position = new Vector3(0f, 1f, 5f);\n\n        // localPosition — position relative to the parent object\n        transform.localPosition = Vector3.zero;\n\n        // Translate — move by an offset each call (not teleport)\n        // Space.Self = relative to own rotation | Space.World = world axes\n        transform.Translate(Vector3.forward * 3f, Space.Self);\n\n        // eulerAngles — rotation in degrees (X pitch, Y yaw, Z roll)\n        transform.eulerAngles = new Vector3(0f, 90f, 0f);\n\n        // Rotate — spin by degrees per call (cumulative, not set)\n        transform.Rotate(Vector3.up, 45f, Space.World);\n\n        // LookAt — instantly point this object's forward at a target\n        Transform target = GameObject.Find("Enemy").transform;\n        transform.LookAt(target);\n\n        // forward, right, up — unit vectors in the object's local axes\n        Vector3 ahead = transform.forward;\n        Vector3 side = transform.right;\n\n        // localScale — size multiplier (1 = normal, 2 = double size)\n        transform.localScale = new Vector3(2f, 1f, 2f);\n\n        // parent — which Transform owns this one in the hierarchy\n        transform.SetParent(null); // null = make it a root object\n    }\n}`
-    },
+        difficulty: 1,
+        type: "api",
+        code: `// TRANSFORM — every GameObject has one; controls where it lives in the world
+using UnityEngine;
+
+public class TransformAPI : MonoBehaviour
+{
+    void Start()
     {
-        id: 3, category: "Rigidbody API",
+        // position — world-space coordinates (X right, Y up, Z forward)
+        transform.position = new Vector3(0f, 1f, 5f);
+
+        // localPosition — position relative to the parent object
+        transform.localPosition = Vector3.zero;
+
+        // Translate — move by an offset each call (not teleport)
+        // Space.Self = relative to own rotation | Space.World = world axes
+        transform.Translate(Vector3.forward * 3f, Space.Self);
+
+        // eulerAngles — rotation in degrees (X pitch, Y yaw, Z roll)
+        transform.eulerAngles = new Vector3(0f, 90f, 0f);
+
+        // Rotate — spin by degrees per call (cumulative, not set)
+        transform.Rotate(Vector3.up, 45f, Space.World);
+
+        // LookAt — instantly point this object's forward at a target
+        Transform target = GameObject.Find("Enemy").transform;
+        transform.LookAt(target);
+
+        // forward, right, up — unit vectors in the object's local axes
+        Vector3 ahead = transform.forward;
+        Vector3 side = transform.right;
+
+        // localScale — size multiplier (1 = normal, 2 = double size)
+        transform.localScale = new Vector3(2f, 1f, 2f);
+
+        // parent — which Transform owns this one in the hierarchy
+        transform.SetParent(null); // null = make it a root object
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 3 — Rigidbody API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 3,
+        category: "Rigidbody API",
         title: "Rigidbody — Forces, Mass, Velocity",
         description: "כל שיטות ה-physics של Rigidbody עם הסבר על כל ForceMode.",
-        difficulty: 2, type: "api",
-        code: `// RIGIDBODY — Unity's physics engine component\n// Requires: Add Component > Physics > Rigidbody on your GameObject\nusing UnityEngine;\n\npublic class RigidbodyAPI : MonoBehaviour\n{\n    Rigidbody rb;\n\n    void Awake()\n    {\n        // GetComponent — find the Rigidbody on THIS same GameObject\n        rb = GetComponent<Rigidbody>();\n\n        // mass — weight in kg (heavier = needs more force to accelerate)\n        rb.mass = 2f;\n\n        // drag — linear air resistance (0 = no drag, 5 = stops quickly)\n        rb.drag = 0.3f;\n\n        // angularDrag — rotational resistance (higher = spins slow down faster)\n        rb.angularDrag = 0.05f;\n\n        // useGravity — false lets objects float with no downward pull\n        rb.useGravity = true;\n\n        // isKinematic — true disables all physics; move via transform instead\n        rb.isKinematic = false;\n\n        // velocity — current movement speed and direction (world space)\n        // setting this directly overrides all existing momentum\n        rb.velocity = new Vector3(3f, 0f, 0f);\n\n        // AddForce — push the object in a direction\n        // ForceMode.Impulse      — instant hit, affected by mass (kick)\n        // ForceMode.Force        — continuous push per second (engine)\n        // ForceMode.Acceleration — continuous push, ignores mass\n        // ForceMode.VelocityChange — instant push, ignores mass\n        rb.AddForce(Vector3.up * 8f, ForceMode.Impulse);\n\n        // AddTorque — apply rotational force (spin the object)\n        rb.AddTorque(Vector3.up * 5f, ForceMode.Force);\n\n        // MovePosition — teleport with collision checks (use in FixedUpdate)\n        rb.MovePosition(transform.position + Vector3.forward * 0.1f);\n\n        // constraints — lock specific axes from physics\n        rb.constraints = RigidbodyConstraints.FreezeRotationX |\n                         RigidbodyConstraints.FreezeRotationZ;\n    }\n}`
-    },
+        difficulty: 2,
+        type: "api",
+        code: `// RIGIDBODY — Unity's physics engine component
+// Requires: Add Component > Physics > Rigidbody on your GameObject
+using UnityEngine;
+
+public class RigidbodyAPI : MonoBehaviour
+{
+    Rigidbody rb;
+
+    void Awake()
     {
-        id: 4, category: "Input API",
+        // GetComponent — find the Rigidbody on THIS same GameObject
+        rb = GetComponent<Rigidbody>();
+
+        // mass — weight in kg (heavier = needs more force to accelerate)
+        rb.mass = 2f;
+
+        // drag — linear air resistance (0 = no drag, 5 = stops quickly)
+        rb.drag = 0.3f;
+
+        // angularDrag — rotational resistance (higher = spins slow down faster)
+        rb.angularDrag = 0.05f;
+
+        // useGravity — false lets objects float with no downward pull
+        rb.useGravity = true;
+
+        // isKinematic — true disables all physics; move via transform instead
+        rb.isKinematic = false;
+
+        // velocity — current movement speed and direction (world space)
+        // setting this directly overrides all existing momentum
+        rb.velocity = new Vector3(3f, 0f, 0f);
+
+        // AddForce — push the object in a direction
+        // ForceMode.Impulse      — instant hit, affected by mass (kick)
+        // ForceMode.Force        — continuous push per second (engine)
+        // ForceMode.Acceleration — continuous push, ignores mass
+        // ForceMode.VelocityChange — instant push, ignores mass
+        rb.AddForce(Vector3.up * 8f, ForceMode.Impulse);
+
+        // AddTorque — apply rotational force (spin the object)
+        rb.AddTorque(Vector3.up * 5f, ForceMode.Force);
+
+        // MovePosition — teleport with collision checks (use in FixedUpdate)
+        rb.MovePosition(transform.position + Vector3.forward * 0.1f);
+
+        // constraints — lock specific axes from physics
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationZ;
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 4 — Input API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 4,
+        category: "Input API",
         title: "Input — Keyboard, Mouse, Axes",
         description: "Legacy Input system — GetKey, GetAxis, GetMouseButton ועוד.",
-        difficulty: 1, type: "api",
-        code: `// INPUT — Unity's legacy input system (Works without any setup)\n// Edit > Project Settings > Input Manager to see/edit axis names\nusing UnityEngine;\n\npublic class InputAPI : MonoBehaviour\n{\n    void Update()\n    {\n        // GetKey — true EVERY frame the key is held down\n        if (Input.GetKey(KeyCode.W)) Debug.Log("holding W");\n\n        // GetKeyDown — true ONLY on the first frame the key is pressed\n        if (Input.GetKeyDown(KeyCode.Space)) Debug.Log("jumped!");\n\n        // GetKeyUp — true ONLY on the frame the key is released\n        if (Input.GetKeyUp(KeyCode.Space)) Debug.Log("released space");\n\n        // GetAxis — returns -1 to +1, smoothly (has acceleration/friction)\n        // \"Horizontal\" = A/D or Left/Right arrow keys\n        // \"Vertical\"   = W/S or Up/Down arrow keys\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n\n        // GetAxisRaw — same as GetAxis but snaps to -1, 0, or +1 instantly\n        // better for grid movement or when you don't want the smoothing\n        float hRaw = Input.GetAxisRaw(\"Horizontal\");\n\n        // GetMouseButton — 0=left, 1=right, 2=middle\n        if (Input.GetMouseButtonDown(0)) Debug.Log("left click!");\n\n        // mousePosition — pixel coordinates of mouse (bottom-left = 0,0)\n        Vector3 mousePos = Input.mousePosition;\n\n        // GetMouseButtonDown returns true on click frame only (not held)\n        bool clicked = Input.GetMouseButtonDown(1); // right click\n    }\n}`
-    },
+        difficulty: 1,
+        type: "api",
+        code: `// INPUT — Unity's legacy input system (Works without any setup)
+// Edit > Project Settings > Input Manager to see/edit axis names
+using UnityEngine;
+
+public class InputAPI : MonoBehaviour
+{
+    void Update()
     {
-        id: 5, category: "Physics API",
+        // GetKey — true EVERY frame the key is held down
+        if (Input.GetKey(KeyCode.W)) Debug.Log("holding W");
+
+        // GetKeyDown — true ONLY on the first frame the key is pressed
+        if (Input.GetKeyDown(KeyCode.Space)) Debug.Log("jumped!");
+
+        // GetKeyUp — true ONLY on the frame the key is released
+        if (Input.GetKeyUp(KeyCode.Space)) Debug.Log("released space");
+
+        // GetAxis — returns -1 to +1, smoothly (has acceleration/friction)
+        // "Horizontal" = A/D or Left/Right arrow keys
+        // "Vertical"   = W/S or Up/Down arrow keys
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        // GetAxisRaw — same as GetAxis but snaps to -1, 0, or +1 instantly
+        // better for grid movement or when you don't want the smoothing
+        float hRaw = Input.GetAxisRaw("Horizontal");
+
+        // GetMouseButton — 0=left, 1=right, 2=middle
+        if (Input.GetMouseButtonDown(0)) Debug.Log("left click!");
+
+        // mousePosition — pixel coordinates of mouse (bottom-left = 0,0)
+        Vector3 mousePos = Input.mousePosition;
+
+        // GetMouseButtonDown returns true on click frame only (not held)
+        bool clicked = Input.GetMouseButtonDown(1); // right click
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 5 — Physics Raycast API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 5,
+        category: "Physics API",
         title: "Physics.Raycast — Hit Detection",
         description: "שליחת קרן בחלל והחזרת מידע על מה שנפגע — הבסיס של כל shooting ו-selection.",
-        difficulty: 3, type: "api",
-        code: `// PHYSICS.RAYCAST — fire an invisible line, detect the first thing it hits\nusing UnityEngine;\n\npublic class RaycastAPI : MonoBehaviour\n{\n    public LayerMask hitLayers;\n\n    void Update()\n    {\n        // Ray — a starting point + direction (infinite length by default)\n        Ray ray = new Ray(transform.position, transform.forward);\n\n        // Also create a ray from the camera through the mouse cursor:\n        // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);\n\n        // RaycastHit — struct that holds all info about what was hit\n        RaycastHit hit;\n\n        // Physics.Raycast — returns true if it hit something\n        // signature: Raycast(ray, out hitInfo, maxDistance, layerMask)\n        // 'out' means RaycastHit is filled in by the method for you\n        if (Physics.Raycast(ray, out hit, 100f, hitLayers))\n        {\n            // hit.point — exact world position where the ray landed\n            Debug.Log("Hit at: " + hit.point);\n\n            // hit.normal — surface normal at impact (perpendicular to surface)\n            Debug.DrawRay(hit.point, hit.normal, Color.green);\n\n            // hit.distance — how far from ray origin to the hit point\n            Debug.Log("Distance: " + hit.distance);\n\n            // hit.transform — the Transform of the object that was hit\n            Debug.Log("Hit object: " + hit.transform.name);\n\n            // hit.collider — the Collider component that was hit\n            Collider col = hit.collider;\n        }\n\n        // DrawRay — visualizes the ray in the Scene view (editor only)\n        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red);\n    }\n}`
-    },
+        difficulty: 3,
+        type: "api",
+        code: `// PHYSICS.RAYCAST — fire an invisible line, detect the first thing it hits
+using UnityEngine;
+
+public class RaycastAPI : MonoBehaviour
+{
+    // LayerMask — bitmask that filters which layers the ray can hit
+    // Assign in Inspector: drag layers you WANT to hit onto this field
+    public LayerMask hitLayers;
+
+    void Update()
     {
-        id: 6, category: "Collider API",
+        // Ray — a starting point + direction (infinite length by default)
+        Ray ray = new Ray(transform.position, transform.forward);
+
+        // Also create a ray from the camera through the mouse cursor:
+        // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // RaycastHit — struct that holds all info about what was hit
+        RaycastHit hit;
+
+        // Physics.Raycast — returns true if it hit something
+        // signature: Raycast(ray, out hitInfo, maxDistance, layerMask)
+        // 'out' means RaycastHit is filled in by the method for you
+        if (Physics.Raycast(ray, out hit, 100f, hitLayers))
+        {
+            // hit.point — exact world position where the ray landed
+            Debug.Log("Hit at: " + hit.point);
+
+            // hit.normal — surface normal at impact (perpendicular to surface)
+            Debug.DrawRay(hit.point, hit.normal, Color.green);
+
+            // hit.distance — how far from ray origin to the hit point
+            Debug.Log("Distance: " + hit.distance);
+
+            // hit.transform — the Transform of the object that was hit
+            Debug.Log("Hit object: " + hit.transform.name);
+
+            // hit.collider — the Collider component that was hit
+            Collider col = hit.collider;
+        }
+
+        // DrawRay — visualizes the ray in the Scene view (editor only)
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red);
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 6 — Collider Callbacks API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 6,
+        category: "Collider API",
         title: "Collider — Collision & Trigger Callbacks",
         description: "OnCollisionEnter vs OnTriggerEnter — מתי להשתמש בכל אחד.",
-        difficulty: 2, type: "api",
-        code: `// COLLIDER CALLBACKS — Unity calls these automatically on physics contact\n// Collision vs Trigger:\n//   Collision — solid objects that push each other (both need Collider)\n//   Trigger   — one Collider has \"Is Trigger\" checked; objects pass through\n//               but the callback fires. Used for zones, pickups, detection.\nusing UnityEngine;\n\npublic class ColliderCallbacks : MonoBehaviour\n{\n    // OnCollisionEnter — fires ONCE when this object physically touches another\n    void OnCollisionEnter(Collision collision)\n    {\n        Debug.Log("Touched: " + collision.gameObject.name);\n\n        // CompareTag — faster than .tag == \"Player\" (uses hash internally)\n        if (collision.gameObject.CompareTag(\"Player\"))\n        {\n            // relativeVelocity.magnitude = how hard the impact was\n            float impactSpeed = collision.relativeVelocity.magnitude;\n            Debug.Log("Impact speed: " + impactSpeed);\n        }\n    }\n\n    // OnCollisionStay — fires EVERY frame while touching (expensive!)\n    void OnCollisionStay(Collision collision) { }\n\n    // OnCollisionExit — fires ONCE when objects separate\n    void OnCollisionExit(Collision collision) { }\n\n    // OnTriggerEnter — fires when an object enters the trigger zone\n    // 'other' is the Collider of the entering object\n    void OnTriggerEnter(Collider other)\n    {\n        Debug.Log("Entered trigger: " + other.name);\n        other.GetComponent<PlayerHealth>()?.TakeDamage(10);\n    }\n\n    // OnTriggerExit — fires when an object leaves the trigger zone\n    void OnTriggerExit(Collider other)\n    {\n        Debug.Log("Left trigger: " + other.name);\n    }\n}`
-    },
+        difficulty: 2,
+        type: "api",
+        code: `// COLLIDER CALLBACKS — Unity calls these automatically on physics contact
+// Collision vs Trigger:
+//   Collision — solid objects that push each other (both need Collider)
+//   Trigger   — one Collider has "Is Trigger" checked; objects pass through
+//               but the callback fires. Used for zones, pickups, detection.
+using UnityEngine;
+
+public class ColliderCallbacks : MonoBehaviour
+{
+    // OnCollisionEnter — fires ONCE when this object physically touches another
+    // 'collision' holds contact points, the other Rigidbody, impulse force
+    void OnCollisionEnter(Collision collision)
     {
-        id: 7, category: "Coroutine API",
+        // collision.gameObject — the other object we hit
+        Debug.Log("Touched: " + collision.gameObject.name);
+
+        // CompareTag — faster than .tag == "Player" (uses hash internally)
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // relativeVelocity — impact speed (magnitude = how hard the hit was)
+            float impactSpeed = collision.relativeVelocity.magnitude;
+            Debug.Log("Impact speed: " + impactSpeed);
+        }
+    }
+
+    // OnCollisionStay — fires EVERY frame while touching (use carefully, expensive)
+    void OnCollisionStay(Collision collision) { }
+
+    // OnCollisionExit — fires ONCE when objects separate
+    void OnCollisionExit(Collision collision) { }
+
+    // OnTriggerEnter — fires when an object enters the trigger zone
+    // 'other' is the Collider of the entering object
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Entered trigger: " + other.name);
+        other.GetComponent<PlayerHealth>()?.TakeDamage(10);
+    }
+
+    // OnTriggerExit — fires when an object leaves the trigger zone
+    void OnTriggerExit(Collider other)
+    {
+        Debug.Log("Left trigger: " + other.name);
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 7 — Coroutine API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 7,
+        category: "Coroutine API",
         title: "Coroutines — IEnumerator & yield",
         description: "קורוטינות — הדרך של Unity לעשות 'wait' בתוך קוד רגיל.",
-        difficulty: 2, type: "api",
-        code: `// COROUTINES — pause execution and resume later without blocking the game\nusing System.Collections;\nusing UnityEngine;\n\npublic class CoroutineAPI : MonoBehaviour\n{\n    void Start()\n    {\n        // StartCoroutine — launch a coroutine method\n        StartCoroutine(MyRoutine());\n\n        // Store the reference if you need to stop it later\n        Coroutine handle = StartCoroutine(CountDown(5));\n\n        // StopCoroutine — stop a specific coroutine by reference\n        StopCoroutine(handle);\n\n        // StopAllCoroutines — stop every coroutine on this MonoBehaviour\n        StopAllCoroutines();\n    }\n\n    // IEnumerator — the return type of every coroutine method\n    IEnumerator MyRoutine()\n    {\n        Debug.Log("Step 1");\n\n        // yield return null — pause here, resume on the NEXT frame\n        yield return null;\n\n        Debug.Log("Step 2 — one frame later");\n\n        // yield return new WaitForSeconds — pause for N real seconds\n        yield return new WaitForSeconds(2f);\n\n        Debug.Log("Step 3 — two seconds later");\n\n        // yield return new WaitUntil — pause until condition becomes true\n        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));\n\n        Debug.Log("Player pressed Space!");\n    }\n\n    IEnumerator CountDown(int from)\n    {\n        for (int i = from; i > 0; i--)\n        {\n            Debug.Log("T-minus: " + i);\n            yield return new WaitForSeconds(1f);\n        }\n        Debug.Log("Launch!");\n    }\n}`
-    },
+        difficulty: 2,
+        type: "api",
+        code: `// COROUTINES — pause execution and resume later without blocking the game
+// A coroutine is a method that can pause at 'yield' and resume next frame
+using System.Collections;
+using UnityEngine;
+
+public class CoroutineAPI : MonoBehaviour
+{
+    void Start()
     {
-        id: 8, category: "Animator API",
+        // StartCoroutine — launch a coroutine method
+        StartCoroutine(MyRoutine());
+
+        // Store the reference if you need to stop it later
+        Coroutine handle = StartCoroutine(CountDown(5));
+
+        // StopCoroutine — stop a specific coroutine by name or reference
+        StopCoroutine(handle);
+
+        // StopAllCoroutines — stop every coroutine on this MonoBehaviour
+        StopAllCoroutines();
+    }
+
+    // IEnumerator — the return type of every coroutine method
+    IEnumerator MyRoutine()
+    {
+        Debug.Log("Step 1");
+
+        // yield return null — pause here, resume on the NEXT frame
+        yield return null;
+
+        Debug.Log("Step 2 — one frame later");
+
+        // yield return new WaitForSeconds — pause for N real seconds
+        yield return new WaitForSeconds(2f);
+
+        Debug.Log("Step 3 — two seconds later");
+
+        // yield return new WaitForFixedUpdate — resume after next FixedUpdate
+        yield return new WaitForFixedUpdate();
+
+        // yield return new WaitUntil — pause until condition becomes true
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+        Debug.Log("Player pressed Space!");
+    }
+
+    IEnumerator CountDown(int from)
+    {
+        // coroutines can use loops — each iteration waits one second
+        for (int i = from; i > 0; i--)
+        {
+            Debug.Log("T-minus: " + i);
+            yield return new WaitForSeconds(1f);
+        }
+        Debug.Log("Launch!");
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 8 — Animator API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 8,
+        category: "Animator API",
         title: "Animator — Controlling Animation States",
         description: "שליטה ב-Animator Controller דרך קוד — Set, Get, Trigger, Crossfade.",
-        difficulty: 2, type: "api",
-        code: `// ANIMATOR — controls the Animator Controller state machine from code\nusing UnityEngine;\n\npublic class AnimatorAPI : MonoBehaviour\n{\n    Animator anim;\n\n    void Awake() { anim = GetComponent<Animator>(); }\n\n    void Update()\n    {\n        // SetFloat — drive a Float parameter (smooth blend tree speed)\n        float speed = GetComponent<Rigidbody>().velocity.magnitude;\n        anim.SetFloat("Speed", speed);\n\n        // Lerp toward target for smoother transitions (avoids snapping)\n        float current = anim.GetFloat("Speed");\n        anim.SetFloat("Speed", Mathf.Lerp(current, speed, 0.1f));\n\n        // SetBool — toggle states on/off\n        bool grounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);\n        anim.SetBool("IsGrounded", grounded);\n\n        // SetTrigger — fire a one-shot event (resets itself after use)\n        // perfect for jump, attack, death — things that happen once\n        if (Input.GetKeyDown(KeyCode.Space)) anim.SetTrigger("Jump");\n\n        // SetInteger — drive an Integer parameter (weapon index, etc.)\n        anim.SetInteger("WeaponType", 2);\n\n        // CrossFade — manually transition to a state by name\n        // args: stateName, transitionDuration, layerIndex, normalizedTime\n        anim.CrossFade("RunForward", 0.2f, 0);\n\n        // GetCurrentAnimatorStateInfo — read what state is playing now\n        AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);\n        bool isRunning = info.IsName("RunForward");\n\n        // normalizedTime — 0.0 = start of animation, 1.0 = end\n        float progress = info.normalizedTime;\n    }\n}`
-    },
+        difficulty: 2,
+        type: "api",
+        code: `// ANIMATOR — controls the Animator Controller state machine from code
+// Requires: GameObject with an Animator component + Animator Controller asset
+using UnityEngine;
+
+public class AnimatorAPI : MonoBehaviour
+{
+    Animator anim;
+
+    void Awake()
     {
-        id: 9, category: "AudioSource API",
+        anim = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        // SetFloat — drive a Float parameter (like blend tree speed)
+        // use this to smoothly blend between idle/walk/run animations
+        float speed = GetComponent<Rigidbody>().velocity.magnitude;
+        anim.SetFloat("Speed", speed);
+
+        // Lerp the value for smoother transitions (avoids snapping)
+        float current = anim.GetFloat("Speed");
+        anim.SetFloat("Speed", Mathf.Lerp(current, speed, 0.1f));
+
+        // SetBool — drive a Bool parameter (toggle states)
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);
+        anim.SetBool("IsGrounded", grounded);
+
+        // SetTrigger — fire a one-shot event (resets itself after use)
+        // perfect for jump, attack, death — things that happen once
+        if (Input.GetKeyDown(KeyCode.Space)) anim.SetTrigger("Jump");
+
+        // SetInteger — drive an Integer parameter (state IDs, weapon index)
+        anim.SetInteger("WeaponType", 2);
+
+        // CrossFade — manually transition to a state by name
+        // args: stateName, transitionDuration, layerIndex, normalizedTime
+        anim.CrossFade("RunForward", 0.2f, 0);
+
+        // GetCurrentAnimatorStateInfo — read what state is playing now
+        AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+        bool isRunning = info.IsName("RunForward");
+
+        // normalizedTime — 0.0 = start of animation, 1.0 = end
+        float progress = info.normalizedTime;
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 9 — AudioSource API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 9,
+        category: "AudioSource API",
         title: "AudioSource — Playing Sounds",
         description: "Play, PlayOneShot, volume, pitch, spatialBlend — כל מה שצריך לאודיו ב-Unity.",
-        difficulty: 1, type: "api",
-        code: `// AUDIOSOURCE — plays audio clips in the scene (2D or 3D spatial)\n// Requires: Add Component > Audio > Audio Source\nusing UnityEngine;\n\npublic class AudioSourceAPI : MonoBehaviour\n{\n    AudioSource src;\n    public AudioClip shootSound;\n    public AudioClip musicClip;\n\n    void Awake() { src = GetComponent<AudioSource>(); }\n\n    void Start()\n    {\n        // clip — assign which audio file this source plays by default\n        src.clip = musicClip;\n\n        // Play — start playing the assigned clip from the beginning\n        src.Play();\n\n        // volume — 0.0 (silent) to 1.0 (full volume)\n        src.volume = 0.8f;\n\n        // pitch — 1.0 = normal speed; 0.5 = half speed; 2.0 = double\n        // changing pitch also changes perceived tone (like a tape deck)\n        src.pitch = 1.2f;\n\n        // loop — repeat automatically when the clip ends\n        src.loop = true;\n\n        // PlayOneShot — play a clip ONCE without interrupting the main clip\n        // perfect for SFX: gunshots, footsteps, coins, explosions\n        src.PlayOneShot(shootSound, 0.9f);\n\n        // spatialBlend — 0.0 = fully 2D (no position), 1.0 = fully 3D\n        // 3D audio gets quieter with distance\n        src.spatialBlend = 1.0f;\n\n        // isPlaying — check if the source is currently making sound\n        bool playing = src.isPlaying;\n    }\n}`
-    },
+        difficulty: 1,
+        type: "api",
+        code: `// AUDIOSOURCE — plays audio clips in the scene (2D or 3D spatial)
+// Requires: Add Component > Audio > Audio Source
+using UnityEngine;
+
+public class AudioSourceAPI : MonoBehaviour
+{
+    AudioSource src;
+    public AudioClip shootSound;
+    public AudioClip musicClip;
+
+    void Awake()
     {
-        id: 10, category: "Camera API",
+        src = GetComponent<AudioSource>();
+    }
+
+    void Start()
+    {
+        // clip — assign which audio file this source plays by default
+        src.clip = musicClip;
+
+        // Play — start playing the assigned clip from the beginning
+        src.Play();
+
+        // Stop — immediately halt playback
+        // src.Stop();
+
+        // Pause / UnPause — freeze and resume at the same position
+        // src.Pause();   src.UnPause();
+
+        // volume — 0.0 (silent) to 1.0 (full volume)
+        src.volume = 0.8f;
+
+        // pitch — 1.0 = normal speed; 0.5 = half speed; 2.0 = double speed
+        // changing pitch also changes perceived tone (like a tape deck)
+        src.pitch = 1.2f;
+
+        // loop — repeat automatically when the clip ends
+        src.loop = true;
+
+        // PlayOneShot — play a clip ONCE without interrupting the main clip
+        // perfect for SFX: gunshots, footsteps, coins, explosions
+        // volume parameter scales the clip's volume (1.0 = full)
+        src.PlayOneShot(shootSound, 0.9f);
+
+        // spatialBlend — 0.0 = fully 2D (no position), 1.0 = fully 3D
+        // 3D audio gets quieter with distance (set AudioSource rolloff curve)
+        src.spatialBlend = 1.0f;
+
+        // isPlaying — check if the source is currently making sound
+        bool playing = src.isPlaying;
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // CATEGORY 10 — Camera API
+    // ══════════════════════════════════════════════════════════════
+    {
+        id: 10,
+        category: "Camera API",
         title: "Camera — Viewports, Rays, Projections",
         description: "Camera.main, ScreenToWorldPoint, ScreenPointToRay, fieldOfView.",
-        difficulty: 2, type: "api",
-        code: `// CAMERA — controls what the player sees; converts between screen and world\nusing UnityEngine;\n\npublic class CameraAPI : MonoBehaviour\n{\n    void Update()\n    {\n        // Camera.main — finds the camera tagged \"MainCamera\" in the scene\n        // Cache this in Awake() if you call it often (FindWithTag is slow)\n        Camera cam = Camera.main;\n\n        // ScreenPointToRay — fire a ray from the camera through a screen pixel\n        // Input.mousePosition is in pixels: (0,0) = bottom-left corner\n        Ray ray = cam.ScreenPointToRay(Input.mousePosition);\n\n        // WorldToScreenPoint — convert world position to pixel on screen\n        Vector3 screenPos = cam.WorldToScreenPoint(transform.position);\n\n        // ScreenToWorldPoint — convert pixel to world position\n        // Z component = distance from camera (must be set manually)\n        Vector3 worldPos = cam.ScreenToWorldPoint(\n            new Vector3(Screen.width / 2f, Screen.height / 2f, 10f));\n\n        // fieldOfView — camera FOV in degrees (60 default, 90 = wider)\n        cam.fieldOfView = 75f;\n\n        // orthographic — true = 2D/isometric (no perspective), false = 3D\n        cam.orthographic = false;\n\n        // orthographicSize — half the height in world units (ortho mode only)\n        cam.orthographicSize = 5f;\n\n        // nearClipPlane / farClipPlane — objects outside this range invisible\n        float near = cam.nearClipPlane; // default 0.3\n        float far  = cam.farClipPlane;  // default 1000\n    }\n}`
-    },
+        difficulty: 2,
+        type: "api",
+        code: `// CAMERA — controls what the player sees; converts between screen and world
+using UnityEngine;
+
+public class CameraAPI : MonoBehaviour
+{
+    void Update()
     {
-        id: 11, category: "דוגמה מעשית",
+        // Camera.main — finds the camera tagged "MainCamera" in the scene
+        // Cache this in Awake() if you call it often (FindWithTag is slow)
+        Camera cam = Camera.main;
+
+        // ScreenPointToRay — fire a ray from the camera through a screen pixel
+        // Input.mousePosition is in pixels: (0,0)=bottom-left corner
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        // WorldToScreenPoint — convert world position to pixel on screen
+        // useful for placing UI elements above world objects
+        Vector3 screenPos = cam.WorldToScreenPoint(transform.position);
+
+        // ScreenToWorldPoint — convert pixel to world position
+        // Z component = distance from camera (must be set manually)
+        Vector3 worldPos = cam.ScreenToWorldPoint(
+            new Vector3(Screen.width / 2f, Screen.height / 2f, 10f));
+
+        // fieldOfView — camera FOV in degrees (60 default, 90 = wider angle)
+        cam.fieldOfView = 75f;
+
+        // orthographic — true = isometric/2D (no perspective), false = 3D
+        cam.orthographic = false;
+
+        // orthographicSize — half the height in world units (only in ortho mode)
+        cam.orthographicSize = 5f;
+
+        // nearClipPlane / farClipPlane — objects outside this range are invisible
+        float near = cam.nearClipPlane; // default 0.3
+        float far  = cam.farClipPlane;  // default 1000
+
+        // viewport rect — what part of the screen this camera renders to
+        // (0,0,1,1) = full screen; (0.5,0,0.5,0.5) = bottom-right quarter
+        cam.rect = new Rect(0f, 0f, 1f, 1f);
+    }
+}`
+    },
+
+    // ══════════════════════════════════════════════════════════════
+    // PRACTICAL EXAMPLES
+    // ══════════════════════════════════════════════════════════════
+
+    {
+        id: 11,
+        category: "דוגמה מעשית",
         title: "Ball Launcher — Rigidbody Forces",
         description: "HOW TO TEST: Create > 3D Object > Sphere → Add Rigidbody → Add this script. Space=launch, R=reset.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// BALL LAUNCHER — test Rigidbody forces in the scene\n// HOW TO SET UP:\n//   1. Create > 3D Object > Sphere\n//   2. Add Component > Physics > Rigidbody\n//   3. Add Component > this script (BallLauncher)\n//   Press SPACE to launch, press R to reset position\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class BallLauncher : MonoBehaviour\n{\n    // [SerializeField] keeps field private but visible in the Inspector\n    [SerializeField] private float launchForce = 15f;\n    [SerializeField] private float upwardBias = 0.4f;  // arc angle\n\n    private Rigidbody rb;\n    private Vector3 startPos; // saved at Awake so we can reset\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody>();\n        startPos = transform.position; // remember where we began\n    }\n\n    void Update()\n    {\n        // GetKeyDown — fires ONCE on the exact frame the key is pressed\n        if (Input.GetKeyDown(KeyCode.Space)) Launch();\n        if (Input.GetKeyDown(KeyCode.R))     ResetBall();\n    }\n\n    void Launch()\n    {\n        // Zero out any old movement so each launch feels identical\n        rb.velocity = Vector3.zero;\n        rb.angularVelocity = Vector3.zero;\n\n        // transform.forward = direction this object's nose points\n        // adding Vector3.up * bias makes the ball arc into the air\n        Vector3 dir = transform.forward + Vector3.up * upwardBias;\n\n        // ForceMode.Impulse = instant push proportional to mass\n        rb.AddForce(dir.normalized * launchForce, ForceMode.Impulse);\n    }\n\n    void ResetBall()\n    {\n        transform.position = startPos;     // teleport to start\n        rb.velocity = Vector3.zero;        // stop all linear movement\n        rb.angularVelocity = Vector3.zero; // stop all spinning\n    }\n}`
-    },
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// BALL LAUNCHER — test Rigidbody forces in the scene
+// HOW TO SET UP:
+//   1. Create > 3D Object > Sphere
+//   2. Add Component > Physics > Rigidbody
+//   3. Add Component > this script (BallLauncher)
+//   Press SPACE to launch, press R to reset position
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class BallLauncher : MonoBehaviour
+{
+    // [SerializeField] keeps field private but visible in the Inspector
+    [SerializeField] private float launchForce = 15f;
+    [SerializeField] private float upwardBias = 0.4f;  // arc angle
+
+    private Rigidbody rb;
+    private Vector3 startPos; // saved at Awake so we can reset
+
+    void Awake()
     {
-        id: 12, category: "דוגמה מעשית",
+        rb = GetComponent<Rigidbody>();
+        startPos = transform.position; // remember where we began
+    }
+
+    void Update()
+    {
+        // GetKeyDown — fires ONCE on the exact frame the key is pressed
+        if (Input.GetKeyDown(KeyCode.Space)) Launch();
+        if (Input.GetKeyDown(KeyCode.R))     ResetBall();
+    }
+
+    void Launch()
+    {
+        // Zero out any old movement so each launch feels identical
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // transform.forward = direction this object's nose points
+        // adding Vector3.up * bias makes the ball arc into the air
+        Vector3 dir = transform.forward + Vector3.up * upwardBias;
+
+        // ForceMode.Impulse = instant push proportional to mass
+        // dir.normalized = same direction but magnitude exactly 1
+        rb.AddForce(dir.normalized * launchForce, ForceMode.Impulse);
+    }
+
+    void ResetBall()
+    {
+        transform.position = startPos;   // teleport to start
+        rb.velocity = Vector3.zero;      // stop all linear movement
+        rb.angularVelocity = Vector3.zero; // stop all spinning
+    }
+}`
+    },
+
+    {
+        id: 12,
+        category: "דוגמה מעשית",
         title: "Top-Down Controller — Input + Transform",
-        description: "HOW TO TEST: Capsule + CharacterController → Add this script. WASD to move, mouse to rotate.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// TOP-DOWN CONTROLLER — keyboard movement + mouse aiming\n// HOW TO SET UP:\n//   1. Create > 3D Object > Capsule\n//   2. Add Component > CharacterController\n//   3. Add Component > this script\n//   4. Set Main Camera rotation to (90, 0, 0) to look straight down\n//   WASD = move  |  mouse = face direction\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class TopDownController : MonoBehaviour\n{\n    [SerializeField] private float moveSpeed = 5f;\n    private CharacterController cc;\n\n    void Awake() { cc = GetComponent<CharacterController>(); }\n\n    void Update() { Move(); AimAtMouse(); }\n\n    void Move()\n    {\n        // GetAxisRaw snaps to -1, 0, +1 instantly (no smoothing)\n        float h = Input.GetAxisRaw(\"Horizontal\"); // A/D keys\n        float v = Input.GetAxisRaw(\"Vertical\");   // W/S keys\n\n        Vector3 move = new Vector3(h, 0f, v);\n\n        // Normalize prevents diagonal movement being 40% faster\n        if (move.magnitude > 1f) move.Normalize();\n\n        // SimpleMove applies gravity automatically, moves in world space\n        cc.SimpleMove(move * moveSpeed);\n    }\n\n    void AimAtMouse()\n    {\n        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);\n        Plane ground = new Plane(Vector3.up, Vector3.zero);\n\n        // Plane.Raycast fills 'dist' with distance to the ground plane\n        if (ground.Raycast(ray, out float dist))\n        {\n            // GetPoint — find the actual world position at that distance\n            Vector3 mouseWorld = ray.GetPoint(dist);\n            mouseWorld.y = transform.position.y; // keep on same Y level\n            transform.LookAt(mouseWorld);\n        }\n    }\n}`
-    },
+        description: "HOW TO TEST: Create empty GameObject → Add this script. WASD to move, mouse to rotate.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// TOP-DOWN CONTROLLER — keyboard movement + mouse aiming
+// HOW TO SET UP:
+//   1. Create > 3D Object > Capsule
+//   2. Add Component > this script (TopDownController)
+//   3. Set Main Camera to look straight down (rotation 90,0,0)
+//   WASD = move    |    mouse = face direction
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class TopDownController : MonoBehaviour
+{
+    [SerializeField] private float moveSpeed = 5f;
+
+    // CharacterController handles collision without a Rigidbody
+    private CharacterController cc;
+
+    void Awake()
     {
-        id: 13, category: "דוגמה מעשית",
+        cc = GetComponent<CharacterController>();
+    }
+
+    void Update()
+    {
+        Move();
+        AimAtMouse();
+    }
+
+    void Move()
+    {
+        // GetAxisRaw snaps to -1, 0, +1 instantly (no smoothing)
+        float h = Input.GetAxisRaw("Horizontal"); // A/D keys
+        float v = Input.GetAxisRaw("Vertical");   // W/S keys
+
+        // Build movement vector in XZ plane (Y=0 keeps it on the ground)
+        Vector3 move = new Vector3(h, 0f, v);
+
+        // Normalize prevents diagonal movement being 40% faster
+        if (move.magnitude > 1f) move.Normalize();
+
+        // SimpleMove applies gravity automatically and moves in world space
+        cc.SimpleMove(move * moveSpeed);
+    }
+
+    void AimAtMouse()
+    {
+        // Cast a ray from camera through the mouse cursor into the world
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane ground = new Plane(Vector3.up, Vector3.zero);
+
+        // Plane.Raycast fills 'dist' with distance along the ray to the plane
+        if (ground.Raycast(ray, out float dist))
+        {
+            // GetPoint — find the actual world position at that distance
+            Vector3 mouseWorld = ray.GetPoint(dist);
+
+            // LookAt — rotate to face the mouse position (ignore Y difference)
+            mouseWorld.y = transform.position.y;
+            transform.LookAt(mouseWorld);
+        }
+    }
+}`
+    },
+
+    {
+        id: 13,
+        category: "דוגמה מעשית",
         title: "Click to Select — Mouse Raycast",
-        description: "HOW TO TEST: Add cubes to scene → Attach this to Camera. Click to select (turns yellow).",
-        difficulty: 3, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// CLICK TO SELECT — raycast from mouse to pick objects\n// HOW TO SET UP:\n//   1. Add several Cubes/Spheres to the scene\n//   2. Attach this script to the Main Camera\n//   Left-click any object to select it (turns yellow)\n//   Click empty space to deselect\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class ClickToSelect : MonoBehaviour\n{\n    [SerializeField] private Color highlightColor = Color.yellow;\n    [SerializeField] private LayerMask selectableLayers;\n\n    private GameObject selectedObject;\n    private Color originalColor;\n\n    void Update()\n    {\n        if (Input.GetMouseButtonDown(0)) TrySelect();\n    }\n\n    void TrySelect()\n    {\n        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);\n        RaycastHit hit;\n\n        if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectableLayers))\n        {\n            Deselect();\n            selectedObject = hit.gameObject;\n            Renderer rend = selectedObject.GetComponent<Renderer>();\n            originalColor = rend.material.color;  // save the old color\n            rend.material.color = highlightColor; // apply yellow highlight\n            Debug.Log("Selected: " + selectedObject.name + " at " + hit.point);\n        }\n        else\n        {\n            Deselect();\n        }\n    }\n\n    void Deselect()\n    {\n        if (selectedObject == null) return;\n        selectedObject.GetComponent<Renderer>().material.color = originalColor;\n        selectedObject = null;\n    }\n}`
-    },
+        description: "HOW TO TEST: Add cubes to scene → Add this to Camera. Left click selects, highlights, logs name.",
+        difficulty: 3,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// CLICK TO SELECT — raycast from mouse to pick objects
+// HOW TO SET UP:
+//   1. Add several Cubes/Spheres to the scene
+//   2. Attach this script to the Main Camera
+//   Left-click any object to select it (turns yellow)
+//   Click empty space to deselect
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class ClickToSelect : MonoBehaviour
+{
+    [SerializeField] private Color highlightColor = Color.yellow;
+    [SerializeField] private LayerMask selectableLayers;
+
+    private GameObject selectedObject;
+    private Color originalColor;
+
+    void Update()
     {
-        id: 14, category: "דוגמה מעשית",
+        // GetMouseButtonDown(0) = left mouse button, fires once per click
+        if (Input.GetMouseButtonDown(0))
+        {
+            TrySelect();
+        }
+    }
+
+    void TrySelect()
+    {
+        // Build a ray from the camera through the mouse pixel on screen
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        // Physics.Raycast returns true if the ray collides with anything
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectableLayers))
+        {
+            // Deselect whatever was selected before
+            Deselect();
+
+            // Store reference and original color, then highlight
+            selectedObject = hit.gameObject;
+            Renderer rend = selectedObject.GetComponent<Renderer>();
+            originalColor = rend.material.color;  // save the old color
+            rend.material.color = highlightColor; // apply yellow highlight
+
+            Debug.Log("Selected: " + selectedObject.name +
+                      " at " + hit.point);
+        }
+        else
+        {
+            // Clicked empty space — deselect
+            Deselect();
+        }
+    }
+
+    void Deselect()
+    {
+        if (selectedObject == null) return;
+
+        // Restore original color before clearing the reference
+        selectedObject.GetComponent<Renderer>().material.color = originalColor;
+        selectedObject = null;
+    }
+}`
+    },
+
+    {
+        id: 14,
+        category: "דוגמה מעשית",
         title: "Trigger Score Zone — Collider Events",
-        description: "HOW TO TEST: Cube + Is Trigger checked → Add this script → Tag player as 'Player'. Walk in.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// TRIGGER SCORE ZONE — add points when player enters area\n// HOW TO SET UP:\n//   1. Create > 3D Object > Cube (scale to a large flat area)\n//   2. On the Cube's Box Collider, check \"Is Trigger\"\n//   3. Attach this script to the Cube\n//   4. Tag your player GameObject as \"Player\"\n//   Walk the Player into the zone — watch the Console\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class ScoreZone : MonoBehaviour\n{\n    [SerializeField] private int pointsToAward = 100;\n    [SerializeField] private Color zoneColor = Color.green;\n\n    private Renderer zoneRenderer;\n    private int visitCount = 0;\n\n    void Awake()\n    {\n        zoneRenderer = GetComponent<Renderer>();\n        zoneRenderer.material.color = zoneColor;\n    }\n\n    // OnTriggerEnter fires once when a Collider enters the trigger volume\n    void OnTriggerEnter(Collider other)\n    {\n        // CompareTag — faster than (other.tag == \"Player\"), uses hashed ID\n        if (!other.CompareTag(\"Player\")) return;\n\n        visitCount++;\n        Debug.Log("Player entered! Visit #" + visitCount +\n                  " | +" + pointsToAward + " points");\n\n        zoneRenderer.material.color = Color.white; // flash bright on enter\n    }\n\n    // OnTriggerStay fires EVERY frame while inside — use sparingly\n    void OnTriggerStay(Collider other) { }\n\n    // OnTriggerExit fires once when the Collider leaves the volume\n    void OnTriggerExit(Collider other)\n    {\n        if (!other.CompareTag(\"Player\")) return;\n        Debug.Log("Player left the zone.");\n        zoneRenderer.material.color = zoneColor; // restore color on exit\n    }\n}`
-    },
+        description: "HOW TO TEST: Cube=IsTrigger checked → Add this script. Walk in with Player-tagged object → score up.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// TRIGGER SCORE ZONE — add points when player enters area
+// HOW TO SET UP:
+//   1. Create > 3D Object > Cube → scale it to a large flat area
+//   2. On the Cube's Box Collider, check "Is Trigger"
+//   3. Attach this script to the Cube
+//   4. Tag your player GameObject as "Player"
+//   Walk the Player into the zone — watch the Console
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class ScoreZone : MonoBehaviour
+{
+    [SerializeField] private int pointsToAward = 100;
+    [SerializeField] private Color zoneColor = Color.green;
+
+    private Renderer zoneRenderer;
+    private int visitCount = 0;  // how many times player entered
+
+    void Awake()
     {
-        id: 15, category: "דוגמה מעשית",
+        zoneRenderer = GetComponent<Renderer>();
+        zoneRenderer.material.color = zoneColor;
+    }
+
+    // OnTriggerEnter fires once when a Collider enters the trigger volume
+    // 'other' is the Collider that entered (could be player, enemy, ball...)
+    void OnTriggerEnter(Collider other)
+    {
+        // CompareTag — faster than (other.tag == "Player"), uses hashed ID
+        if (!other.CompareTag("Player")) return;
+
+        visitCount++;
+        Debug.Log("Player entered! Visit #" + visitCount +
+                  " | +" + pointsToAward + " points");
+
+        // Flash the zone bright to give visual feedback
+        zoneRenderer.material.color = Color.white;
+    }
+
+    // OnTriggerStay fires EVERY frame while inside the trigger
+    // use sparingly — it runs constantly and can be expensive
+    void OnTriggerStay(Collider other) { }
+
+    // OnTriggerExit fires once when the Collider leaves the volume
+    void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+        Debug.Log("Player left the zone.");
+
+        // Restore zone color when player leaves
+        zoneRenderer.material.color = zoneColor;
+    }
+}`
+    },
+
+    {
+        id: 15,
+        category: "דוגמה מעשית",
         title: "Fade Sequence — Coroutines in Practice",
-        description: "HOW TO TEST: Canvas > Image + CanvasGroup → Add this script. Auto runs fade-in/pause/fade-out.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// FADE SEQUENCE — timed fade using coroutines\n// HOW TO SET UP:\n//   1. Create > UI > Canvas > Image (black, fill screen)\n//   2. Add Component > CanvasGroup to the Image\n//   3. Attach this script to the Image\n//   On Play: fades in → waits → fades out automatically\n// ═══════════════════════════════════════════════════════\nusing System.Collections;\nusing UnityEngine;\n\npublic class FadeSequence : MonoBehaviour\n{\n    [SerializeField] private float fadeInDuration  = 1.5f;\n    [SerializeField] private float holdDuration    = 2.0f;\n    [SerializeField] private float fadeOutDuration = 1.5f;\n\n    private CanvasGroup cg; // controls alpha of all UI children at once\n\n    void Start()\n    {\n        cg = GetComponent<CanvasGroup>();\n        StartCoroutine(PlaySequence());\n    }\n\n    IEnumerator PlaySequence()\n    {\n        yield return StartCoroutine(Fade(0f, 1f, fadeInDuration));\n        yield return new WaitForSeconds(holdDuration);\n        yield return StartCoroutine(Fade(1f, 0f, fadeOutDuration));\n        Debug.Log("Fade sequence complete!");\n    }\n\n    // Generic fade — goes from startAlpha to endAlpha over duration seconds\n    IEnumerator Fade(float startAlpha, float endAlpha, float duration)\n    {\n        float elapsed = 0f;\n        cg.alpha = startAlpha;\n\n        while (elapsed < duration)\n        {\n            elapsed += Time.deltaTime; // seconds since last frame\n\n            // Lerp = linear interpolation: blends from start to end by ratio\n            cg.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsed / duration);\n\n            yield return null; // pause here, resume on the NEXT frame\n        }\n\n        cg.alpha = endAlpha; // snap to exact value (avoid float drift)\n    }\n}`
-    },
+        description: "HOW TO TEST: Canvas > Image → Add CanvasGroup → Add this script. Runs fade-in/pause/fade-out on Start.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// FADE SEQUENCE — timed fade using coroutines
+// HOW TO SET UP:
+//   1. Create > UI > Canvas > Image (set color to black, fill screen)
+//   2. Add Component > CanvasGroup to the Image
+//   3. Attach this script to the Image
+//   On Play: fades in → waits → fades out automatically
+// ═══════════════════════════════════════════════════════
+using System.Collections;
+using UnityEngine;
+
+public class FadeSequence : MonoBehaviour
+{
+    [SerializeField] private float fadeInDuration  = 1.5f;
+    [SerializeField] private float holdDuration    = 2.0f;
+    [SerializeField] private float fadeOutDuration = 1.5f;
+
+    private CanvasGroup cg; // controls alpha of all UI children at once
+
+    void Start()
     {
-        id: 16, category: "דוגמה מעשית",
+        cg = GetComponent<CanvasGroup>();
+
+        // Start the sequence — we can wait for it to finish with yield
+        StartCoroutine(PlaySequence());
+    }
+
+    IEnumerator PlaySequence()
+    {
+        yield return StartCoroutine(Fade(0f, 1f, fadeInDuration));
+        yield return new WaitForSeconds(holdDuration);
+        yield return StartCoroutine(Fade(1f, 0f, fadeOutDuration));
+        Debug.Log("Fade sequence complete!");
+    }
+
+    // Generic fade — goes from 'startAlpha' to 'endAlpha' over 'duration' seconds
+    IEnumerator Fade(float startAlpha, float endAlpha, float duration)
+    {
+        float elapsed = 0f;
+        cg.alpha = startAlpha;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime; // Time.deltaTime = seconds since last frame
+
+            // Lerp = linear interpolation: blends from start to end by a 0-1 ratio
+            cg.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsed / duration);
+
+            // yield return null = pause here, resume on the NEXT frame
+            yield return null;
+        }
+
+        cg.alpha = endAlpha; // snap to exact final value (avoid floating point drift)
+    }
+}`
+    },
+
+    {
+        id: 16,
+        category: "דוגמה מעשית",
         title: "Player Animator — Code Drives State Machine",
-        description: "HOW TO TEST: Capsule + CharacterController + Animator with Speed(Float), IsGrounded(Bool), Jump(Trigger).",
-        difficulty: 3, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// PLAYER ANIMATOR — drives Animator Controller from movement\n// HOW TO SET UP:\n//   1. Capsule with CharacterController + Animator\n//   2. Create Animator Controller with parameters:\n//      Speed (Float), IsGrounded (Bool), Jump (Trigger)\n//   3. Attach this script\n//   WASD = move and watch blend  |  Space = jump trigger\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class PlayerAnimator : MonoBehaviour\n{\n    private Animator anim;\n    private CharacterController cc;\n\n    // Cache hashes — faster than passing strings every frame\n    private static readonly int SpeedHash      = Animator.StringToHash(\"Speed\");\n    private static readonly int IsGroundedHash = Animator.StringToHash(\"IsGrounded\");\n    private static readonly int JumpHash       = Animator.StringToHash(\"Jump\");\n\n    [SerializeField] private float moveSpeed = 4f;\n    [SerializeField] private float animSmoothTime = 0.1f;\n\n    void Awake()\n    {\n        anim = GetComponent<Animator>();\n        cc   = GetComponent<CharacterController>();\n    }\n\n    void Update()\n    {\n        Vector2 input = new Vector2(\n            Input.GetAxisRaw(\"Horizontal\"),\n            Input.GetAxisRaw(\"Vertical\")\n        );\n\n        float targetSpeed = input.magnitude * moveSpeed;\n\n        // Lerp the Speed param — prevents animation snapping\n        float currentSpeed = anim.GetFloat(SpeedHash);\n        anim.SetFloat(SpeedHash, Mathf.Lerp(currentSpeed, targetSpeed, animSmoothTime));\n\n        // isGrounded — CharacterController updates this every Update\n        anim.SetBool(IsGroundedHash, cc.isGrounded);\n\n        // SetTrigger resets itself after the transition fires once\n        if (Input.GetKeyDown(KeyCode.Space) && cc.isGrounded)\n        {\n            anim.SetTrigger(JumpHash);\n        }\n    }\n}`
-    },
+        description: "HOW TO TEST: Capsule + Animator Controller with Speed(Float), IsGrounded(Bool), Jump(Trigger).",
+        difficulty: 3,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// PLAYER ANIMATOR — drives Animator Controller from movement
+// HOW TO SET UP:
+//   1. Capsule with Rigidbody + CharacterController + Animator
+//   2. Create Animator Controller with parameters:
+//      Speed (Float), IsGrounded (Bool), Jump (Trigger)
+//   3. Attach this script
+//   WASD = move and watch animation blend  |  Space = jump trigger
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class PlayerAnimator : MonoBehaviour
+{
+    private Animator anim;
+    private CharacterController cc;
+
+    // Cache the parameter hashes — faster than passing strings every frame
+    private static readonly int SpeedHash      = Animator.StringToHash("Speed");
+    private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+    private static readonly int JumpHash       = Animator.StringToHash("Jump");
+
+    [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private float animSmoothTime = 0.1f; // blend smoothing
+
+    void Awake()
     {
-        id: 17, category: "דוגמה מעשית",
+        anim = GetComponent<Animator>();
+        cc   = GetComponent<CharacterController>();
+    }
+
+    void Update()
+    {
+        Vector2 input = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        );
+
+        float targetSpeed = input.magnitude * moveSpeed;
+
+        // Lerp the Speed param toward target — prevents animation snapping
+        float currentSpeed = anim.GetFloat(SpeedHash);
+        float newSpeed = Mathf.Lerp(currentSpeed, targetSpeed, animSmoothTime);
+        anim.SetFloat(SpeedHash, newSpeed);
+
+        // isGrounded — CharacterController updates this every Update
+        anim.SetBool(IsGroundedHash, cc.isGrounded);
+
+        // SetTrigger resets automatically after the transition fires once
+        if (Input.GetKeyDown(KeyCode.Space) && cc.isGrounded)
+        {
+            anim.SetTrigger(JumpHash);
+        }
+    }
+}`
+    },
+
+    {
+        id: 17,
+        category: "דוגמה מעשית",
         title: "Footstep System — AudioSource.PlayOneShot",
-        description: "HOW TO TEST: Capsule + CharacterController + AudioSource → Add this script + AudioClip array.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// FOOTSTEP SYSTEM — play sounds based on movement speed\n// HOW TO SET UP:\n//   1. Player Capsule with CharacterController + AudioSource\n//   2. Attach this script\n//   3. Fill 'footstepSounds' array in Inspector with .wav files\n//   Walk/run — footsteps play at pace matching your speed\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class FootstepSystem : MonoBehaviour\n{\n    [SerializeField] private AudioClip[] footstepSounds;\n    [SerializeField] private float stepInterval = 0.45f;\n    [SerializeField] private float minSpeedToPlay = 0.5f;\n\n    private AudioSource audioSrc;\n    private CharacterController cc;\n    private float stepTimer = 0f;\n    private int lastIndex = -1; // avoid repeating the same clip twice in a row\n\n    void Awake()\n    {\n        audioSrc = GetComponent<AudioSource>();\n        cc = GetComponent<CharacterController>();\n        audioSrc.spatialBlend = 0f; // 2D sound — no positional falloff\n    }\n\n    void Update()\n    {\n        // XZ speed only — ignore vertical (jumping) movement\n        float speed = new Vector3(cc.velocity.x, 0f, cc.velocity.z).magnitude;\n        bool isMoving = cc.isGrounded && speed > minSpeedToPlay;\n\n        if (!isMoving) { stepTimer = 0f; return; }\n\n        stepTimer += Time.deltaTime;\n\n        // faster speed = shorter interval = more frequent steps\n        float interval = stepInterval / (speed * 0.3f);\n        if (stepTimer >= interval)\n        {\n            stepTimer = 0f;\n            PlayRandomFootstep();\n        }\n    }\n\n    void PlayRandomFootstep()\n    {\n        if (footstepSounds.Length == 0) return;\n\n        // Pick a random clip but never the same one twice in a row\n        int index;\n        do { index = Random.Range(0, footstepSounds.Length); }\n        while (index == lastIndex && footstepSounds.Length > 1);\n\n        lastIndex = index;\n        audioSrc.PlayOneShot(footstepSounds[index], 0.7f);\n    }\n}`
-    },
+        description: "HOW TO TEST: Capsule moving + AudioSource + this script. Footstep sounds play from speed threshold.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// FOOTSTEP SYSTEM — play sounds based on movement speed
+// HOW TO SET UP:
+//   1. Player Capsule with CharacterController + AudioSource
+//   2. Attach this script
+//   3. Fill 'footstepSounds' array in Inspector with .wav files
+//   Walk/run to hear footsteps at correct pace
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class FootstepSystem : MonoBehaviour
+{
+    [SerializeField] private AudioClip[] footstepSounds; // fill in Inspector
+    [SerializeField] private float stepInterval = 0.45f;  // seconds between steps
+    [SerializeField] private float minSpeedToPlay = 0.5f; // don't play when barely moving
+
+    private AudioSource audioSrc;
+    private CharacterController cc;
+    private float stepTimer = 0f;
+    private int lastIndex = -1; // avoid repeating the same clip twice in a row
+
+    void Awake()
     {
-        id: 18, category: "דוגמה מעשית",
+        audioSrc = GetComponent<AudioSource>();
+        cc = GetComponent<CharacterController>();
+
+        // 2D sound — no position-based volume change
+        audioSrc.spatialBlend = 0f;
+    }
+
+    void Update()
+    {
+        // cc.velocity.magnitude = current movement speed in units/second
+        float speed = new Vector3(cc.velocity.x, 0f, cc.velocity.z).magnitude;
+        bool isMoving = cc.isGrounded && speed > minSpeedToPlay;
+
+        if (!isMoving) { stepTimer = 0f; return; }
+
+        stepTimer += Time.deltaTime;
+
+        // stepInterval decreases with speed — faster = more frequent steps
+        float interval = stepInterval / (speed * 0.3f);
+        if (stepTimer >= interval)
+        {
+            stepTimer = 0f;
+            PlayRandomFootstep();
+        }
+    }
+
+    void PlayRandomFootstep()
+    {
+        if (footstepSounds.Length == 0) return;
+
+        // Pick a random clip but never the same one twice in a row
+        int index;
+        do { index = Random.Range(0, footstepSounds.Length); }
+        while (index == lastIndex && footstepSounds.Length > 1);
+
+        lastIndex = index;
+
+        // PlayOneShot plays without interrupting any currently playing clip
+        audioSrc.PlayOneShot(footstepSounds[index], 0.7f);
+    }
+}`
+    },
+
+    {
+        id: 18,
+        category: "דוגמה מעשית",
         title: "Camera Shake — Coroutine + Random",
-        description: "HOW TO TEST: Attach to Main Camera. Call CameraShake.Instance.Shake(0.5f, 0.3f) from any script.",
-        difficulty: 3, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// CAMERA SHAKE — trauma-based screen shake via Singleton\n// HOW TO SET UP:\n//   1. Attach this script to the Main Camera\n//   2. From any other script call:\n//      CameraShake.Instance.Shake(intensity, duration);\n//   Example: CameraShake.Instance.Shake(0.5f, 0.4f);\n// ═══════════════════════════════════════════════════════\nusing System.Collections;\nusing UnityEngine;\n\npublic class CameraShake : MonoBehaviour\n{\n    // Singleton so any script can call Shake() without a reference\n    public static CameraShake Instance { get; private set; }\n\n    private Vector3 originalPosition;\n\n    void Awake()\n    {\n        Instance = this;\n        originalPosition = transform.localPosition;\n    }\n\n    // intensity = max offset in Unity units (0.1 = subtle, 1.0 = violent)\n    // duration  = how many seconds the shake lasts\n    public void Shake(float intensity, float duration)\n    {\n        StopAllCoroutines(); // stop any ongoing shake before starting new\n        StartCoroutine(DoShake(intensity, duration));\n    }\n\n    IEnumerator DoShake(float intensity, float duration)\n    {\n        float elapsed = 0f;\n\n        while (elapsed < duration)\n        {\n            elapsed += Time.deltaTime;\n\n            // t goes from 1.0 down to 0.0 — shake fades out over time\n            float t = 1f - (elapsed / duration);\n\n            // Random.insideUnitSphere = random point inside a unit sphere\n            Vector3 offset = Random.insideUnitSphere * intensity * t;\n            offset.z = 0f; // no Z shake for a 2D-style feel\n\n            transform.localPosition = originalPosition + offset;\n            yield return null; // shake every frame\n        }\n\n        transform.localPosition = originalPosition; // snap back when done\n    }\n}`
-    },
+        description: "HOW TO TEST: Add to Main Camera. Call CameraShake.Instance.Shake(0.5f, 0.3f) from anywhere.",
+        difficulty: 3,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// CAMERA SHAKE — add trauma-based shake to Main Camera
+// HOW TO SET UP:
+//   1. Attach this script to the Main Camera
+//   2. From any other script, call:
+//      CameraShake.Instance.Shake(intensity, duration);
+//   Example: on explosion — CameraShake.Instance.Shake(0.5f, 0.4f);
+// ═══════════════════════════════════════════════════════
+using System.Collections;
+using UnityEngine;
+
+public class CameraShake : MonoBehaviour
+{
+    // Singleton so any script can call Shake() without a reference
+    public static CameraShake Instance { get; private set; }
+
+    private Vector3 originalPosition; // saved so we can return to it
+
+    void Awake()
     {
-        id: 19, category: "דוגמה מעשית",
+        Instance = this;
+        originalPosition = transform.localPosition;
+    }
+
+    // Public API — call this to trigger a shake
+    // intensity = max offset in Unity units (0.1 = subtle, 1.0 = violent)
+    // duration  = how many seconds the shake lasts
+    public void Shake(float intensity, float duration)
+    {
+        // If already shaking, stop it before starting a new one
+        StopAllCoroutines();
+        StartCoroutine(DoShake(intensity, duration));
+    }
+
+    IEnumerator DoShake(float intensity, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            // t goes from 1.0 down to 0.0 — shake fades out over time
+            float t = 1f - (elapsed / duration);
+
+            // Random.insideUnitSphere = a random point within a sphere of radius 1
+            // multiplying by intensity*t makes it smaller as time passes
+            Vector3 offset = Random.insideUnitSphere * intensity * t;
+            offset.z = 0f; // don't shake on Z for a 2D-style feel
+
+            transform.localPosition = originalPosition + offset;
+
+            yield return null; // wait one frame, then shake again
+        }
+
+        // Snap back to original position when done
+        transform.localPosition = originalPosition;
+    }
+}`
+    },
+
+    {
+        id: 19,
+        category: "דוגמה מעשית",
         title: "Orbit Object — Transform Math",
-        description: "HOW TO TEST: Sphere + empty Center object → Attach script to Sphere, drag Center into orbitTarget.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// ORBIT OBJECT — rotate around a center using sin/cos math\n// HOW TO SET UP:\n//   1. Create an empty GameObject (call it \"Center\")\n//   2. Create a Sphere as the orbiting body\n//   3. Attach this script to the Sphere\n//   4. Drag \"Center\" into the 'orbitTarget' field in Inspector\n//   Adjust radius and speed in Inspector while in Play mode\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class OrbitObject : MonoBehaviour\n{\n    [SerializeField] private Transform orbitTarget;\n    [SerializeField] private float radius      = 5f;\n    [SerializeField] private float orbitSpeed  = 45f;  // degrees per second\n    [SerializeField] private float heightOffset = 0f;\n\n    private float currentAngle = 0f;\n\n    void Update()\n    {\n        // Time.deltaTime = seconds since last frame (framerate independent)\n        currentAngle += orbitSpeed * Time.deltaTime;\n\n        // Keep angle in 0-360 range (prevents float overflow over time)\n        if (currentAngle >= 360f) currentAngle -= 360f;\n\n        // Mathf.Sin/Cos expect radians, not degrees — convert first\n        float rad = currentAngle * Mathf.Deg2Rad;\n\n        // Circle formula: x = cos(angle)*r, z = sin(angle)*r\n        Vector3 offset = new Vector3(\n            Mathf.Cos(rad) * radius,  // X = left/right position\n            heightOffset,             // Y = vertical (0 = flat orbit)\n            Mathf.Sin(rad) * radius   // Z = forward/back position\n        );\n\n        // Add offset to center — this IS the orbit position\n        transform.position = orbitTarget.position + offset;\n\n        // LookAt center — remove this line to let it spin freely\n        transform.LookAt(orbitTarget.position);\n    }\n}`
-    },
+        description: "HOW TO TEST: Two GameObjects — Parent stays still, Child gets this script. Radius and speed control orbit.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// ORBIT OBJECT — rotate around a center point using math
+// HOW TO SET UP:
+//   1. Create an empty GameObject as the center (call it "Center")
+//   2. Create a Sphere as the orbiting body
+//   3. Attach this script to the Sphere
+//   4. Drag "Center" into the 'orbitTarget' field in Inspector
+//   Adjust radius and speed in the Inspector while in Play mode
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class OrbitObject : MonoBehaviour
+{
+    [SerializeField] private Transform orbitTarget;   // the center to orbit
+    [SerializeField] private float radius     = 5f;   // distance from center
+    [SerializeField] private float orbitSpeed = 45f;  // degrees per second
+    [SerializeField] private float heightOffset = 0f; // Y offset from center
+
+    private float currentAngle = 0f; // tracks rotation in degrees
+
+    void Update()
     {
-        id: 20, category: "דוגמה מעשית",
+        // Increase angle each frame by speed * deltaTime
+        // Time.deltaTime = seconds elapsed since last frame (ensures framerate independence)
+        currentAngle += orbitSpeed * Time.deltaTime;
+
+        // Keep angle in 0-360 range (prevents float overflow after long play sessions)
+        if (currentAngle >= 360f) currentAngle -= 360f;
+
+        // Convert angle to radians (Mathf.Sin/Cos expect radians, not degrees)
+        float rad = currentAngle * Mathf.Deg2Rad;
+
+        // Calculate position on a circle: x = cos(angle)*r, z = sin(angle)*r
+        Vector3 offset = new Vector3(
+            Mathf.Cos(rad) * radius,  // X = how far right/left
+            heightOffset,             // Y = vertical offset (flat orbit if 0)
+            Mathf.Sin(rad) * radius   // Z = how far forward/back
+        );
+
+        // Add offset to the center point — this is the orbit position
+        transform.position = orbitTarget.position + offset;
+
+        // Always face the center (optional: comment out to let it spin freely)
+        transform.LookAt(orbitTarget.position);
+    }
+}`
+    },
+
+    {
+        id: 20,
+        category: "דוגמה מעשית",
         title: "Save & Load — PlayerPrefs System",
-        description: "HOW TO TEST: Add to any GameObject. Press S to save, L to load, D to delete — see Console.",
-        difficulty: 2, type: "example",
-        code: `// ═══════════════════════════════════════════════════════\n// SAVE & LOAD — persist data between sessions with PlayerPrefs\n// HOW TO TEST:\n//   1. Attach this script to any empty GameObject\n//   2. Press S in Play mode to save score and level\n//   3. Press L to load and print — check Console\n//   4. Stop Play, press Play again, press L — data persists!\n// ═══════════════════════════════════════════════════════\nusing UnityEngine;\n\npublic class SaveLoadSystem : MonoBehaviour\n{\n    // String constants for keys — avoids typo bugs\n    private const string KEY_SCORE  = \"HighScore\";\n    private const string KEY_LEVEL  = \"Level\";\n    private const string KEY_VOLUME = \"MusicVolume\";\n\n    private int score   = 250;\n    private int level   = 3;\n    private float volume = 0.8f;\n\n    void Update()\n    {\n        if (Input.GetKeyDown(KeyCode.S)) SaveData();\n        if (Input.GetKeyDown(KeyCode.L)) LoadData();\n        if (Input.GetKeyDown(KeyCode.D)) DeleteAll();\n    }\n\n    void SaveData()\n    {\n        // SetInt / SetFloat / SetString — store value under a string key\n        PlayerPrefs.SetInt(KEY_SCORE, score);\n        PlayerPrefs.SetInt(KEY_LEVEL, level);\n        PlayerPrefs.SetFloat(KEY_VOLUME, volume);\n\n        // Save — flush to disk immediately (otherwise saves on app quit)\n        PlayerPrefs.Save();\n        Debug.Log("Saved: score=" + score + " level=" + level);\n    }\n\n    void LoadData()\n    {\n        // GetInt(key, defaultValue) — returns default if key missing\n        score  = PlayerPrefs.GetInt(KEY_SCORE, 0);\n        level  = PlayerPrefs.GetInt(KEY_LEVEL, 1);\n        volume = PlayerPrefs.GetFloat(KEY_VOLUME, 1.0f);\n        Debug.Log("Loaded: score=" + score + " level=" + level);\n    }\n\n    void DeleteAll()\n    {\n        // HasKey — confirm key exists before deleting\n        if (PlayerPrefs.HasKey(KEY_SCORE))\n            PlayerPrefs.DeleteKey(KEY_SCORE);\n\n        PlayerPrefs.DeleteAll(); // wipe everything\n        Debug.Log("All saved data deleted.");\n    }\n}`
+        description: "HOW TO TEST: Add to any GameObject. Press S to save, L to load — check Console for values.",
+        difficulty: 2,
+        type: "example",
+        code: `// ═══════════════════════════════════════════════════════
+// SAVE & LOAD — persist data between play sessions with PlayerPrefs
+// PlayerPrefs stores key-value pairs on disk (like a registry/plist)
+// HOW TO TEST:
+//   1. Attach this script to any empty GameObject
+//   2. Press S in Play mode to save current score/level
+//   3. Press L to load saved data — check Console output
+//   4. Stop Play, press Play again, press L — data persists!
+// ═══════════════════════════════════════════════════════
+using UnityEngine;
+
+public class SaveLoadSystem : MonoBehaviour
+{
+    // String constants for keys — avoids typo bugs ("HighScore" vs "Highscore")
+    private const string KEY_SCORE  = "HighScore";
+    private const string KEY_LEVEL  = "Level";
+    private const string KEY_VOLUME = "MusicVolume";
+
+    private int score  = 250;  // example data to save
+    private int level  = 3;
+    private float volume = 0.8f;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S)) SaveData();
+        if (Input.GetKeyDown(KeyCode.L)) LoadData();
+        if (Input.GetKeyDown(KeyCode.D)) DeleteAll();
+    }
+
+    void SaveData()
+    {
+        // SetInt / SetFloat / SetString — store value under a key
+        PlayerPrefs.SetInt(KEY_SCORE, score);
+        PlayerPrefs.SetInt(KEY_LEVEL, level);
+        PlayerPrefs.SetFloat(KEY_VOLUME, volume);
+
+        // Save — flush to disk immediately (otherwise it saves on app quit)
+        PlayerPrefs.Save();
+        Debug.Log("Saved: score=" + score + " level=" + level);
+    }
+
+    void LoadData()
+    {
+        // GetInt(key, defaultValue) — returns defaultValue if key doesn't exist yet
+        score  = PlayerPrefs.GetInt(KEY_SCORE, 0);
+        level  = PlayerPrefs.GetInt(KEY_LEVEL, 1);
+        volume = PlayerPrefs.GetFloat(KEY_VOLUME, 1.0f);
+
+        Debug.Log("Loaded: score=" + score + " level=" + level +
+                  " volume=" + volume);
+    }
+
+    void DeleteAll()
+    {
+        // HasKey — check before deleting to confirm the key existed
+        if (PlayerPrefs.HasKey(KEY_SCORE))
+        {
+            PlayerPrefs.DeleteKey(KEY_SCORE); // remove one specific key
+        }
+
+        PlayerPrefs.DeleteAll(); // nuclear option — wipe everything
+        Debug.Log("All saved data deleted.");
+    }
+}`
     }
 ];

@@ -233,8 +233,11 @@ function buildCodeDisplay() {
     for (let i = 0; i < currentCode.length; i++) {
         const ch = currentCode[i];
         if (ch === '\n') {
+            // Render visible ↵ symbol; the raw \n after the closing tag
+            // creates the actual line break in white-space:pre context
             html += `<span class="char char-pending char-newline" data-i="${i}">↵</span>\n`;
         } else if (ch === ' ') {
+            // Use a middot · for spaces to make them visible while typing
             html += `<span class="char char-pending char-space" data-i="${i}">·</span>`;
         } else {
             html += `<span class="char char-pending" data-i="${i}">${escapeHtml(ch)}</span>`;
@@ -243,6 +246,7 @@ function buildCodeDisplay() {
     codeDisplay.innerHTML = html;
     charSpans = Array.from(codeDisplay.querySelectorAll('.char'));
 
+    // Mark first character as the cursor position
     if (charSpans.length > 0) {
         charSpans[0].classList.replace('char-pending', 'char-current');
     }
@@ -255,7 +259,7 @@ document.addEventListener('keydown', handleKeyDown);
 function handleKeyDown(e) {
     if (state.isComplete) return;
     if (!LESSONS[state.lessonIndex]) return;
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return; // don't intercept browser shortcuts
 
     if (e.key === 'Backspace') {
         e.preventDefault();
@@ -268,11 +272,11 @@ function handleKeyDown(e) {
         typed = '\n';
     } else if (e.key === 'Tab') {
         e.preventDefault();
-        return;
+        return; // tabs are spaces in all lessons; just ignore
     } else if (e.key.length === 1) {
         typed = e.key;
     } else {
-        return;
+        return; // ignore Shift, F1, ArrowUp, etc.
     }
 
     e.preventDefault();
@@ -280,7 +284,7 @@ function handleKeyDown(e) {
 }
 
 function handleChar(typed) {
-    if (state.hasError) return;
+    if (state.hasError) return; // must press Backspace to clear error first
 
     if (!state.isStarted) {
         state.isStarted = true;
@@ -292,6 +296,7 @@ function handleChar(typed) {
     const expected = currentCode[state.currentPosition];
 
     if (typed === expected) {
+        // ✓ Correct keystroke
         setSpanClass(state.currentPosition, 'correct');
         state.correctChars++;
         state.currentPosition++;
@@ -300,6 +305,7 @@ function handleChar(typed) {
             setSpanClass(state.currentPosition, 'current');
         }
 
+        // Scroll so new current character stays at the target row
         scrollToCurrent(true);
         updateStats();
 
@@ -307,9 +313,11 @@ function handleChar(typed) {
             completeLesson();
         }
     } else {
+        // ✗ Wrong keystroke — mark error, force Backspace to continue
         state.errors++;
         state.hasError = true;
         charSpans[state.currentPosition].classList.add('char-wrong');
+        // Brief shake animation for feedback
         charSpans[state.currentPosition].classList.add('shake');
         setTimeout(() => {
             charSpans[state.currentPosition]?.classList.remove('shake');
@@ -319,6 +327,7 @@ function handleChar(typed) {
 
 function handleBackspace() {
     if (state.hasError) {
+        // Clear the error state — user can retry
         state.hasError = false;
         charSpans[state.currentPosition].classList.remove('char-wrong');
         return;
@@ -329,11 +338,12 @@ function handleBackspace() {
         state.currentPosition--;
         state.correctChars = Math.max(0, state.correctChars - 1);
         setSpanClass(state.currentPosition, 'current');
-        scrollToCurrent(true);
+        scrollToCurrent(true); // scroll back too
         updateStats();
     }
 }
 
+// Efficiently update a single span's CSS class
 function setSpanClass(idx, type) {
     if (idx < 0 || idx >= charSpans.length) return;
     const span = charSpans[idx];

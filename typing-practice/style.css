@@ -1,4 +1,4 @@
-/* ── Variables (Catppuccin Mocha) ─────────────────────────────────────── */
+/* ── Variables (Catppuccin Mocha) ─────────────────────────────────── */
 :root {
     --bg:          #1e1e2e;
     --bg-sidebar:  #181825;
@@ -26,7 +26,7 @@
     --radius:    8px;
 }
 
-/* ── Reset ──────────────────────────────────────────────────────── */
+/* ── Reset ────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 
@@ -45,7 +45,7 @@ body {
     overflow: hidden;
 }
 
-/* ── Sidebar ───────────────────────────────────────────────────────── */
+/* ── Sidebar ──────────────────────────────────────────────────────── */
 .sidebar {
     width: var(--sidebar-w);
     min-width: var(--sidebar-w);
@@ -155,7 +155,7 @@ body {
     position: relative;
 }
 
-/* ── Stats Bar ───────────────────────────────────────────────────────── */
+/* ── Stats Bar ────────────────────────────────────────────────────── */
 .stats-bar {
     display: flex;
     align-items: center;
@@ -194,7 +194,7 @@ body {
     margin-top: 1px;
 }
 
-/* ── Lesson Header ──────────────────────────────────────────────────────── */
+/* ── Lesson Header ────────────────────────────────────────────────── */
 .lesson-header {
     display: flex;
     align-items: flex-start;
@@ -254,7 +254,7 @@ body {
     margin-top: 4px;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────────────── */
+/* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
     border: none;
     border-radius: var(--radius);
@@ -272,7 +272,7 @@ body {
 .btn-primary   { background: var(--blue); color: var(--bg); }
 .btn-primary:hover { opacity: 0.85; }
 
-/* ── Progress Bar ────────────────────────────────────────────────────── */
+/* ── Progress Bar (thin line, no panel) ──────────────────────────── */
 .progress-bar { height: 2px; background: var(--surface0); flex-shrink: 0; }
 .progress-fill {
     height: 100%;
@@ -281,14 +281,15 @@ body {
     transition: width 0.08s linear;
 }
 
-/* ── Code Container ────────────────────────────────────────────────────── */
+/* ── Code Container — OVERFLOW HIDDEN for typewriter scroll ─────── */
 .code-container {
     flex: 1;
-    overflow: hidden;
+    overflow: hidden;       /* text scrolls OUT of view above/below */
     position: relative;
-    padding: 0 28px;
+    padding: 0 28px;        /* left/right padding only */
 }
 
+/* Gradient fade at top — gives "text disappearing upward" feel */
 .code-container::before,
 .code-container::after {
     content: '';
@@ -310,29 +311,41 @@ body {
     background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
 }
 
-/* ── Code Display ─────────────────────────────────────────────────────── */
+/* ── Code Display — animated via translateY ─────────────────────── */
 .code-display {
     font-family: var(--font-code);
     font-size: 15.5px;
-    line-height: 2;
+    line-height: 2;          /* generous line height makes each line readable */
     white-space: pre;
     tab-size: 4;
     user-select: none;
-    padding-top: 24px;
-    padding-bottom: 40vh;
+    padding-top: 24px;       /* small top pad before first line */
+    padding-bottom: 40vh;    /* large bottom pad so last lines can scroll to top */
+
+    /* Animated by app.js — this is the typewriter scroll mechanism */
     will-change: transform;
     transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ── Character States ────────────────────────────────────────────────────── */
+/* ── Character States ─────────────────────────────────────────────── */
 .char { display: inline; }
 
+/* Pending — not yet typed; dim/muted so focus stays on current position */
 .char-pending { color: var(--pending); }
+
+/* Space dots — subtle visibility for upcoming spaces */
 .char-space.char-pending { color: var(--space-dot); }
+
+/* Correct — typed accurately; bright green confirmation */
 .char-correct { color: var(--green); }
+
+/* Correct space — dimmer so the column of dots doesn't dominate */
 .char-space.char-correct { color: rgba(166, 227, 161, 0.45); }
+
+/* Correct newline — even dimmer, just a faint ↵ */
 .char-newline.char-correct { color: rgba(166, 227, 161, 0.3); }
 
+/* Current — the character to type RIGHT NOW; blinking cursor to its left */
 .char-current {
     color: var(--text);
     position: relative;
@@ -340,6 +353,7 @@ body {
     animation: cursor-blink 1.1s step-end infinite;
 }
 
+/* Error state — wrong key pressed; red background, user must Backspace */
 .char-current.char-wrong {
     color: var(--bg);
     background: var(--red);
@@ -348,8 +362,11 @@ body {
     animation: none;
 }
 
-.char-newline.char-pending { color: transparent; }
-.char-newline.char-current { color: var(--surface1); }
+/* Newline marker — only visible when it's the current position */
+.char-newline.char-pending { color: transparent; }      /* hidden until cursor reaches it */
+.char-newline.char-current { color: var(--surface1); }  /* show ↵ when it's the cursor target */
+
+/* Space dots — show only when current */
 .char-space.char-current { color: var(--text); }
 
 @keyframes cursor-blink {
@@ -365,7 +382,7 @@ body {
 
 .shake { animation: shake-x 0.25s ease; display: inline-block; }
 
-/* ── Hint ───────────────────────────────────────────────────────────────── */
+/* ── Hint ─────────────────────────────────────────────────────────── */
 .hint {
     position: absolute;
     bottom: 24px;
@@ -381,7 +398,7 @@ body {
     white-space: nowrap;
 }
 
-/* ── Completion Overlay ──────────────────────────────────────────────────── */
+/* ── Completion Overlay ───────────────────────────────────────────── */
 .completion {
     position: absolute;
     inset: 0;
