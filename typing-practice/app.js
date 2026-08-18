@@ -47,8 +47,10 @@ const elFinalWPM       = document.getElementById('final-wpm');
 const elFinalAccuracy  = document.getElementById('final-accuracy');
 const elFinalTime      = document.getElementById('final-time');
 
-const btnRestart = document.getElementById('btn-restart');
-const btnNext    = document.getElementById('btn-next');
+const btnRestart   = document.getElementById('btn-restart');
+const btnNext      = document.getElementById('btn-next');
+const btnCollapse  = document.getElementById('btn-collapse');
+const lessonHeader = document.getElementById('lesson-header');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -412,6 +414,24 @@ function completeLesson() {
 
 btnRestart.addEventListener('click', () => loadLesson(state.lessonIndex));
 btnNext.addEventListener('click', nextLesson);
+
+// ── Header collapse toggle ────────────────────────────────────────────────────
+
+let headerCollapsed = localStorage.getItem('headerCollapsed') === 'true';
+applyCollapse();
+
+btnCollapse.addEventListener('click', () => {
+    headerCollapsed = !headerCollapsed;
+    localStorage.setItem('headerCollapsed', headerCollapsed);
+    applyCollapse();
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToCurrent(false)));
+});
+
+function applyCollapse() {
+    lessonHeader.classList.toggle('collapsed', headerCollapsed);
+    btnCollapse.textContent = headerCollapsed ? '▾' : '▴';
+    btnCollapse.title = headerCollapsed ? 'הצג פרטים' : 'הסתר פרטים';
+}
 document.getElementById('btn-completion-retry').addEventListener('click', () => loadLesson(state.lessonIndex));
 document.getElementById('btn-completion-next').addEventListener('click', nextLesson);
 

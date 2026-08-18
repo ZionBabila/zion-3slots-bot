@@ -254,6 +254,38 @@ body {
     margin-top: 4px;
 }
 
+/* ── Collapsed header ─────────────────────────────────────────── */
+.lesson-header {
+    transition: padding 0.18s ease;
+}
+
+.lesson-header.collapsed {
+    padding: 7px 24px;
+    align-items: center;
+}
+
+.lesson-header.collapsed .lesson-meta-collapsible {
+    display: none;
+}
+
+.lesson-header.collapsed .lesson-title {
+    font-size: 13px;
+    margin-top: 0;
+}
+
+.lesson-header.collapsed .lesson-category {
+    display: none;
+}
+
+.lesson-header.collapsed .lesson-controls {
+    margin-top: 0;
+}
+
+#btn-collapse {
+    font-size: 10px;
+    padding: 7px 10px;
+}
+
 /* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
     border: none;
