@@ -5,7 +5,7 @@
 const LESSONS = [
   {
     id: 1,
-    title: "שלב 1 — סימני פיסוק וסוגריים",
+    title: "שלב 1 - סימני פיסוק וסוגריים",
     description: "התרגלות לסימנים הנפוצים ביותר בקוד C#: סוגריים, נקודה-פסיק, נקודה.",
     lines: [
       "{ }",
@@ -30,7 +30,7 @@ const LESSONS = [
   },
   {
     id: 2,
-    title: "שלב 2 — משתנים וטיפוסים",
+    title: "שלב 2 - משתנים וטיפוסים",
     description: "הצהרות משתנים בסיסיות עם הטיפוסים הנפוצים ב-C#.",
     lines: [
       "int health = 100;",
@@ -47,7 +47,7 @@ const LESSONS = [
   },
   {
     id: 3,
-    title: "שלב 3 — שלד של MonoBehaviour",
+    title: "שלב 3 - שלד של MonoBehaviour",
     description: "המבנה הבסיסי של כל סקריפט ביוניטי.",
     lines: [
       "using UnityEngine;",
@@ -66,8 +66,8 @@ const LESSONS = [
   },
   {
     id: 4,
-    title: "שלב 4 — מתודות מחזור החיים של יוניטי",
-    description: "Awake, Start, Update, FixedUpdate ועוד — בסדר הנכון.",
+    title: "שלב 4 - מתודות מחזור החיים של יוניטי",
+    description: "Awake, Start, Update, FixedUpdate ועוד - בסדר הנכון.",
     lines: [
       "void Awake()",
       "{",
@@ -101,7 +101,7 @@ const LESSONS = [
   },
   {
     id: 5,
-    title: "שלב 5 — Transform ו-Vector3",
+    title: "שלב 5 - Transform ו-Vector3",
     description: "תנועה בסיסית של אובייקטים במרחב התלת-מימדי.",
     lines: [
       "transform.position = Vector3.zero;",
@@ -116,7 +116,7 @@ const LESSONS = [
   },
   {
     id: 6,
-    title: "שלב 6 — קלט מהשחקן (Input)",
+    title: "שלב 6 - קלט מהשחקן (Input)",
     description: "קריאת מקשים, צירים ולחיצות עכבר.",
     lines: [
       "float h = Input.GetAxis(\"Horizontal\");",
@@ -134,7 +134,7 @@ const LESSONS = [
   },
   {
     id: 7,
-    title: "שלב 7 — GetComponent ורכיבים",
+    title: "שלב 7 - GetComponent ורכיבים",
     description: "גישה לרכיבים אחרים על אותו GameObject.",
     lines: [
       "Rigidbody rb = GetComponent<Rigidbody>();",
@@ -150,7 +150,7 @@ const LESSONS = [
   },
   {
     id: 8,
-    title: "שלב 8 — פיזיקה והתנגשויות",
+    title: "שלב 8 - פיזיקה והתנגשויות",
     description: "OnCollisionEnter, OnTriggerEnter ועבודה עם תגיות.",
     lines: [
       "void OnTriggerEnter(Collider other)",
@@ -169,7 +169,7 @@ const LESSONS = [
   },
   {
     id: 9,
-    title: "שלב 9 — Coroutines",
+    title: "שלב 9 - Coroutines",
     description: "פעולות אסינכרוניות מבוססות זמן בסטייל יוניטי.",
     lines: [
       "IEnumerator RespawnAfterDelay(float delay)",
@@ -186,7 +186,7 @@ const LESSONS = [
   },
   {
     id: 10,
-    title: "שלב 10 — סקריפט שלם: PlayerController",
+    title: "שלב 10 - סקריפט שלם: PlayerController",
     description: "כתיבת סקריפט מלא של תנועת שחקן ב-Unity.",
     lines: [
       "using UnityEngine;",
@@ -219,7 +219,7 @@ const LESSONS = [
   },
   {
     id: 11,
-    title: "שלב 11 — סקריפט שלם: Health & Enemy",
+    title: "שלב 11 - סקריפט שלם: Health & Enemy",
     description: "מערכת חיים, נזק ומוות עם אירועים.",
     lines: [
       "using UnityEngine;",
@@ -250,7 +250,7 @@ const LESSONS = [
   },
   {
     id: 12,
-    title: "שלב 12 — Animator מתקדם",
+    title: "שלב 12 - Animator מתקדם",
     description: "פרמטרים של Animator: SetFloat, CrossFade ואירועי אנימציה.",
     lines: [
       "anim.SetFloat(\"Speed\", currentSpeed);",
@@ -272,7 +272,7 @@ const LESSONS = [
   },
   {
     id: 13,
-    title: "שלב 13 — CharacterController",
+    title: "שלב 13 - CharacterController",
     description: "תנועה מבוססת קפסולה עם בדיקת קרקע וכבידה.",
     lines: [
       "using UnityEngine;",
@@ -308,7 +308,7 @@ const LESSONS = [
   },
   {
     id: 14,
-    title: "שלב 14 — מצלמה עוקבת אחרי השחקן",
+    title: "שלב 14 - מצלמה עוקבת אחרי השחקן",
     description: "סקריפט CameraFollow קלאסי עם Vector3.Lerp ב-LateUpdate.",
     lines: [
       "using UnityEngine;",
@@ -330,7 +330,7 @@ const LESSONS = [
   },
   {
     id: 15,
-    title: "שלב 15 — בינה מלאכותית של אויב עם NavMesh",
+    title: "שלב 15 - בינה מלאכותית של אויב עם NavMesh",
     description: "אויב שרודף את השחקן ועובר בין מצבי אנימציה לפי מרחק.",
     lines: [
       "using UnityEngine;",
@@ -370,8 +370,8 @@ const LESSONS = [
   },
   {
     id: 16,
-    title: "שלב 16 — סקריפט שלם: PlayerAnimatorSync",
-    description: "סינכרון בין תנועת Rigidbody לפרמטרים של Animator — שילוב מלא של שחקן עם אנימציה.",
+    title: "שלב 16 - סקריפט שלם: PlayerAnimatorSync",
+    description: "סינכרון בין תנועת Rigidbody לפרמטרים של Animator - שילוב מלא של שחקן עם אנימציה.",
     lines: [
       "using UnityEngine;",
       "",
@@ -419,15 +419,15 @@ const LESSONS = [
     ],
   },
 
-  // ── SimplePlayer script ────────────────────────────────────────────────────
+  // == SimplePlayer script ==
   {
     id: 17,
-    title: "SimplePlayer 1 — Class & Movement Fields",
+    title: "SimplePlayer 1 - Class & Movement Fields",
     description: "Class declaration with RequireComponent, and every movement serialized field with its role.",
     lines: [
       "using UnityEngine;",
       "",
-      "// Requires a Rigidbody2D on the same GameObject — Unity adds one automatically",
+      "// Requires a Rigidbody2D on the same GameObject - Unity adds one automatically",
       "[RequireComponent(typeof(Rigidbody2D))]",
       "public class SimplePlayer : MonoBehaviour",
       "{",
@@ -435,7 +435,7 @@ const LESSONS = [
       "    // Impulse force applied every FixedUpdate to accelerate the player",
       "    public float speed = 50f;",
       "",
-      "    // Hard cap on horizontal velocity — prevents endless acceleration",
+      "    // Hard cap on horizontal velocity - prevents endless acceleration",
       "    public float maxSpeed = 8f;",
       "",
       "    // How quickly velocity bleeds off when no input is held",
@@ -448,11 +448,11 @@ const LESSONS = [
   },
   {
     id: 18,
-    title: "SimplePlayer 2 — Visuals & Slope Fields",
+    title: "SimplePlayer 2 - Visuals & Slope Fields",
     description: "Serialized fields for sprite rotation, slope grip, and slide physics.",
     lines: [
       "    [Header(\"Visuals & Slopes\")]",
-      "    // Root transform of the sprite rig — rotated to align with slope normal",
+      "    // Root transform of the sprite rig - rotated to align with slope normal",
       "    public Transform visualsRoot;",
       "",
       "    // How fast the sprite tilts to match the ground angle (degrees/second)",
@@ -465,13 +465,13 @@ const LESSONS = [
       "    // Downhill force applied continuously while sliding on a steep slope",
       "    public float slideForce = 30f;",
       "",
-      "    // Terminal velocity reached while sliding — caps speed on infinite slopes",
+      "    // Terminal velocity reached while sliding - caps speed on infinite slopes",
       "    public float maxSlideSpeed = 12f;",
     ],
   },
   {
     id: 19,
-    title: "SimplePlayer 3 — Push/Pull & Component Fields",
+    title: "SimplePlayer 3 - Push/Pull & Component Fields",
     description: "Grab-probe settings, physics collider references, and ground-detection fields.",
     lines: [
       "    [Header(\"Push / Pull (Movable)\")]",
@@ -491,16 +491,16 @@ const LESSONS = [
       "    // Active collider when walking without a shell",
       "    public Collider2D standingCollider;",
       "",
-      "    // Taller/wider collider while carrying a shell — blocks narrow gaps",
+      "    // Taller/wider collider while carrying a shell - blocks narrow gaps",
       "    public Collider2D withShellCollider;",
       "",
-      "    // Round collider used during roll — must sit on this GameObject",
+      "    // Round collider used during roll - must sit on this GameObject",
       "    public Collider2D rollingCollider;",
     ],
   },
   {
     id: 20,
-    title: "SimplePlayer 4 — Ground Detection & Private Fields",
+    title: "SimplePlayer 4 - Ground Detection & Private Fields",
     description: "Raycast ground-check settings and the private runtime fields used by the physics logic.",
     lines: [
       "    [Header(\"Ground Detection\")]",
@@ -510,7 +510,7 @@ const LESSONS = [
       "    // Horizontal gap between the left and right parallel raycasts",
       "    public float groundCheckWidth = 0.5f;",
       "",
-      "    // Length of each downward raycast — must reach the floor from the center",
+      "    // Length of each downward raycast - must reach the floor from the center",
       "    public float groundCheckDistance = 1.0f;",
       "    public LayerMask groundLayer;",
       "",
@@ -530,10 +530,10 @@ const LESSONS = [
   },
   {
     id: 21,
-    title: "SimplePlayer 5 — Properties & Awake",
+    title: "SimplePlayer 5 - Properties & Awake",
     description: "Read-only properties exposed to other systems, and Awake() initialization.",
     lines: [
-      "    // Shell speed multiplier — hidden from Inspector but writable by code",
+      "    // Shell speed multiplier - hidden from Inspector but writable by code",
       "    [HideInInspector] public float currentSpeedMultiplier = 1f;",
       "",
       "    [SerializeField, HideInInspector]",
@@ -560,14 +560,14 @@ const LESSONS = [
       "        rb = GetComponent<Rigidbody2D>();",
       "        defaultGravityScale = rb.gravityScale;",
       "        inputHandler = GetComponent<PlayerInputHandler>();",
-      "        // Lock physics rotation — all sprite rotation goes through visualsRoot",
+      "        // Lock physics rotation - all sprite rotation goes through visualsRoot",
       "        rb.freezeRotation = true;",
       "    }",
     ],
   },
   {
     id: 22,
-    title: "SimplePlayer 6 — FixedUpdate & Update",
+    title: "SimplePlayer 6 - FixedUpdate & Update",
     description: "FixedUpdate drives physics; Update reads input and updates visuals each frame.",
     lines: [
       "    private void FixedUpdate()",
@@ -601,7 +601,7 @@ const LESSONS = [
   },
   {
     id: 23,
-    title: "SimplePlayer 7 — HandleMovement: Steep Slope (Case A)",
+    title: "SimplePlayer 7 - HandleMovement: Steep Slope (Case A)",
     description: "When the slope angle exceeds maxSlopeAngle the player loses grip and slides downhill.",
     lines: [
       "    private void HandleMovement()",
@@ -610,7 +610,7 @@ const LESSONS = [
       "        float slopeAngle = Vector2.Angle(surfaceNormal, Vector2.up);",
       "        bool onSteepSlope = IsGrounded && slopeAngle > maxSlopeAngle;",
       "",
-      "        // CASE A: Too steep — player loses grip and slides downhill",
+      "        // CASE A: Too steep - player loses grip and slides downhill",
       "        if (onSteepSlope)",
       "        {",
       "            rb.gravityScale = defaultGravityScale;",
@@ -632,8 +632,8 @@ const LESSONS = [
   },
   {
     id: 24,
-    title: "SimplePlayer 8 — HandleMovement: Active Input (Case B)",
-    description: "Player is pressing a direction — apply force along the slope and clamp speed.",
+    title: "SimplePlayer 8 - HandleMovement: Active Input (Case B)",
+    description: "Player is pressing a direction - apply force along the slope and clamp speed.",
     lines: [
       "        float actualMaxSpeed = maxSpeed * currentSpeedMultiplier;",
       "",
@@ -672,10 +672,10 @@ const LESSONS = [
   },
   {
     id: 25,
-    title: "SimplePlayer 9 — HandleMovement: Grip & Air Damping (Cases C & D)",
+    title: "SimplePlayer 9 - HandleMovement: Grip & Air Damping (Cases C & D)",
     description: "No input while grounded locks the player to the slope; no input in air softly damps drift.",
     lines: [
-      "        // CASE C: No input while grounded — grip the slope, prevent sliding",
+      "        // CASE C: No input while grounded - grip the slope, prevent sliding",
       "        else if (IsGrounded)",
       "        {",
       "            // An external system (e.g. jump) may request no braking for a moment",
@@ -693,7 +693,7 @@ const LESSONS = [
       "            if (vel.magnitude < 0.05f) vel = Vector2.zero;",
       "            rb.linearVelocity = vel;",
       "        }",
-      "        // CASE D: No input in the air — restore gravity and gently damp horizontal drift",
+      "        // CASE D: No input in the air - restore gravity and gently damp horizontal drift",
       "        else",
       "        {",
       "            rb.gravityScale = defaultGravityScale;",
@@ -708,7 +708,7 @@ const LESSONS = [
   },
   {
     id: 26,
-    title: "SimplePlayer 10 — HandleGroundDetection",
+    title: "SimplePlayer 10 - HandleGroundDetection",
     description: "Three parallel downward raycasts determine IsGrounded and the current surface normal.",
     lines: [
       "    private void HandleGroundDetection()",
@@ -746,7 +746,7 @@ const LESSONS = [
   },
   {
     id: 27,
-    title: "SimplePlayer 11 — Visual Rotation & Grab System",
+    title: "SimplePlayer 11 - Visual Rotation & Grab System",
     description: "Slope-aligned sprite rotation, momentum preservation, and grab toggle/start/release.",
     lines: [
       "    private void HandleVisualRotation()",
@@ -756,7 +756,7 @@ const LESSONS = [
       "        Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, surfaceNormal);",
       "        // Slerp so the sprite tilts smoothly instead of snapping at floor seams",
       "        visualsRoot.rotation = Quaternion.Lerp(visualsRoot.rotation, targetRotation, Time.deltaTime * rotationSpeed);",
-      "        // Flip sprite — skip while grabbing so the crab doesn't spin when pulling",
+      "        // Flip sprite - skip while grabbing so the crab doesn't spin when pulling",
       "        if (Mathf.Abs(moveInputX) > 0.01f && grabJoint == null)",
       "        {",
       "            Vector3 scale = visualsRoot.localScale;",
@@ -809,10 +809,10 @@ const LESSONS = [
   },
   {
     id: 28,
-    title: "SimplePlayer 12 — FindGrabbableObject, Collision & Gizmos",
+    title: "SimplePlayer 12 - FindGrabbableObject, Collision & Gizmos",
     description: "Overlap-circle grab probe, shell collision forwarding, and editor debug gizmos.",
     lines: [
-      "    // OverlapCircle in front of the player — returns the Movable found, or null",
+      "    // OverlapCircle in front of the player - returns the Movable found, or null",
       "    private Movable FindGrabbableObject()",
       "    {",
       "        // Temporarily enable trigger queries so the grab-handle trigger is detected",
@@ -867,15 +867,15 @@ const LESSONS = [
     ],
   },
 
-  // ── Unity API Examples ─────────────────────────────────────────────────────
+  // == Unity API Examples ==
   {
     id: 29,
-    title: "Unity API — Rigidbody",
+    title: "Unity API - Rigidbody",
     description: "AddForce modes, velocity clamping, MovePosition, and constraints from the Unity ScriptReference.",
     lines: [
       "using UnityEngine;",
       "",
-      "// Rigidbody: drives all physics-based movement — always use FixedUpdate",
+      "// Rigidbody: drives all physics-based movement - always use FixedUpdate",
       "public class RigidbodyAPI : MonoBehaviour",
       "{",
       "    public float thrust = 10f;",
@@ -891,7 +891,7 @@ const LESSONS = [
       "        // Force: continuous push scaled by mass each physics step",
       "        rb.AddForce(Vector3.forward * thrust, ForceMode.Force);",
       "",
-      "        // Impulse: instant kick — ignores mass, like a jump or explosion",
+      "        // Impulse: instant kick - ignores mass, like a jump or explosion",
       "        rb.AddForce(Vector3.up * 8f, ForceMode.Impulse);",
       "",
       "        // VelocityChange: instant velocity delta that ignores mass",
@@ -914,7 +914,7 @@ const LESSONS = [
   },
   {
     id: 30,
-    title: "Unity API — Physics.Raycast",
+    title: "Unity API - Physics.Raycast",
     description: "Single ray, layer mask, SphereCast and the full RaycastHit data from the Unity ScriptReference.",
     lines: [
       "using UnityEngine;",
@@ -923,21 +923,21 @@ const LESSONS = [
       "{",
       "    void Update()",
       "    {",
-      "        // Layer mask — bit-shift to select only layer 8",
+      "        // Layer mask - bit-shift to select only layer 8",
       "        int layerMask = 1 << 8;",
       "",
       "        RaycastHit hit;",
       "        // Cast from this object forward; Mathf.Infinity = no distance limit",
       "        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask))",
       "        {",
-      "            // hit.point   — world-space contact position",
-      "            // hit.normal  — surface normal at the contact point",
-      "            // hit.distance— distance along the ray to the hit",
+      "            // hit.point   - world-space contact position",
+      "            // hit.normal  - surface normal at the contact point",
+      "            // hit.distance- distance along the ray to the hit",
       "            Debug.DrawRay(transform.position, transform.forward * hit.distance, Color.yellow);",
       "            Debug.Log(\"Hit: \" + hit.collider.name + \" dist: \" + hit.distance);",
       "        }",
       "",
-      "        // SphereCast: like Raycast but with a radius — good for wide characters",
+      "        // SphereCast: like Raycast but with a radius - good for wide characters",
       "        RaycastHit sphereHit;",
       "        if (Physics.SphereCast(transform.position, 0.5f, transform.forward, out sphereHit, 10f))",
       "        {",
@@ -956,8 +956,8 @@ const LESSONS = [
   },
   {
     id: 31,
-    title: "Unity API — Vector3",
-    description: "Lerp, MoveTowards, Distance, Dot, Cross and Reflect — the most-used Vector3 statics.",
+    title: "Unity API - Vector3",
+    description: "Lerp, MoveTowards, Distance, Dot, Cross and Reflect - the most-used Vector3 statics.",
     lines: [
       "using UnityEngine;",
       "",
@@ -968,7 +968,7 @@ const LESSONS = [
       "",
       "    void Update()",
       "    {",
-      "        // Lerp: interpolate by fraction t (0..1) — smooth but slows near target",
+      "        // Lerp: interpolate by fraction t (0..1) - smooth but slows near target",
       "        transform.position = Vector3.Lerp(transform.position, target.position, speed * Time.deltaTime);",
       "",
       "        // MoveTowards: constant speed, guaranteed to stop at target",
@@ -978,7 +978,7 @@ const LESSONS = [
       "        // Distance: magnitude of (b - a)",
       "        float dist = Vector3.Distance(transform.position, target.position);",
       "",
-      "        // Dot: > 0 same dir, 0 perpendicular, < 0 opposite — use for facing checks",
+      "        // Dot: > 0 same dir, 0 perpendicular, < 0 opposite - use for facing checks",
       "        float dot = Vector3.Dot(transform.forward, (target.position - transform.position).normalized);",
       "        bool isFacing = dot > 0.5f;",
       "",
@@ -996,7 +996,7 @@ const LESSONS = [
   },
   {
     id: 32,
-    title: "Unity API — Quaternion",
+    title: "Unity API - Quaternion",
     description: "Euler, LookRotation, Slerp, RotateTowards, AngleAxis and Angle from the Unity ScriptReference.",
     lines: [
       "using UnityEngine;",
@@ -1015,7 +1015,7 @@ const LESSONS = [
       "        Vector3 direction = (target.position - transform.position).normalized;",
       "        Quaternion lookRot = Quaternion.LookRotation(direction);",
       "",
-      "        // Slerp: smooth arc interpolation — t=0 is from, t=1 is to",
+      "        // Slerp: smooth arc interpolation - t=0 is from, t=1 is to",
       "        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);",
       "",
       "        // RotateTowards: constant angular speed, never overshoots",
@@ -1034,7 +1034,7 @@ const LESSONS = [
   },
   {
     id: 33,
-    title: "Unity API — Coroutines & Yield",
+    title: "Unity API - Coroutines & Yield",
     description: "WaitForSeconds, WaitUntil, WaitForEndOfFrame, WaitForFixedUpdate and stopping coroutines.",
     lines: [
       "using UnityEngine;",
@@ -1063,14 +1063,14 @@ const LESSONS = [
       "",
       "    IEnumerator WaitForInput()",
       "    {",
-      "        // Suspend until a delegate returns true — checked once per frame",
+      "        // Suspend until a delegate returns true - checked once per frame",
       "        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));",
       "        Debug.Log(\"Space pressed!\");",
       "    }",
       "",
       "    IEnumerator EndOfFrameWork()",
       "    {",
-      "        // Resume after all cameras have rendered — useful for screenshot logic",
+      "        // Resume after all cameras have rendered - useful for screenshot logic",
       "        yield return new WaitForEndOfFrame();",
       "        // Resume at the start of the next FixedUpdate step",
       "        yield return new WaitForFixedUpdate();",
@@ -1085,7 +1085,7 @@ const LESSONS = [
   },
   {
     id: 34,
-    title: "Unity API — ScriptableObject",
+    title: "Unity API - ScriptableObject",
     description: "CreateAssetMenu, data asset pattern, and loading assets at runtime via Resources.",
     lines: [
       "using UnityEngine;",
@@ -1104,7 +1104,7 @@ const LESSONS = [
       "    public bool CanAfford(int playerGold) => playerGold >= damage * 10;",
       "}",
       "",
-      "// ── Consumer MonoBehaviour ─────────────────────────────────────────",
+      "// == Consumer MonoBehaviour ==",
       "public class PlayerInventory : MonoBehaviour",
       "{",
       "    // Drag the .asset file from the Project window into this field",
@@ -1125,7 +1125,7 @@ const LESSONS = [
   },
   {
     id: 35,
-    title: "Unity API — Camera Utilities",
+    title: "Unity API - Camera Utilities",
     description: "ScreenPointToRay for mouse picking, ViewportToWorldPoint, WorldToScreenPoint, and field-of-view.",
     lines: [
       "using UnityEngine;",
@@ -1164,7 +1164,7 @@ const LESSONS = [
   },
   {
     id: 36,
-    title: "Unity API — Events & Delegates",
+    title: "Unity API - Events & Delegates",
     description: "UnityEvent, UnityEvent<T>, System.Action with subscribe/unsubscribe pattern and null-safe invoke.",
     lines: [
       "using UnityEngine;",
@@ -1173,13 +1173,13 @@ const LESSONS = [
       "",
       "public class EventsAPI : MonoBehaviour",
       "{",
-      "    // UnityEvent: wired in the Inspector without code — zero-argument version",
+      "    // UnityEvent: wired in the Inspector without code - zero-argument version",
       "    public UnityEvent onPlayerDied;",
       "",
       "    // UnityEvent<T>: passes one argument to every Inspector and code listener",
       "    public UnityEvent<int> onScoreChanged;",
       "",
-      "    // System.Action: lightweight C# delegate — no Inspector support",
+      "    // System.Action: lightweight C# delegate - no Inspector support",
       "    public static event Action<GameObject> OnEnemySpawned;",
       "",
       "    void Die()",
@@ -1192,13 +1192,13 @@ const LESSONS = [
       "",
       "    void OnEnable()",
       "    {",
-      "        // Subscribe with += — executed every time the event fires",
+      "        // Subscribe with += - executed every time the event fires",
       "        OnEnemySpawned += HandleEnemySpawned;",
       "    }",
       "",
       "    void OnDisable()",
       "    {",
-      "        // Always unsubscribe in OnDisable — prevents memory leaks and ghost calls",
+      "        // Always unsubscribe in OnDisable - prevents memory leaks and ghost calls",
       "        OnEnemySpawned -= HandleEnemySpawned;",
       "    }",
       "",
@@ -1211,8 +1211,8 @@ const LESSONS = [
   },
   {
     id: 37,
-    title: "Unity API — Invoke & InvokeRepeating",
-    description: "Invoke, InvokeRepeating, CancelInvoke and IsInvoking — Unity's built-in delayed-call system.",
+    title: "Unity API - Invoke & InvokeRepeating",
+    description: "Invoke, InvokeRepeating, CancelInvoke and IsInvoking - Unity's built-in delayed-call system.",
     lines: [
       "using UnityEngine;",
       "",
@@ -1254,7 +1254,7 @@ const LESSONS = [
   },
   {
     id: 38,
-    title: "Unity API — Instantiate, Destroy & Object Pooling",
+    title: "Unity API - Instantiate, Destroy & Object Pooling",
     description: "Instantiate overloads, Destroy timing, DontDestroyOnLoad and basic manual object pooling.",
     lines: [
       "using UnityEngine;",
@@ -1273,7 +1273,7 @@ const LESSONS = [
       "        // Parent to a container to keep the hierarchy tidy",
       "        obj.transform.SetParent(transform);",
       "",
-      "        // Destroy after 5 seconds — the delay is world-time, not frame count",
+      "        // Destroy after 5 seconds - the delay is world-time, not frame count",
       "        Destroy(obj, 5f);",
       "    }",
       "",
