@@ -288,6 +288,10 @@ function finishLesson() {
   const secs = elapsed % 60;
   const timeStr = mins > 0 ? `${mins}:${String(secs).padStart(2, "0")} דק'` : `${secs} שנ'`;
 
+  const stars = accuracy >= 98 ? 3 : accuracy >= 92 ? 2 : accuracy >= 80 ? 1 : 0;
+  document.getElementById("result-stars").innerHTML = [0, 1, 2]
+    .map((i) => `<span class="${i < stars ? "" : "off"}">★</span>`)
+    .join("");
   document.getElementById("result-text").textContent =
     `מהירות: ${wpm} מ/ד  ·  דיוק: ${accuracy}%  ·  שגיאות: ${state.errorCount}  ·  זמן: ${timeStr}`;
   document.getElementById("result-panel").hidden = false;
@@ -355,6 +359,15 @@ document.addEventListener("DOMContentLoaded", () => {
   loadLesson(0);
 
   const input = document.getElementById("hidden-input");
+  const overlay = document.getElementById("start-overlay");
+  const stage = document.querySelector(".code-stage");
+  const setIdle = (idle) => {
+    overlay.hidden = !idle || state.finished;
+    stage.classList.toggle("idle", idle && !state.finished);
+  };
+  input.addEventListener("focus", () => setIdle(false));
+  input.addEventListener("blur", () => setIdle(true));
+  overlay.addEventListener("click", () => input.focus());
   input.addEventListener("input", handleInput);
   input.addEventListener("keydown", handleKeydown);
 
