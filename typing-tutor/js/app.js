@@ -229,7 +229,10 @@ function renderCode() {
     }
   }
   display.innerHTML = html;
-  display.querySelector(".char-current")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  const cur = display.querySelector(".char-current");
+  if (cur) {
+    display.scrollTop = cur.offsetTop - display.clientHeight / 2 + cur.offsetHeight / 2;
+  }
 }
 
 function escapeHtml(s) {
