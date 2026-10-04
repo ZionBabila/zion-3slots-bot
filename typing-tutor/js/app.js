@@ -69,6 +69,8 @@ const state = {
   finished: false,
 };
 
+let learnMode = false;
+
 function loadProgress() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -128,11 +130,19 @@ function buildKeyboard() {
   });
 }
 
+function highlightFinger(zone) {
+  document.querySelectorAll(".hand-finger.active").forEach((f) => f.classList.remove("active"));
+  if (zone) {
+    document.querySelectorAll(`.hand-finger[data-zone="${zone}"]`).forEach((f) => f.classList.add("active"));
+  }
+}
+
 function highlightNextKey(char) {
   document.querySelectorAll(".key.active").forEach((k) => k.classList.remove("active"));
   const fingerLabel = document.getElementById("finger-label");
   if (char === undefined) {
     fingerLabel.textContent = "";
+    highlightFinger(null);
     return;
   }
   let target = char.toLowerCase();
@@ -151,6 +161,7 @@ function highlightNextKey(char) {
   }
   const finger = FINGER_MAP[target];
   fingerLabel.textContent = finger ? `השתמש ב: ${FINGER_LABELS[finger]}` : "";
+  highlightFinger(finger || null);
 }
 
 function cssEscape(s) {
@@ -178,6 +189,7 @@ function loadLesson(index) {
   input.value = "";
   input.focus();
   highlightNextKey(state.fullText[0]);
+  if (learnMode) renderLearnView();
 }
 
 function renderCode() {
@@ -203,6 +215,30 @@ function renderCode() {
 
 function escapeHtml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function syntaxHighlight(text) {
+  const ph = [];
+  let s = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  // Comments first (protect from keyword matching)
+  s = s.replace(/(\/\/[^\n]*)/g, (m) => { ph.push(`<span class="syn-comment">${m}</span>`); return `\x00${ph.length - 1}\x00`; });
+  // Strings
+  s = s.replace(/("(?:[^"\\]|\\.)*")/g, (m) => { ph.push(`<span class="syn-string">${m}</span>`); return `\x00${ph.length - 1}\x00`; });
+  // Keywords
+  s = s.replace(/\b(using|namespace|public|private|protected|static|void|int|float|bool|string|char|var|class|struct|enum|new|return|if|else|for|foreach|while|do|in|out|ref|this|null|true|false|override|virtual|abstract|sealed|readonly|const|get|set|base|typeof|is|as|throw|try|catch|finally|yield|async|await)\b/g, '<span class="syn-keyword">$1</span>');
+  // Numbers
+  s = s.replace(/\b(\d+\.?\d*f?)\b/g, '<span class="syn-number">$1</span>');
+  // Restore placeholders
+  return s.replace(/\x00(\d+)\x00/g, (_, i) => ph[+i]);
+}
+
+function renderLearnView() {
+  const lesson = LESSONS[state.lessonIndex];
+  const el = document.getElementById("learn-display");
+  el.innerHTML =
+    `<div class="learn-desc-box"><h3 class="learn-lesson-title">${lesson.title}</h3>` +
+    `<p class="learn-desc-text">${lesson.description}</p></div>` +
+    `<pre class="learn-code-block" dir="ltr">${syntaxHighlight(lesson.lines.join("\n"))}</pre>`;
 }
 
 function updateStats() {
@@ -314,5 +350,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const hiding = document.body.classList.toggle("blind-mode");
     blindToggle.textContent = hiding ? "👁️ הצג מקלדת" : "🙈 מצב הקלדה עיוורת";
     input.focus();
+  });
+
+  document.getElementById("btn-learn-mode").addEventListener("click", () => {
+    learnMode = !learnMode;
+    document.body.classList.toggle("learn-mode", learnMode);
+    document.getElementById("btn-learn-mode").textContent = learnMode ? "⌨️ מצב הקלדה" : "📖 מצב קריאה";
+    if (learnMode) {
+      renderLearnView();
+      highlightNextKey(undefined);
+    } else {
+      input.focus();
+      highlightNextKey(state.fullText[state.typed.length]);
+    }
   });
 });

@@ -31,6 +31,8 @@
         <textarea id="hidden-input" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
       </div>
 
+      <div id="learn-display" class="learn-display"></div>
+
       <div class="result-panel" id="result-panel" hidden>
         <h3>🎉 שיעור הושלם!</h3>
         <p id="result-text"></p>
@@ -41,9 +43,35 @@
       <div class="keyboard-panel">
         <div class="keyboard-toolbar">
           <span id="finger-label" class="finger-label"></span>
-          <button id="btn-blind-mode" class="btn-secondary">🙈 מצב הקלדה עיוורת</button>
+          <div style="display:flex;gap:8px;">
+            <button id="btn-learn-mode" class="btn-secondary">📖 מצב קריאה</button>
+            <button id="btn-blind-mode" class="btn-secondary">🙈 מצב הקלדה עיוורת</button>
+          </div>
         </div>
         <div class="keyboard" id="keyboard" dir="ltr"></div>
+
+        <div class="hands-container" id="hands-container">
+          <!-- Left hand: thumb on right, pinky on left -->
+          <svg class="hand-svg" id="hand-left" viewBox="0 0 130 205" xmlns="http://www.w3.org/2000/svg">
+            <text x="65" y="14" class="hand-label" text-anchor="middle">יד שמאל</text>
+            <rect x="18" y="122" width="92" height="66" rx="14" class="hand-palm"/>
+            <rect class="hand-finger" data-zone="l-pinky"  x="18" y="80"  width="18" height="50" rx="9"/>
+            <rect class="hand-finger" data-zone="l-ring"   x="40" y="60"  width="18" height="70" rx="9"/>
+            <rect class="hand-finger" data-zone="l-middle" x="62" y="52"  width="18" height="78" rx="9"/>
+            <rect class="hand-finger" data-zone="l-index"  x="84" y="58"  width="18" height="72" rx="9"/>
+            <ellipse class="hand-finger" data-zone="thumb" cx="113" cy="145" rx="11" ry="21" transform="rotate(-28 113 145)"/>
+          </svg>
+          <!-- Right hand: thumb on left, pinky on right -->
+          <svg class="hand-svg" id="hand-right" viewBox="0 0 130 205" xmlns="http://www.w3.org/2000/svg">
+            <text x="65" y="14" class="hand-label" text-anchor="middle">יד ימין</text>
+            <rect x="20" y="122" width="92" height="66" rx="14" class="hand-palm"/>
+            <rect class="hand-finger" data-zone="r-index"  x="28" y="58"  width="18" height="72" rx="9"/>
+            <rect class="hand-finger" data-zone="r-middle" x="50" y="52"  width="18" height="78" rx="9"/>
+            <rect class="hand-finger" data-zone="r-ring"   x="72" y="60"  width="18" height="70" rx="9"/>
+            <rect class="hand-finger" data-zone="r-pinky"  x="94" y="80"  width="18" height="50" rx="9"/>
+            <ellipse class="hand-finger" data-zone="thumb" cx="17" cy="145" rx="11" ry="21" transform="rotate(28 17 145)"/>
+          </svg>
+        </div>
       </div>
     </section>
   </main>

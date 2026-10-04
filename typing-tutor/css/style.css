@@ -196,8 +196,94 @@ body.blind-mode .finger-label { visibility: hidden; }
 .key.finger-r-pinky   { border-bottom-color: #ed64a6; }
 .key.finger-thumb     { border-bottom-color: var(--muted); }
 
+/* ── Hand illustrations ── */
+.hands-container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.hand-svg {
+  width: 130px;
+  height: auto;
+  overflow: visible;
+}
+
+.hand-label {
+  fill: var(--muted);
+  font-size: 11px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.hand-palm { fill: #2a2a3e; }
+
+.hand-finger { transition: opacity 0.12s, filter 0.12s; }
+
+.hand-finger[data-zone="l-pinky"]  { fill: #f56565; opacity: 0.32; }
+.hand-finger[data-zone="l-ring"]   { fill: #ed8936; opacity: 0.32; }
+.hand-finger[data-zone="l-middle"] { fill: #ecc94b; opacity: 0.32; }
+.hand-finger[data-zone="l-index"]  { fill: #48bb78; opacity: 0.32; }
+.hand-finger[data-zone="r-index"]  { fill: #4fd1c5; opacity: 0.32; }
+.hand-finger[data-zone="r-middle"] { fill: #4299e1; opacity: 0.32; }
+.hand-finger[data-zone="r-ring"]   { fill: #9f7aea; opacity: 0.32; }
+.hand-finger[data-zone="r-pinky"]  { fill: #ed64a6; opacity: 0.32; }
+.hand-finger[data-zone="thumb"]    { fill: #8b94ac; opacity: 0.32; }
+
+.hand-finger.active { opacity: 1 !important; filter: brightness(1.25) drop-shadow(0 0 5px currentColor); }
+
+body.blind-mode .hands-container { display: none; }
+
+/* ── Learn / read mode ── */
+.learn-display { display: none; }
+
+body.learn-mode .code-stage    { display: none; }
+body.learn-mode .result-panel  { display: none; }
+body.learn-mode .learn-display { display: block; }
+
+.learn-desc-box {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border-right: 4px solid var(--accent);
+}
+
+.learn-lesson-title {
+  margin: 0 0 5px;
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.learn-desc-text {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.learn-code-block {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  margin: 0;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+/* Syntax highlight colors for learn mode */
+.syn-keyword { color: #c792ea; }
+.syn-string  { color: #c3e88d; }
+.syn-comment { color: #546e7a; font-style: italic; }
+.syn-number  { color: #f78c6c; }
+
 @media (max-width: 720px) {
   .layout { flex-direction: column; }
   .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
   .keyboard { display: none; }
+  .hands-container { display: none; }
 }
