@@ -22,7 +22,10 @@
 
     <section class="main-panel">
       <div class="lesson-header">
-        <h2 id="lesson-title">בחר שיעור</h2>
+        <div class="lesson-header-top">
+          <h2 id="lesson-title">בחר שיעור</h2>
+          <button id="btn-learn-mode" class="btn-learn-mode">📖 מצב קריאה</button>
+        </div>
         <p id="lesson-desc"></p>
       </div>
 
@@ -43,10 +46,7 @@
       <div class="keyboard-panel">
         <div class="keyboard-toolbar">
           <span id="finger-label" class="finger-label"></span>
-          <div style="display:flex;gap:8px;">
-            <button id="btn-learn-mode" class="btn-secondary">📖 מצב קריאה</button>
-            <button id="btn-blind-mode" class="btn-secondary">🙈 מצב הקלדה עיוורת</button>
-          </div>
+          <button id="btn-blind-mode" class="btn-secondary">🙈 מצב הקלדה עיוורת</button>
         </div>
         <div class="keyboard" id="keyboard" dir="ltr"></div>
 

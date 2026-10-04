@@ -70,6 +70,24 @@ const state = {
 };
 
 let learnMode = false;
+let commentMask = [];
+
+function computeCommentMask(text) {
+  const mask = new Array(text.length).fill(false);
+  let pos = 0;
+  for (const line of text.split("\n")) {
+    if (line.trimStart().startsWith("//")) mask.fill(true, pos, pos + line.length);
+    pos += line.length + 1;
+  }
+  return mask;
+}
+
+// Letter case is only enforced in code; inside // comment lines either case is accepted.
+function charMatches(i, ch) {
+  const expected = state.fullText[i];
+  if (ch === expected) return true;
+  return commentMask[i] && ch.toLowerCase() === expected.toLowerCase();
+}
 
 function loadProgress() {
   try {
@@ -171,6 +189,7 @@ function cssEscape(s) {
 function loadLesson(index) {
   state.lessonIndex = index;
   state.fullText = LESSONS[index].lines.join("\n");
+  commentMask = computeCommentMask(state.fullText);
   state.typed = "";
   state.startTime = null;
   state.errorCount = 0;
@@ -200,7 +219,7 @@ function renderCode() {
     const ch = fullText[i] === "\n" ? "\n" : fullText[i];
     const display_ch = ch === " " ? " " : ch;
     if (i < typed.length) {
-      const cls = typed[i] === fullText[i] ? "char-correct" : "char-incorrect";
+      const cls = charMatches(i, typed[i]) ? "char-correct" : "char-incorrect";
       html += `<span class="${cls}">${escapeHtml(display_ch)}</span>`;
     } else if (i === typed.length) {
       html += `<span class="char-current">${escapeHtml(display_ch === "\n" ? " " : display_ch)}</span>`;
@@ -286,9 +305,8 @@ function handleInput(e) {
 
   if (value.length > state.typed.length) {
     const newChar = value[value.length - 1];
-    const expected = state.fullText[state.typed.length];
     state.totalTyped++;
-    const correct = newChar === expected;
+    const correct = charMatches(state.typed.length, newChar);
     if (!correct) state.errorCount++;
     playTypeSound(correct);
   }
@@ -304,7 +322,10 @@ function handleInput(e) {
   updateStats();
   highlightNextKey(state.fullText[state.typed.length]);
 
-  if (state.typed.length === state.fullText.length && state.typed === state.fullText) {
+  if (
+    state.typed.length === state.fullText.length &&
+    [...state.typed].every((ch, i) => charMatches(i, ch))
+  ) {
     finishLesson();
   }
 }
