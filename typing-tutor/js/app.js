@@ -243,15 +243,15 @@ function syntaxHighlight(text) {
   const ph = [];
   let s = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   // Comments first (protect from keyword matching)
-  s = s.replace(/(\/\/[^\n]*)/g, (m) => { ph.push(`<span class="syn-comment">${m}</span>`); return `\x00${ph.length - 1}\x00`; });
+  s = s.replace(/(\/\/[^\n]*)/g, (m) => { ph.push(`<span class="syn-comment">${m}</span>`); return `\x00${String.fromCharCode(0xE000 + ph.length - 1)}\x00`; });
   // Strings
-  s = s.replace(/("(?:[^"\\]|\\.)*")/g, (m) => { ph.push(`<span class="syn-string">${m}</span>`); return `\x00${ph.length - 1}\x00`; });
+  s = s.replace(/("(?:[^"\\]|\\.)*")/g, (m) => { ph.push(`<span class="syn-string">${m}</span>`); return `\x00${String.fromCharCode(0xE000 + ph.length - 1)}\x00`; });
   // Keywords
   s = s.replace(/\b(using|namespace|public|private|protected|static|void|int|float|bool|string|char|var|class|struct|enum|new|return|if|else|for|foreach|while|do|in|out|ref|this|null|true|false|override|virtual|abstract|sealed|readonly|const|get|set|base|typeof|is|as|throw|try|catch|finally|yield|async|await)\b/g, '<span class="syn-keyword">$1</span>');
   // Numbers
   s = s.replace(/\b(\d+\.?\d*f?)\b/g, '<span class="syn-number">$1</span>');
   // Restore placeholders
-  return s.replace(/\x00(\d+)\x00/g, (_, i) => ph[+i]);
+  return s.replace(/\x00([\uE000-\uF8FF])\x00/g, (_, c) => ph[c.charCodeAt(0) - 0xE000]);
 }
 
 function renderLearnView() {
